@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// Componente de revision periodica de seguimientos
 @Component
 public class FollowUpScheduler {
 
+    // Inyeccion de repository y el publisher de eventos internos de spring
     private final FollowUpRepository followUpRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -24,24 +26,21 @@ public class FollowUpScheduler {
         this.eventPublisher = eventPublisher;
     }
 
+    // metodo de chequeo de seguimientos activos configurado a cada hora
     @Scheduled(cron = "0 0 * * * *")
     public void checkPendingFollowUps() {
 
         LocalDateTime now = LocalDateTime.now();
 
         List<FollowUp> followUps =
-                followUpRepository
-                        .findByStatusAndScheduledAtLessThanEqualAndActiveTrue(
+                followUpRepository.findByStatusAndScheduledAtLessThanEqualAndActiveTrue(
                                 FollowUpStatus.PENDING, now);
 
         for (FollowUp followUp : followUps) {
 
             FollowUpDueEvent event =
-                    new FollowUpDueEvent(
-                            followUp.getId(),
-                            followUp.getQuote().getId(),
-                            followUp.getScheduledAt()
-                    );
+                    new FollowUpDueEvent(followUp.getId(), followUp.getQuote().getId(),
+                            followUp.getScheduledAt());
 
             eventPublisher.publishEvent(event);
         }

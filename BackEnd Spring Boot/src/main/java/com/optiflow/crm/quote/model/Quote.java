@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "quotes")
@@ -35,6 +37,9 @@ public class Quote {
     private LocalDate quoteDate;
 
     private LocalDate expirationDate;
+
+    @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuoteItem> items = new ArrayList<>();
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal = BigDecimal.ZERO;
@@ -148,6 +153,10 @@ public class Quote {
         this.expirationDate = expirationDate;
     }
 
+    public List<QuoteItem> getItems() { return items; }
+
+    public void setItems(List<QuoteItem> items) { this.items = items; }
+
     public BigDecimal getSubtotal() {
         return subtotal;
     }
@@ -219,4 +228,10 @@ public class Quote {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    // Logicas de quote
+    public void markAsConverted() {
+        this.status = QuoteStatus.CONVERTED;
+    }
+
 }

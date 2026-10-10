@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class QuoteDto {
 
@@ -28,6 +29,8 @@ public class QuoteDto {
     private LocalDate quoteDate;
 
     private LocalDate expirationDate;
+
+    private List<QuoteItemDto> items;
 
     @DecimalMin(
             value = "0.00",

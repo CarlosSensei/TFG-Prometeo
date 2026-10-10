@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
+// Entidad Dto de seguimiento
 public class FollowUpDto {
 
     private Long id;

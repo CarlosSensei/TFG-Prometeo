@@ -1,6 +1,8 @@
 package com.optiflow.crm.user;
 
 import com.optiflow.crm.shared.exception.DuplicateResourceException;
+import com.optiflow.crm.shared.exception.UserAlreadyCreatedException;
+import com.optiflow.crm.shared.exception.UserNotFoundException;
 import com.optiflow.crm.user.dto.CreateUserDto;
 import com.optiflow.crm.user.model.User;
 
@@ -33,14 +35,14 @@ public class UserServiceImpl implements UserService {
     public User findById(Long id) {
 
         return userRepository.findById(id).orElseThrow(() ->
-                        new RuntimeException("Usuario no encontrado con id: " + id));
+                        new UserNotFoundException(id));
     }
 
     @Override
     public User findByEmail(String email) {
 
         return userRepository.findByEmailIgnoreCase(email).orElseThrow(() ->
-                        new RuntimeException("Usuario no encontrado"));
+                        new UserNotFoundException(email));
     }
 
     @Override
@@ -49,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.existsByEmailIgnoreCase(dto.getEmail())) {
 
-            throw new DuplicateResourceException("Ya existe un usuario con el email " + dto.getEmail());
+            throw new UserAlreadyCreatedException(dto.getEmail());
         }
 
         User user = new User();

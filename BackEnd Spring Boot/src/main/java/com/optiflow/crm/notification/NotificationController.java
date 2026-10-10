@@ -10,11 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// Controler de notificaciones
 @RestController
 @RequestMapping("/notifications")
 @CrossOrigin(origins = "*")
 public class NotificationController {
 
+    // Inyeccion del service y del mapper
     private final NotificationService notificationService;
     private final NotificationMapper notificationMapper;
 
@@ -25,6 +27,7 @@ public class NotificationController {
         this.notificationMapper = notificationMapper;
     }
 
+    // Listado paginado de notificaciones
     @GetMapping
     public ResponseEntity<Page<NotificationDto>> findAll(Pageable pageable) {
 
@@ -34,6 +37,7 @@ public class NotificationController {
         return ResponseEntity.ok(result);
     }
 
+    // Nusqueda de notificaciones no leidas
     @GetMapping("/unread")
     public ResponseEntity<Page<NotificationDto>> findUnread(Pageable pageable) {
 
@@ -43,12 +47,14 @@ public class NotificationController {
         return ResponseEntity.ok(result);
     }
 
+    // Numero de notificaciones no leidas
     @GetMapping("/unread/count")
     public ResponseEntity<Long> countUnread() {
 
         return ResponseEntity.ok(notificationService.countUnread());
     }
 
+    // Metodo para marcar como leida una notificacion
     @PatchMapping("/{id}/read")
     public ResponseEntity<NotificationDto> markAsRead(@PathVariable Long id) {
 
@@ -57,6 +63,7 @@ public class NotificationController {
         return ResponseEntity.ok(notificationMapper.toDto(notification));
     }
 
+    // Borrar una notificacion
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 

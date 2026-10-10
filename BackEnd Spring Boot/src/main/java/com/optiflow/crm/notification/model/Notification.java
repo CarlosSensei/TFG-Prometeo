@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+// Entidad de Notificacion
 @Entity
-@Table(name = "notifications",
-        uniqueConstraints = {@UniqueConstraint(
+@Table(name = "notifications", uniqueConstraints = {@UniqueConstraint(
                         name = "uk_notification_followup_type",
-                        columnNames = {"follow_up_id", "type"})}
-)
+                        columnNames = {"follow_up_id", "type"})})
 public class Notification {
 
     @Id
@@ -43,6 +42,7 @@ public class Notification {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // Preparacion de algunos campos antes de crear una notificacion
     @PrePersist
     protected void onCreate() {
 

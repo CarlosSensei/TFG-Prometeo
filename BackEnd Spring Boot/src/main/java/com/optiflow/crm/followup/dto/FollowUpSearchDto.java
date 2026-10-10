@@ -5,6 +5,7 @@ import com.optiflow.crm.followup.model.FollowUpType;
 
 import java.time.LocalDateTime;
 
+// Entidad dto de filtrado de seguimientos
 public class FollowUpSearchDto {
 
     private Long quoteId;

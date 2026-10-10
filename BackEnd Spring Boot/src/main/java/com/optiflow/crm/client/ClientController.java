@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// Controller de cliente
 @RestController
 @RequestMapping("/clients")
 @CrossOrigin(origins = "*")
@@ -32,9 +33,7 @@ public class ClientController {
     @GetMapping
     public ResponseEntity<Page<ClientDto>> findAll(Pageable pageable) {
 
-        Page<ClientDto> result = clientService
-                .findAll(pageable)
-                .map(clientMapper::toDto);
+        Page<ClientDto> result = clientService.findAll(pageable).map(clientMapper::toDto);
 
         return ResponseEntity.ok(result);
     }
@@ -43,9 +42,7 @@ public class ClientController {
     @PostMapping("/search")
     public ResponseEntity<Page<ClientDto>> search(@Valid @RequestBody ClientSearchDto searchDto) {
 
-        Page<ClientDto> result = clientService
-                .search(searchDto)
-                .map(clientMapper::toDto);
+        Page<ClientDto> result = clientService.search(searchDto).map(clientMapper::toDto);
 
         return ResponseEntity.ok(result);
     }
@@ -69,9 +66,7 @@ public class ClientController {
 
         ClientDto response = clientMapper.toDto(savedClient);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Actualizar cliente

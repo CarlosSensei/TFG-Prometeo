@@ -16,4 +16,5 @@ public interface QuoteRepository extends JpaRepository<Quote, Long>, JpaSpecific
 
     Optional<Quote> findTopByQuoteNumberStartingWithOrderByQuoteNumberDesc(String prefix);
 
+    long countByClientIdAndActiveTrue(Long clientId);
 }

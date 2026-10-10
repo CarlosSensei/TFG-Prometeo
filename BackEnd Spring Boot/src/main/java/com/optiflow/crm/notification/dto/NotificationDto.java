@@ -4,6 +4,7 @@ import com.optiflow.crm.notification.model.NotificationType;
 
 import java.time.LocalDateTime;
 
+// Entidad Dto de la notificacion
 public class NotificationDto {
 
     private Long id;

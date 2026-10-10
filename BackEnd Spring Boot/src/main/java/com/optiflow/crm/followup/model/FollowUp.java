@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+// Entidad de seguimiento
 @Entity
 @Table(name = "follow_ups")
 public class FollowUp {
@@ -48,6 +49,7 @@ public class FollowUp {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // Prepara la fecha y algunos campos para la creacion
     @PrePersist
     protected void onCreate() {
 
@@ -56,19 +58,14 @@ public class FollowUp {
         createdAt = now;
         updatedAt = now;
 
-        if (status == null) {
-            status = FollowUpStatus.PENDING;
-        }
+        if (status == null) { status = FollowUpStatus.PENDING; }
 
-        if (automated == null) {
-            automated = false;
-        }
+        if (automated == null) { automated = false; }
 
-        if (active == null) {
-            active = true;
-        }
+        if (active == null) { active = true; }
     }
 
+    // Prepara la fecha para actualizaciones
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

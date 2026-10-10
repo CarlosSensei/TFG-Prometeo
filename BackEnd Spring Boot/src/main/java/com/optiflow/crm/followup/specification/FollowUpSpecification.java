@@ -9,11 +9,14 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 
+// Especificaciones personalizadas de busqueda
 public class FollowUpSpecification {
 
+    // constructor vacio
     private FollowUpSpecification() {
     }
 
+    // Metodo para filtrar
     public static Specification<FollowUp> filterBy(FollowUpSearchDto searchDto) {
 
         return Specification.allOf(
@@ -29,6 +32,7 @@ public class FollowUpSpecification {
         );
     }
 
+    // Metodo para buscar por Id de presupuesto
     private static Specification<FollowUp> quoteIdEquals(Long quoteId) {
 
         return (root, query, criteriaBuilder) -> {
@@ -39,6 +43,7 @@ public class FollowUpSpecification {
         };
     }
 
+    // Metodo para buscar por tipo de seguimiento
     private static Specification<FollowUp> typeEquals(FollowUpType type) {
 
         return (root, query, criteriaBuilder) -> {
@@ -49,6 +54,7 @@ public class FollowUpSpecification {
         };
     }
 
+    // Metodo para buscar por status del seguimiento
     private static Specification<FollowUp> statusEquals(FollowUpStatus status) {
 
         return (root, query, criteriaBuilder) -> {
@@ -59,9 +65,8 @@ public class FollowUpSpecification {
         };
     }
 
-    private static Specification<FollowUp> scheduledFrom(
-            LocalDateTime scheduledFrom
-    ) {
+    // Metodo para buscar por fecha de seguimiento desde
+    private static Specification<FollowUp> scheduledFrom(LocalDateTime scheduledFrom) {
 
         return (root, query, criteriaBuilder) -> {
 
@@ -71,6 +76,7 @@ public class FollowUpSpecification {
         };
     }
 
+    // Metodo para buscar por fecha de seguimiento hasta
     private static Specification<FollowUp> scheduledTo(LocalDateTime scheduledTo) {
 
         return (root, query, criteriaBuilder) -> {
@@ -81,6 +87,7 @@ public class FollowUpSpecification {
         };
     }
 
+    // Metodo para buscar por fecha de seguimiento completado desde
     private static Specification<FollowUp> completedFrom(LocalDateTime completedFrom) {
 
         return (root, query, criteriaBuilder) -> {
@@ -91,6 +98,7 @@ public class FollowUpSpecification {
         };
     }
 
+    // Metodo para buscar por fecha de seguimiento completado hasta
     private static Specification<FollowUp> completedTo(LocalDateTime completedTo) {
 
         return (root, query, criteriaBuilder) -> {
@@ -101,6 +109,7 @@ public class FollowUpSpecification {
         };
     }
 
+    // Busqueda por seguimientos automatizados
     private static Specification<FollowUp> automatedEquals(Boolean automated) {
 
         return (root, query, criteriaBuilder) -> {
@@ -111,6 +120,7 @@ public class FollowUpSpecification {
         };
     }
 
+    // Busqueda por seguimientos activos
     private static Specification<FollowUp> activeEquals(Boolean active) {
 
         return (root, query, criteriaBuilder) -> {

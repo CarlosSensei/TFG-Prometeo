@@ -1,10 +1,10 @@
 package com.optiflow.crm.client.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// Entidad del cliente
 @Entity
 @Table(name = "clients")
 public class Client {
@@ -17,13 +17,13 @@ public class Client {
     private String name;
 
     @Column(nullable = false, length = 50)
-    private String firstSurname;
+    private String surname;
 
     @Column(length = 50)
     private String lastSurname;
 
     @Column(nullable = false, length = 10, unique = true)
-    private String DNI;
+    private String Dni;
 
     @Column(nullable = false, length = 13)
     private String phoneNumber;
@@ -54,6 +54,7 @@ public class Client {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // prepara la fecha para antes de crear un cliente
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -61,6 +62,7 @@ public class Client {
         this.updatedAt = now;
     }
 
+    // prepara la fecha para antes de actualizar un cliente
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
@@ -82,12 +84,12 @@ public class Client {
 
     public void setName(String name) { this.name = name; }
 
-    public String getFirstSurname() {
-        return firstSurname;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setFirstSurname(String firstSurname) {
-        this.firstSurname = firstSurname;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getLastSurname() {
@@ -98,12 +100,12 @@ public class Client {
         this.lastSurname = lastSurname;
     }
 
-    public String getDNI() {
-        return DNI;
+    public String getDni() {
+        return Dni;
     }
 
-    public void setDNI(String DNI) {
-        this.DNI = DNI;
+    public void setDni(String Dni) {
+        this.Dni = Dni;
     }
 
     public String getPhoneNumber() {
@@ -174,5 +176,5 @@ public class Client {
 
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    // Logicas de cliente
+
 }

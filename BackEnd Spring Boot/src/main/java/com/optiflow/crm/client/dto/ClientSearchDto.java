@@ -1,14 +1,15 @@
 package com.optiflow.crm.client.dto;
 
+// Criterios de busqueda para la búsqueda avanzada
 public class ClientSearchDto {
 
     private String name;
 
-    private String firstSurname;
+    private String surname;
 
     private String lastSurname;
 
-    private String DNI;
+    private String Dni;
 
     private String phoneNumber;
 
@@ -36,26 +37,24 @@ public class ClientSearchDto {
 
     public void setName(String name) { this.name = name; }
 
-    public String getFirstSurname() { return firstSurname; }
+    public String getSurname() { return surname; }
 
-    public void setFirstSurname(String firstSurname) {
-        this.firstSurname = firstSurname;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
-    public String getLastSurname() {
-        return lastSurname;
-    }
+    public String getLastSurname() { return lastSurname; }
 
     public void setLastSurname(String lastSurname) {
         this.lastSurname = lastSurname;
     }
 
-    public String getDNI() {
-        return DNI;
+    public String getDni() {
+        return Dni;
     }
 
-    public void setDNI(String DNI) {
-        this.DNI = DNI;
+    public void setDni(String Dni) {
+        this.Dni = Dni;
     }
 
     public String getPhoneNumber() { return phoneNumber; }

@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+// Entidad de cliente
 @Entity
 @Table(name = "users")
 public class User {
 
+    // id autogenerado incremental
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

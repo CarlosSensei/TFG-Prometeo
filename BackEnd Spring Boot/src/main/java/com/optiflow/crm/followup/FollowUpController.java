@@ -15,17 +15,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// Controller de seguimientos
 @RestController
 @CrossOrigin(origins = "*")
 public class FollowUpController {
 
+    // Inyeccion del service y el mapper
     private final FollowUpService followUpService;
     private final FollowUpMapper followUpMapper;
 
-    public FollowUpController(
-            FollowUpService followUpService,
-            FollowUpMapper followUpMapper
-    ) {
+    public FollowUpController(FollowUpService followUpService, FollowUpMapper followUpMapper) {
         this.followUpService = followUpService;
         this.followUpMapper = followUpMapper;
     }
@@ -102,7 +101,7 @@ public class FollowUpController {
         return ResponseEntity.ok(followUpMapper.toDto(completedFollowUp));
     }
 
-    // Baja lógica
+    // Baja del seguimiento
     @DeleteMapping("/followups/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 

@@ -3,13 +3,12 @@ package com.optiflow.crm.quote;
 import com.optiflow.crm.auth.CurrentUserService;
 import com.optiflow.crm.client.ClientRepository;
 import com.optiflow.crm.client.model.Client;
-import com.optiflow.crm.domain.QuoteDomainService;
+import com.optiflow.crm.quote.domain.QuoteDomainService;
 import com.optiflow.crm.quote.dto.QuoteDto;
 import com.optiflow.crm.quote.dto.QuoteSearchDto;
 import com.optiflow.crm.quote.mapper.QuoteMapper;
 import com.optiflow.crm.quote.model.Quote;
 import com.optiflow.crm.quote.model.QuoteService;
-import com.optiflow.crm.quote.model.QuoteStatus;
 
 import com.optiflow.crm.quote.specification.QuoteSpecification;
 import com.optiflow.crm.shared.exception.ClientNotFoundException;

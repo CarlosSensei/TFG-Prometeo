@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// Repository Jpa de seguimientos
 public interface FollowUpRepository extends JpaRepository<FollowUp, Long>, JpaSpecificationExecutor<FollowUp> {
 
     Page<FollowUp> findByActiveTrue(Pageable pageable);

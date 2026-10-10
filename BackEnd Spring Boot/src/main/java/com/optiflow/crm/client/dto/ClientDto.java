@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// Entidad DTO para operaciones CRUD
 public class ClientDto {
 
     private Long id;
@@ -14,12 +15,12 @@ public class ClientDto {
     private String name;
 
     @NotBlank(message = "El primer apellido es obligatorio")
-    private String firstSurname;
+    private String surname;
 
     private String lastSurname;
 
     @ValidSpanishDocument
-    private String DNI;
+    private String Dni;
 
     @NotBlank(message = "El nombre es obligatorio")
     private String phoneNumber;
@@ -65,12 +66,12 @@ public class ClientDto {
         this.name = name;
     }
 
-    public String getFirstSurname() {
-        return firstSurname;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setFirstSurname(String firstSurname) {
-        this.firstSurname = firstSurname;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getLastSurname() {
@@ -81,12 +82,12 @@ public class ClientDto {
         this.lastSurname = lastSurname;
     }
 
-    public String getDNI() {
-        return DNI;
+    public String getDni() {
+        return Dni;
     }
 
-    public void setDNI(String DNI) {
-        this.DNI = DNI;
+    public void setDni(String Dni) {
+        this.Dni = Dni;
     }
 
     public String getPhoneNumber() {

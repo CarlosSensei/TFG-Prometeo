@@ -343,6 +343,221 @@ MERGE INTO clients (
 
 
 -- =========================================================
+-- INVENTORY ITEMS
+-- =========================================================
+
+MERGE INTO inventory_items (
+    id,
+    sku,
+    name,
+    type,
+    brand,
+    description,
+    sale_price,
+    tax_rate,
+    stock,
+    active,
+    created_at,
+    updated_at
+    )
+    KEY(id)
+    VALUES (
+    1,
+    'FRAME-RB-001',
+    'Ray-Ban RX5228',
+    'FRAME',
+    'Ray-Ban',
+    'Montura graduada acetato negro',
+    135.00,
+    21.00,
+    8,
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+    );
+
+MERGE INTO inventory_items (
+    id,
+    sku,
+    name,
+    type,
+    brand,
+    description,
+    sale_price,
+    tax_rate,
+    stock,
+    active,
+    created_at,
+    updated_at
+    )
+    KEY(id)
+    VALUES (
+    2,
+    'FRAME-VO-001',
+    'Vogue VO5276',
+    'FRAME',
+    'Vogue',
+    'Montura graduada mujer',
+    110.00,
+    21.00,
+    5,
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+    );
+
+MERGE INTO inventory_items (
+    id,
+    sku,
+    name,
+    type,
+    brand,
+    description,
+    sale_price,
+    tax_rate,
+    stock,
+    active,
+    created_at,
+    updated_at
+    )
+    KEY(id)
+    VALUES (
+    3,
+    'LENS-PROG-001',
+    'Lente progresiva estándar',
+    'LENS',
+    'OptiFlow',
+    'Lente progresiva orgánica con antirreflejante',
+    120.00,
+    21.00,
+    30,
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+    );
+
+MERGE INTO inventory_items (
+    id,
+    sku,
+    name,
+    type,
+    brand,
+    description,
+    sale_price,
+    tax_rate,
+    stock,
+    active,
+    created_at,
+    updated_at
+    )
+    KEY(id)
+    VALUES (
+    4,
+    'LENS-MONO-001',
+    'Lente monofocal estándar',
+    'LENS',
+    'OptiFlow',
+    'Lente monofocal orgánica',
+    65.00,
+    21.00,
+    40,
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+    );
+
+MERGE INTO inventory_items (
+    id,
+    sku,
+    name,
+    type,
+    brand,
+    description,
+    sale_price,
+    tax_rate,
+    stock,
+    active,
+    created_at,
+    updated_at
+    )
+    KEY(id)
+    VALUES (
+    5,
+    'SUN-RB-001',
+    'Ray-Ban Aviator',
+    'SUNGLASSES',
+    'Ray-Ban',
+    'Gafa de sol clásica',
+    155.00,
+    21.00,
+    6,
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+    );
+
+MERGE INTO inventory_items (
+    id,
+    sku,
+    name,
+    type,
+    brand,
+    description,
+    sale_price,
+    tax_rate,
+    stock,
+    active,
+    created_at,
+    updated_at
+    )
+    KEY(id)
+    VALUES (
+    6,
+    'ACC-CASE-001',
+    'Estuche premium',
+    'ACCESSORY',
+    'OptiFlow',
+    'Estuche rígido para gafas',
+    15.00,
+    21.00,
+    25,
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+    );
+
+MERGE INTO inventory_items (
+    id,
+    sku,
+    name,
+    type,
+    brand,
+    description,
+    sale_price,
+    tax_rate,
+    stock,
+    active,
+    created_at,
+    updated_at
+    )
+    KEY(id)
+    VALUES (
+    7,
+    'SERVICE-ASSEMBLY',
+    'Montaje y ajuste',
+    'SERVICE',
+    'OptiFlow',
+    'Servicio de montaje y ajuste de gafas',
+    30.00,
+    21.00,
+    0,
+    TRUE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+    );
+
+
+-- =========================================================
 -- QUOTES
 -- =========================================================
 

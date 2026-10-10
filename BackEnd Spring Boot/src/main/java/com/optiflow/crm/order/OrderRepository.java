@@ -17,4 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     boolean existsByQuoteId(Long quoteId);
 
     Optional<Order> findTopByOrderNumberStartingWithOrderByOrderNumberDesc(String prefix);
+
+    Long countByClientIdAndActiveTrue(Long clientId);
+
 }

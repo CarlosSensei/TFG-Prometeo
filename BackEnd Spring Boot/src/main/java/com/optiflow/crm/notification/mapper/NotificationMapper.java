@@ -5,6 +5,7 @@ import com.optiflow.crm.notification.model.Notification;
 
 import org.springframework.stereotype.Component;
 
+// Mapper de Notificacion a dto
 @Component
 public class NotificationMapper {
 

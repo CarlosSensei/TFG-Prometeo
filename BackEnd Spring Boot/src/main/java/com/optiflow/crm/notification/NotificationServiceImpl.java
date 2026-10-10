@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+// Implementacion del service de notificaciones
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
+    // Inyeccion del repository
     private final NotificationRepository notificationRepository;
 
     public NotificationServiceImpl(NotificationRepository notificationRepository) {
@@ -21,24 +23,28 @@ public class NotificationServiceImpl implements NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
+    // Busqueda paginada de notificaciones
     @Override
     public Page<Notification> findAll(Pageable pageable) {
 
         return notificationRepository.findByActiveTrue(pageable);
     }
 
+    // Busqueda de notificaciones No Leidas
     @Override
     public Page<Notification> findUnread(Pageable pageable) {
 
         return notificationRepository.findByReadFalseAndActiveTrue(pageable);
     }
 
+    // Numero de notificaciones no leidas
     @Override
     public long countUnread() {
 
         return notificationRepository.countByReadFalseAndActiveTrue();
     }
 
+    // Busqueda por Id
     @Override
     public Notification findById(Long id) {
 
@@ -46,6 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
                         new RuntimeException("Notificación no encontrada con id: " + id));
     }
 
+    // Creacion de notificaciones asociadas a seguimientos
     @Override
     @Transactional
     public Notification createFollowUpNotification(
@@ -64,22 +71,17 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = new Notification();
 
         notification.setFollowUpId(followUpId);
-
         notification.setQuoteId(quoteId);
-
         notification.setType(type);
-
         notification.setTitle(title);
-
         notification.setMessage(message);
-
         notification.setRead(false);
-
         notification.setActive(true);
 
         return notificationRepository.save(notification);
     }
 
+    // Metodo para marcar una notificacion como leida
     @Override
     @Transactional
     public Notification markAsRead(Long id) {
@@ -93,6 +95,7 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationRepository.save(notification);
     }
 
+    // Borrar una notificacion desactivandola
     @Override
     @Transactional
     public void delete(Long id) {

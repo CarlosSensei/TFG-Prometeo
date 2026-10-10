@@ -2,6 +2,7 @@ package com.optiflow.crm.followup.dto;
 
 import jakarta.validation.constraints.Size;
 
+// Entidad Dto para finalizar un seguimiento completado
 public class CompleteFollowUpDto {
 
     @Size(max = 500)

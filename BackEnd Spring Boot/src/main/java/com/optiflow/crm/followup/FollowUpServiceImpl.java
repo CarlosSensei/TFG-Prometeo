@@ -23,9 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+// Implementacion del Service para seguimientos
 @Service
 public class FollowUpServiceImpl implements FollowUpService {
 
+    // Inyeccion de los repositories y el mapper
     private final FollowUpRepository followUpRepository;
     private final QuoteRepository quoteRepository;
     private final FollowUpMapper followUpMapper;
@@ -40,29 +42,27 @@ public class FollowUpServiceImpl implements FollowUpService {
         this.followUpMapper = followUpMapper;
     }
 
+    // Listado paginado de seguimientos
     @Override
     public Page<FollowUp> findAll(Pageable pageable) {
 
         return followUpRepository.findByActiveTrue(pageable);
     }
 
+    // Busqueda avanzada de seguimientos
     @Override
     public Page<FollowUp> search(FollowUpSearchDto searchDto) {
 
-        Specification<FollowUp> specification =
-                FollowUpSpecification.filterBy(searchDto);
+        Specification<FollowUp> specification = FollowUpSpecification.filterBy(searchDto);
 
-        int page = searchDto.getPage() != null
-                ? searchDto.getPage() : 0;
+        int page = searchDto.getPage() != null ? searchDto.getPage() : 0;
 
-        int size = searchDto.getSize() != null
-                ? searchDto.getSize() : 10;
+        int size = searchDto.getSize() != null ? searchDto.getSize() : 10;
 
         String sortBy = searchDto.getSortBy() != null
                 ? searchDto.getSortBy() : "scheduledAt";
 
-        Sort.Direction direction =
-                "desc".equalsIgnoreCase(searchDto.getSortDirection())
+        Sort.Direction direction = "desc".equalsIgnoreCase(searchDto.getSortDirection())
                         ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
@@ -70,30 +70,27 @@ public class FollowUpServiceImpl implements FollowUpService {
         return followUpRepository.findAll(specification, pageable);
     }
 
+    // Busqueda por id de presupuesto
     @Override
     public Page<FollowUp> findByQuoteId(Long quoteId, Pageable pageable) {
 
-        return followUpRepository
-                .findByQuoteIdAndActiveTrue(quoteId, pageable);
+        return followUpRepository.findByQuoteIdAndActiveTrue(quoteId, pageable);
     }
 
+    // Busqueda por id de seguimiento
     @Override
     public FollowUp findById(Long id) {
 
-        return followUpRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new FollowUpNotFoundException(id)
-                );
+        return followUpRepository.findById(id).orElseThrow(() ->
+                        new FollowUpNotFoundException(id));
     }
 
+    // Metodo de creacion de seguimiento
     @Override
     @Transactional
     public FollowUp create(Long quoteId, FollowUpDto followUpDto) {
 
-        Quote quote = quoteRepository
-                .findById(quoteId)
-                .orElseThrow(() ->
+        Quote quote = quoteRepository.findById(quoteId).orElseThrow(() ->
                         new FollowUpNotFoundException(quoteId));
 
         FollowUp followUp = followUpMapper.toEntity(followUpDto);
@@ -115,6 +112,7 @@ public class FollowUpServiceImpl implements FollowUpService {
         return followUpRepository.save(followUp);
     }
 
+    // Actualizacion de seguimientos
     @Override
     @Transactional
     public FollowUp update(Long id, FollowUpDto followUpDto) {
@@ -126,6 +124,7 @@ public class FollowUpServiceImpl implements FollowUpService {
         return followUpRepository.save(existingFollowUp);
     }
 
+    // Metodo para completar un seguimiento
     @Override
     @Transactional
     public FollowUp complete(Long id, CompleteFollowUpDto dto) {
@@ -146,6 +145,7 @@ public class FollowUpServiceImpl implements FollowUpService {
         return followUpRepository.save(followUp);
     }
 
+    // Borrar un seguimiento solo desactivandolo
     @Override
     @Transactional
     public void delete(Long id) {
