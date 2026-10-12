@@ -4,6 +4,7 @@ import com.optiflow.crm.quote.model.QuoteStatus;
 
 import java.time.LocalDate;
 
+// Entidad dto de busqueda de inventario
 public class QuoteSearchDto {
 
     private String quoteNumber;

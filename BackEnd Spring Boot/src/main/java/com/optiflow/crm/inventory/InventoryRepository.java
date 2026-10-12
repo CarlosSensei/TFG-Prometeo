@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
+// Repository de Inventory Items
 public interface InventoryRepository extends JpaRepository<InventoryItem, Long>,
         JpaSpecificationExecutor<InventoryItem> {
 
-    Optional<InventoryItem> findBySku(String sku);
-
     Page<InventoryItem> findByActiveTrue(Pageable pageable);
+
+    Optional<InventoryItem> findBySkuIgnoreCase(String sku);
+
+    boolean existsBySkuIgnoreCase(String sku);
 }

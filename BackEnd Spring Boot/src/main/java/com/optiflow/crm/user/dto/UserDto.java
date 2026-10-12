@@ -4,6 +4,7 @@ import com.optiflow.crm.user.model.UserRole;
 
 import java.time.LocalDateTime;
 
+// Entidad dto de usuario
 public class UserDto {
 
     private Long id;
@@ -23,7 +24,6 @@ public class UserDto {
     private LocalDateTime updatedAt;
 
     // getters y setters
-
 
     public Long getId() { return id; }
 

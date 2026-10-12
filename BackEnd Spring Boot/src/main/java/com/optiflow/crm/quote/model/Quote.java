@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Entidad de presupuesto
 @Entity
 @Table(name = "quotes")
 public class Quote {
@@ -68,6 +69,7 @@ public class Quote {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // Preparacion de campos del presupuesto
     @PrePersist
     protected void onCreate() {
 
@@ -89,6 +91,7 @@ public class Quote {
         }
     }
 
+    // Preparacion de campos para la actualizacion
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

@@ -5,8 +5,17 @@ import com.optiflow.crm.quote.model.Quote;
 
 import org.springframework.stereotype.Component;
 
+// Mapper de entidad - dto de presupuestos
 @Component
 public class QuoteMapper {
+
+    // Inyeccion de quoteItemMapper
+    private final QuoteItemMapper quoteItemMapper;
+
+    public QuoteMapper(QuoteItemMapper quoteItemMapper) {
+
+        this.quoteItemMapper = quoteItemMapper;
+    }
 
     // Metodos de mapeo de Quote y QuoteDto
     public QuoteDto toDto(Quote quote) {
@@ -23,7 +32,10 @@ public class QuoteMapper {
         dto.setStatus(quote.getStatus());
         dto.setQuoteDate(quote.getQuoteDate());
         dto.setExpirationDate(quote.getExpirationDate());
-
+        dto.setItems(quote.getItems()
+                        .stream()
+                        .map(quoteItemMapper::toDto)
+                        .toList());
         dto.setSubtotal(quote.getSubtotal());
         dto.setDiscount(quote.getDiscount());
         dto.setTaxRate(quote.getTaxRate());

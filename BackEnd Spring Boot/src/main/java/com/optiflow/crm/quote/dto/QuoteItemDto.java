@@ -27,6 +27,8 @@ public class QuoteItemDto {
 
     private BigDecimal subtotal;
 
+    private BigDecimal taxAmount;
+
     private BigDecimal total;
 
     // getters / setters
@@ -94,6 +96,10 @@ public class QuoteItemDto {
     public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
     }
+
+    public BigDecimal getTaxAmount() { return taxAmount; }
+
+    public void setTaxAmount(BigDecimal taxAmount) { this.taxAmount = taxAmount; }
 
     public BigDecimal getTotal() {
         return total;

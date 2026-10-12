@@ -14,11 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// Controller de pedidos
 @RestController
 @RequestMapping("/orders")
 @CrossOrigin(origins = "*")
 public class OrderController {
 
+    // Inyeccion de service y mapper
     private final OrderService orderService;
     private final OrderMapper orderMapper;
 
@@ -96,7 +98,25 @@ public class OrderController {
         return ResponseEntity.ok(orderMapper.toDto(updatedOrder));
     }
 
-    // Baja lógica del pedido
+    // Confirmar pedido
+    @PatchMapping("/{id}/confirm")
+    public ResponseEntity<OrderDto> confirm(@PathVariable Long id) {
+
+        Order order = orderService.confirm(id);
+
+        return ResponseEntity.ok(orderMapper.toDto(order));
+    }
+
+    // Cancelar pedido
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<OrderDto> cancel(@PathVariable Long id) {
+
+        Order order = orderService.cancel(id);
+
+        return ResponseEntity.ok(orderMapper.toDto(order));
+    }
+
+    // Baja del pedido
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 

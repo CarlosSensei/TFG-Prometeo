@@ -8,7 +8,9 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
+// Entidad Dto de Pedido
 public class OrderDto {
 
     private Long id;
@@ -33,16 +35,12 @@ public class OrderDto {
 
     private LocalDate deliveryDate;
 
-    @DecimalMin(
-            value = "0.00",
-            message = "El subtotal no puede ser negativo"
-    )
+    private List<OrderItemDto> items;
+
+    @DecimalMin(value = "0.00", message = "El subtotal no puede ser negativo")
     private BigDecimal subtotal;
 
-    @DecimalMin(
-            value = "0.00",
-            message = "El descuento no puede ser negativo"
-    )
+    @DecimalMin(value = "0.00", message = "El descuento no puede ser negativo")
     private BigDecimal discount;
 
     private BigDecimal taxRate;
@@ -131,6 +129,12 @@ public class OrderDto {
 
     public void setDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public List<OrderItemDto> getItems() { return items; }
+
+    public void setItems(List<OrderItemDto> items) {
+        this.items = items;
     }
 
     public BigDecimal getSubtotal() {

@@ -12,11 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// Controller de usuario
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "*")
 public class UserController {
 
+    // Inyeccion de service y mapper
     private final UserService userService;
     private final UserMapper userMapper;
 
@@ -25,6 +27,7 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
+    // Buscar todos los usuarios
     @GetMapping
     public ResponseEntity<Page<UserDto>> findAll(Pageable pageable) {
 
@@ -33,6 +36,7 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    // Buscar por id
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findById(@PathVariable Long id) {
 
@@ -41,6 +45,7 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
+    // Crear un nuevo usuario
     @PostMapping
     public ResponseEntity<UserDto> create(@Valid @RequestBody CreateUserDto dto) {
 
@@ -49,6 +54,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(user));
     }
 
+    // Borrar un usuario
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 

@@ -14,11 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// Controller de presupuestos
 @RestController
 @RequestMapping("/quotes")
 @CrossOrigin(origins = "*")
 public class QuoteController {
 
+    // Inyeccion de service y mapper
     private final QuoteService quoteService;
     private final QuoteMapper quoteMapper;
 
@@ -81,7 +83,7 @@ public class QuoteController {
         return ResponseEntity.ok(quoteMapper.toDto(updatedQuote));
     }
 
-    // Baja lógica
+    // Borrar un presupuesto
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
@@ -92,14 +94,9 @@ public class QuoteController {
 
     // Buscar presupuestos por cliente
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<Page<QuoteDto>> findByClient(
-            @PathVariable Long clientId,
-            Pageable pageable
-    ) {
+    public ResponseEntity<Page<QuoteDto>> findByClient(@PathVariable Long clientId, Pageable pageable) {
 
-        Page<QuoteDto> result = quoteService
-                .findByClientId(clientId, pageable)
-                .map(quoteMapper::toDto);
+        Page<QuoteDto> result = quoteService.findByClientId(clientId, pageable).map(quoteMapper::toDto);
 
         return ResponseEntity.ok(result);
     }

@@ -39,6 +39,7 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // Preparacion de campos para la creacion de un user
     @PrePersist
     protected void onCreate() {
 
@@ -52,6 +53,7 @@ public class User {
         if (role == null) {role = UserRole.SELLER;}
     }
 
+    // Preparacion para actualizacion de user
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

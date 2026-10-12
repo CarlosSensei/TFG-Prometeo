@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+// Entidad dto para crear un nuevo usuario
 public class CreateUserDto {
 
     @NotBlank(message = "El nombre es obligatorio")
@@ -26,7 +27,6 @@ public class CreateUserDto {
     private UserRole role;
 
     // getters y setters
-
 
     public String getFirstName() { return firstName; }
 

@@ -7,11 +7,13 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 
+// Especificaciones personalizadas para busqueda avanzada de presupuestos
 public class QuoteSpecification {
 
     private QuoteSpecification() {
     }
 
+    // Filtrar por:
     public static Specification<Quote> filterBy(QuoteSearchDto searchDto) {
 
         return Specification.allOf(
@@ -26,6 +28,7 @@ public class QuoteSpecification {
         );
     }
 
+    // Buscar por numero de presupuesto
     private static Specification<Quote> quoteNumberContains(String quoteNumber) {
 
         return (root, query, criteriaBuilder) -> {
@@ -37,6 +40,7 @@ public class QuoteSpecification {
         };
     }
 
+    // buscar por cliente
     private static Specification<Quote> clientIdEquals(Long clientId) {
 
         return (root, query, criteriaBuilder) -> {
@@ -47,6 +51,7 @@ public class QuoteSpecification {
         };
     }
 
+    // Buscar por estado
     private static Specification<Quote> statusEquals(QuoteStatus status) {
 
         return (root, query, criteriaBuilder) -> {
@@ -57,6 +62,7 @@ public class QuoteSpecification {
         };
     }
 
+    // Buscar por fecha de creacion desde
     private static Specification<Quote> quoteDateFrom(LocalDate quoteDateFrom) {
 
         return (root, query, criteriaBuilder) -> {
@@ -67,6 +73,7 @@ public class QuoteSpecification {
         };
     }
 
+    // Buscar por fecha de creacion hasta
     private static Specification<Quote> quoteDateTo(LocalDate quoteDateTo) {
 
         return (root, query, criteriaBuilder) -> {
@@ -77,6 +84,7 @@ public class QuoteSpecification {
         };
     }
 
+    // Buscar por fecha de caducidad desde
     private static Specification<Quote> expirationDateFrom(LocalDate expirationDateFrom) {
 
         return (root, query, criteriaBuilder) -> {
@@ -87,6 +95,7 @@ public class QuoteSpecification {
         };
     }
 
+    // Buscar por fecha de caducidad hasta
     private static Specification<Quote> expirationDateTo(LocalDate expirationDateTo) {
 
         return (root, query, criteriaBuilder) -> {
@@ -97,6 +106,7 @@ public class QuoteSpecification {
         };
     }
 
+    // Buscar activos
     private static Specification<Quote> activeEquals(Boolean active) {
 
         return (root, query, criteriaBuilder) -> {

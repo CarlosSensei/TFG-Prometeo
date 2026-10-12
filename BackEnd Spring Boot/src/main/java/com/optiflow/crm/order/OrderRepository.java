@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
+// Repository de pedidos con consultas
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
     Page<Order> findByActiveTrue(Pageable pageable);

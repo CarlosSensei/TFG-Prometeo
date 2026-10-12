@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
+// Interfaz de repository de presupuestos
 public interface QuoteRepository extends JpaRepository<Quote, Long>, JpaSpecificationExecutor<Quote> {
 
     Page<Quote> findByActiveTrue(Pageable pageable);

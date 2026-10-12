@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// Entidad Dto de presupuesto
 public class QuoteDto {
 
     private Long id;
@@ -115,6 +116,10 @@ public class QuoteDto {
     public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
+
+    public List<QuoteItemDto> getItems() { return items; }
+
+    public void setItems(List<QuoteItemDto> items) { this.items = items; }
 
     public BigDecimal getSubtotal() {
         return subtotal;

@@ -4,6 +4,7 @@ import com.optiflow.crm.order.model.OrderStatus;
 
 import java.time.LocalDate;
 
+// Entidad Dto de busqueda de pedido
 public class OrderSearchDto {
 
     private String orderNumber;

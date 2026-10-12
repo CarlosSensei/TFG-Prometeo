@@ -6,12 +6,15 @@ import com.optiflow.crm.order.model.OrderStatus;
 import com.optiflow.crm.quote.model.Quote;
 import com.optiflow.crm.quote.model.QuoteItem;
 import com.optiflow.crm.quote.model.QuoteStatus;
+import com.optiflow.crm.shared.exception.InvalidOrderStatusException;
 import com.optiflow.crm.shared.exception.InvalidQuoteStatusException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
+// Service con logicas de dominio de pedidos
 @Service
 public class OrderDomainService {
 
@@ -19,23 +22,57 @@ public class OrderDomainService {
     public void calculateTotals(Order order) {
 
         BigDecimal subtotal = order.getItems()
-                .stream()
-                .map(OrderItem::getSubtotal)
-                .filter(value -> value != null)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                        .stream()
+                        .map(OrderItem::getSubtotal)
+                        .filter(value -> value != null)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal taxAmount = order.getItems()
+                        .stream()
+                        .map(OrderItem::getTaxAmount)
+                        .filter(value -> value != null)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal total = order.getItems()
-                .stream()
-                .map(OrderItem::getTotal)
-                .filter(value -> value != null)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal taxAmount =
-                total.subtract(subtotal);
+                        .stream()
+                        .map(OrderItem::getTotal)
+                        .filter(value -> value != null)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         order.setSubtotal(subtotal);
         order.setTaxAmount(taxAmount);
         order.setTotal(total);
+    }
+
+    public void calculateItem(OrderItem item) {
+
+        BigDecimal unitPrice = item.getUnitPrice() != null
+                        ? item.getUnitPrice() : BigDecimal.ZERO;
+
+        BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+
+        BigDecimal discount = item.getDiscount() != null
+                        ? item.getDiscount() : BigDecimal.ZERO;
+
+        BigDecimal taxRate = item.getTaxRate() != null
+                        ? item.getTaxRate() : BigDecimal.ZERO;
+
+        BigDecimal gross = unitPrice.multiply(quantity);
+
+        BigDecimal subtotal = gross.subtract(discount);
+
+        if (subtotal.compareTo(BigDecimal.ZERO) < 0) {
+            subtotal = BigDecimal.ZERO;
+        }
+
+        BigDecimal taxAmount = subtotal.multiply(taxRate).divide(
+                                new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+
+        BigDecimal total = subtotal.add(taxAmount);
+
+        item.setSubtotal(subtotal);
+        item.setTaxAmount(taxAmount);
+        item.setTotal(total);
     }
 
     // Validar presupuestos
@@ -44,8 +81,7 @@ public class OrderDomainService {
         if (quote.getStatus() != QuoteStatus.ACCEPTED) {
 
             throw new InvalidQuoteStatusException(
-                    "Solo se pueden convertir presupuestos ACCEPTED"
-            );
+                    "Solo se pueden convertir presupuestos ACCEPTED");
         }
     }
 
@@ -94,6 +130,7 @@ public class OrderDomainService {
             orderItem.setDiscount(quoteItem.getDiscount());
             orderItem.setTaxRate(quoteItem.getTaxRate());
             orderItem.setSubtotal(quoteItem.getSubtotal());
+            orderItem.setTaxAmount(quoteItem.getTaxAmount());
             orderItem.setTotal(quoteItem.getTotal());
 
             order.getItems().add(orderItem);
@@ -103,4 +140,34 @@ public class OrderDomainService {
 
         return order;
     }
+
+    // Validacion de confirmacion de pedido
+    public void validateCanConfirm(Order order) {
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+
+            throw new InvalidOrderStatusException("Solo se pueden confirmar pedidos en estado PENDING");
+        }
+
+        if (order.getItems() == null || order.getItems().isEmpty()) {
+
+            throw new InvalidOrderStatusException("No se puede confirmar un pedido sin artículos");
+        }
+    }
+
+    // Validacion de cancelacion de pedido
+    public void validateCanCancel(Order order) {
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+
+            throw new InvalidOrderStatusException("El pedido ya está cancelado");
+        }
+
+        if (order.getStatus() == OrderStatus.DELIVERED) {
+
+            throw new InvalidOrderStatusException("No se puede cancelar un pedido ya entregado");
+        }
+    }
+
+
 }

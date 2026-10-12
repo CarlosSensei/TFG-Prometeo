@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
-// Entidad de items de inventario
+// Entidad de items de inventario para presupuesto
 @Entity
 @Table(name = "quote_items")
 public class QuoteItem {
@@ -39,6 +39,9 @@ public class QuoteItem {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal taxAmount;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
@@ -116,6 +119,10 @@ public class QuoteItem {
     public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
     }
+
+    public BigDecimal getTaxAmount() { return taxAmount; }
+
+    public void setTaxAmount(BigDecimal taxAmount) { this.taxAmount = taxAmount; }
 
     public BigDecimal getTotal() {
         return total;

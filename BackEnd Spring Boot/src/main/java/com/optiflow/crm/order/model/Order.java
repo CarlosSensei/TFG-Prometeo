@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Entidad de Pedido
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -75,6 +76,7 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // Preparacion para crear un pedido
     @PrePersist
     protected void onCreate() {
 
@@ -96,13 +98,13 @@ public class Order {
         }
     }
 
+    // Preparacion para actualizar
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
 
     // Getters y setters
-
 
     public Long getId() {
         return id;
@@ -176,9 +178,7 @@ public class Order {
         this.deliveryDate = deliveryDate;
     }
 
-    public List<OrderItem> getItems() {
-        return items;
-    }
+    public List<OrderItem> getItems() { return items; }
 
     public void setItems(List<OrderItem> items) {
         this.items = items;

@@ -7,11 +7,14 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 
+// Especificaciones de busqueda personalizadas
 public class OrderSpecification {
 
+    // Constructor vacio
     private OrderSpecification() {
     }
 
+    // Filtros de busqueda
     public static Specification<Order> filterBy(OrderSearchDto searchDto) {
 
         return Specification.allOf(
@@ -29,6 +32,7 @@ public class OrderSpecification {
         );
     }
 
+    // Busqueda por numero de pedido
     private static Specification<Order> orderNumberContains(String orderNumber) {
 
         return (root, query, criteriaBuilder) -> {
@@ -40,6 +44,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda de pedido por cliente
     private static Specification<Order> clientIdEquals(Long clientId) {
 
         return (root, query, criteriaBuilder) -> {
@@ -50,6 +55,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda por Id de presupuesto
     private static Specification<Order> quoteIdEquals(Long quoteId) {
 
         return (root, query, criteriaBuilder) -> {
@@ -60,6 +66,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda por estatus
     private static Specification<Order> statusEquals(OrderStatus status) {
 
         return (root, query, criteriaBuilder) -> {
@@ -70,6 +77,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda por fecha de creacion desde
     private static Specification<Order> orderDateFrom(LocalDate orderDateFrom) {
 
         return (root, query, criteriaBuilder) -> {
@@ -80,6 +88,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda por fecha de creacion hasta
     private static Specification<Order> orderDateTo(LocalDate orderDateTo) {
 
         return (root, query, criteriaBuilder) -> {
@@ -90,9 +99,8 @@ public class OrderSpecification {
         };
     }
 
-    private static Specification<Order> expectedDeliveryDateFrom(
-            LocalDate expectedDeliveryDateFrom
-    ) {
+    // Busqueda por fecha de entrega prevista desde
+    private static Specification<Order> expectedDeliveryDateFrom(LocalDate expectedDeliveryDateFrom) {
 
         return (root, query, criteriaBuilder) -> {
 
@@ -103,9 +111,8 @@ public class OrderSpecification {
         };
     }
 
-    private static Specification<Order> expectedDeliveryDateTo(
-            LocalDate expectedDeliveryDateTo
-    ) {
+    // Busqueda por fecha de entrega prevista hasta
+    private static Specification<Order> expectedDeliveryDateTo(LocalDate expectedDeliveryDateTo) {
 
         return (root, query, criteriaBuilder) -> {
 
@@ -116,6 +123,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda por fecha de entrega completada desde
     private static Specification<Order> deliveryDateFrom(LocalDate deliveryDateFrom) {
 
         return (root, query, criteriaBuilder) -> {
@@ -126,6 +134,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda por fecha de entrega completada hasta
     private static Specification<Order> deliveryDateTo(LocalDate deliveryDateTo) {
 
         return (root, query, criteriaBuilder) -> {
@@ -136,6 +145,7 @@ public class OrderSpecification {
         };
     }
 
+    // Busqueda por pedidos activos
     private static Specification<Order> activeEquals(Boolean active) {
 
         return (root, query, criteriaBuilder) -> {

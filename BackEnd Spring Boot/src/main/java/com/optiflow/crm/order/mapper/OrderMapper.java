@@ -7,9 +7,18 @@ import com.optiflow.crm.quote.model.Quote;
 
 import org.springframework.stereotype.Component;
 
+// Mapper de pedidos
 @Component
 public class OrderMapper {
 
+    // Inyeccion del mapper de items
+    private OrderItemMapper orderItemMapper;
+
+    public OrderMapper(OrderItemMapper orderItemMapper) {
+        this.orderItemMapper = orderItemMapper;
+    }
+
+    // Pedido a Dto
     public OrderDto toDto(Order order) {
 
         OrderDto dto = new OrderDto();
@@ -26,10 +35,14 @@ public class OrderMapper {
         }
 
         dto.setStatus(order.getStatus());
-
         dto.setOrderDate(order.getOrderDate());
         dto.setExpectedDeliveryDate(order.getExpectedDeliveryDate());
         dto.setDeliveryDate(order.getDeliveryDate());
+
+        dto.setItems(order.getItems()
+                        .stream()
+                        .map(orderItemMapper::toDto)
+                        .toList());
 
         dto.setSubtotal(order.getSubtotal());
         dto.setDiscount(order.getDiscount());
@@ -46,6 +59,7 @@ public class OrderMapper {
         return dto;
     }
 
+    // Dto a Pedido
     public Order toEntity(OrderDto dto) {
 
         Order order = new Order();
@@ -65,14 +79,12 @@ public class OrderMapper {
         return order;
     }
 
+    // Actualizar Pedido a Dto
     public void updateEntity(OrderDto dto, Order order) {
-
-        order.setStatus(dto.getStatus());
 
         order.setOrderDate(dto.getOrderDate());
         order.setExpectedDeliveryDate(dto.getExpectedDeliveryDate());
         order.setDeliveryDate(dto.getDeliveryDate());
-
         order.setSubtotal(dto.getSubtotal());
         order.setDiscount(dto.getDiscount());
         order.setTaxRate(dto.getTaxRate());
@@ -80,6 +92,7 @@ public class OrderMapper {
         order.setNotes(dto.getNotes());
     }
 
+    // Mapper desde presupuesto a pedido
     public Order fromQuote(Quote quote) {
 
         Order order = new Order();

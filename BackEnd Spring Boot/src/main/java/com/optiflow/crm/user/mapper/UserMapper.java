@@ -5,6 +5,7 @@ import com.optiflow.crm.user.model.User;
 
 import org.springframework.stereotype.Component;
 
+// Mapper de usuarios a dto
 @Component
 public class UserMapper {
 
