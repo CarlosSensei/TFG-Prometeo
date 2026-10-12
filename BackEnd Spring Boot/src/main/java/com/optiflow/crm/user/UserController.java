@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 // Controller de usuario
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*")
 public class UserController {
 
     // Inyeccion de service y mapper

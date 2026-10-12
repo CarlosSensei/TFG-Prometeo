@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
+// Service del JWT
 @Service
 public class JwtService {
 
+    // Inyeccion del encoder con limite de tiempo
     private final JwtEncoder jwtEncoder;
 
     @Value("${app.jwt.expiration}")
@@ -23,6 +25,7 @@ public class JwtService {
         this.jwtEncoder = jwtEncoder;
     }
 
+    // Generador de tokens
     public String generateToken(User user) {
 
         Instant now = Instant.now();

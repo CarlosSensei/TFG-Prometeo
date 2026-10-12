@@ -16,12 +16,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.nio.charset.StandardCharsets;
 
+// Config de JWT encoder y decoder
 @Configuration
 public class JwtConfig {
 
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
+    // Codificador
     @Bean
     public JwtEncoder jwtEncoder() {
 
@@ -31,6 +33,7 @@ public class JwtConfig {
         return new NimbusJwtEncoder(new ImmutableSecret<>(key));
     }
 
+    // Decodificador
     @Bean
     public JwtDecoder jwtDecoder() {
 

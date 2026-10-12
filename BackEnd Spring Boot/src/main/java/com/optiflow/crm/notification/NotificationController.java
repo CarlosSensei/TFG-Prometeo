@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 // Controler de notificaciones
 @RestController
 @RequestMapping("/notifications")
-@CrossOrigin(origins = "*")
 public class NotificationController {
 
     // Inyeccion del service y del mapper

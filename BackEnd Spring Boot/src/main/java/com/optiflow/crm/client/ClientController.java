@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 // Controller de cliente
 @RestController
 @RequestMapping("/clients")
-@CrossOrigin(origins = "*")
 public class ClientController {
 
     // Inyección de Service y Mapper

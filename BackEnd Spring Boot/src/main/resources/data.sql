@@ -105,9 +105,9 @@ MERGE INTO users (
     KEY(id)
     VALUES (
     4,
-    'Marta',
-    'Gómez',
-    'marta@optiflow.com',
+    'Susana',
+    'Roldan',
+    'susana@optiflow.com',
     '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
     'DIRECTOR',
     TRUE,

@@ -3,6 +3,7 @@ package com.optiflow.crm.auth.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+// Entidad Dto de la peticion de login
 public class LoginRequest {
 
     @NotBlank(message = "El email es obligatorio")
@@ -11,6 +12,8 @@ public class LoginRequest {
 
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
+
+    // Getters y Setters
 
     public String getEmail() {
         return email;

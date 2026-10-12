@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 // Controller de pedidos
 @RestController
 @RequestMapping("/orders")
-@CrossOrigin(origins = "*")
 public class OrderController {
 
     // Inyeccion de service y mapper

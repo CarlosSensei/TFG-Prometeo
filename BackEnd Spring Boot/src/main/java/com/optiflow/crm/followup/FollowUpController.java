@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 // Controller de seguimientos
 @RestController
-@CrossOrigin(origins = "*")
 public class FollowUpController {
 
     // Inyeccion del service y el mapper

@@ -9,15 +9,16 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+// Manager de autenticacion
 @Configuration
 public class AuthenticationConfig {
 
+    // Traduce del authenticationManager de Spring para inyectar en el service
     @Bean
     public AuthenticationManager authenticationManager(CustomUserDetailsService userDetailsService,
                                                        PasswordEncoder passwordEncoder) {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
 
         provider.setPasswordEncoder(passwordEncoder);
 

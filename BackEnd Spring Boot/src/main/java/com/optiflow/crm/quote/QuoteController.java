@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 // Controller de presupuestos
 @RestController
 @RequestMapping("/quotes")
-@CrossOrigin(origins = "*")
 public class QuoteController {
 
     // Inyeccion de service y mapper

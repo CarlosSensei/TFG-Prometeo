@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 // Controller de inventary items
 @RestController
 @RequestMapping("/inventory")
-@CrossOrigin(origins = "*")
 public class InventoryController {
 
     // Inyeccion de service y mapper
