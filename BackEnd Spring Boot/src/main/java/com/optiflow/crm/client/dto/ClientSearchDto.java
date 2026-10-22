@@ -9,7 +9,7 @@ public class ClientSearchDto {
 
     private String lastSurname;
 
-    private String Dni;
+    private String dni;
 
     private String phoneNumber;
 
@@ -25,7 +25,7 @@ public class ClientSearchDto {
 
     private Integer size = 10;
 
-    private String sortBy = "FirstSurame";
+    private String sortBy = "surname";
 
     private String sortDirection = "asc";
 
@@ -50,11 +50,11 @@ public class ClientSearchDto {
     }
 
     public String getDni() {
-        return Dni;
+        return dni;
     }
 
-    public void setDni(String Dni) {
-        this.Dni = Dni;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
     public String getPhoneNumber() { return phoneNumber; }

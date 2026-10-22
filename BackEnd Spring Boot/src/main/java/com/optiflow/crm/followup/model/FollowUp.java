@@ -31,6 +31,9 @@ public class FollowUp {
 
     private LocalDateTime completedAt;
 
+    @Column(name = "due_event_published_at")
+    private LocalDateTime dueEventPublishedAt;
+
     @Column(length = 1000)
     private String notes;
 
@@ -120,6 +123,12 @@ public class FollowUp {
 
     public void setCompletedAt(LocalDateTime completedAt) {
         this.completedAt = completedAt;
+    }
+
+    public LocalDateTime getDueEventPublishedAt() { return dueEventPublishedAt; }
+
+    public void setDueEventPublishedAt(LocalDateTime dueEventPublishedAt) {
+        this.dueEventPublishedAt = dueEventPublishedAt;
     }
 
     public String getNotes() {

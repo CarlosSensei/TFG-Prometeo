@@ -26,6 +26,10 @@ public class OrderMapper {
         dto.setId(order.getId());
         dto.setOrderNumber(order.getOrderNumber());
 
+        if (order.getSeller() != null) {
+            dto.setSellerId(order.getSeller().getId());
+        }
+
         if (order.getClient() != null) {
             dto.setClientId(order.getClient().getId());
         }

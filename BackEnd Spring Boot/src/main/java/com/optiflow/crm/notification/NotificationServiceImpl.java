@@ -88,8 +88,11 @@ public class NotificationServiceImpl implements NotificationService {
 
         Notification notification = findById(id);
 
-        notification.setRead(true);
+        if (Boolean.TRUE.equals(notification.getRead())) {
+            return notification;
+        }
 
+        notification.setRead(true);
         notification.setReadAt(LocalDateTime.now());
 
         return notificationRepository.save(notification);

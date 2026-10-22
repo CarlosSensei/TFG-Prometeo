@@ -20,7 +20,7 @@ public class ClientDto {
     private String lastSurname;
 
     @ValidSpanishDocument
-    private String Dni;
+    private String dni;
 
     @NotBlank(message = "El nombre es obligatorio")
     private String phoneNumber;
@@ -83,11 +83,11 @@ public class ClientDto {
     }
 
     public String getDni() {
-        return Dni;
+        return dni;
     }
 
-    public void setDni(String Dni) {
-        this.Dni = Dni;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
     public String getPhoneNumber() {

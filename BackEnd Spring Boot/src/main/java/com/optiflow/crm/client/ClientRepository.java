@@ -12,6 +12,6 @@ public interface ClientRepository  extends JpaRepository<Client, Long>, JpaSpeci
 
     Page<Client> findByActiveTrue(Pageable pageable);
 
-    Optional<Client> findByDNIIgnoreCase(String DNI);
+    Optional<Client> findByDniIgnoreCase(String dni);
 
 }

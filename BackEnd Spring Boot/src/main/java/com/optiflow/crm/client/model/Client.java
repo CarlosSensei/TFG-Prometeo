@@ -23,7 +23,7 @@ public class Client {
     private String lastSurname;
 
     @Column(nullable = false, length = 10, unique = true)
-    private String Dni;
+    private String dni;
 
     @Column(nullable = false, length = 13)
     private String phoneNumber;
@@ -101,11 +101,11 @@ public class Client {
     }
 
     public String getDni() {
-        return Dni;
+        return dni;
     }
 
-    public void setDni(String Dni) {
-        this.Dni = Dni;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
     public String getPhoneNumber() {

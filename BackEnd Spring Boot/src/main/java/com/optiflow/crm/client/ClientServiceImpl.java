@@ -80,7 +80,7 @@ public class ClientServiceImpl implements ClientService {
     @Transactional
     public Client create(ClientDto dto) {
 
-        Optional<Client> existing = clientRepository.findByDNIIgnoreCase(dto.getDni());
+        Optional<Client> existing = clientRepository.findByDniIgnoreCase(dto.getDni());
 
         if (existing.isPresent()) {
 

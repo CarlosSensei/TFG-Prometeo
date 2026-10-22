@@ -1,6 +1,7 @@
 package com.optiflow.crm.followup.model;
 
 import com.optiflow.crm.followup.dto.CompleteFollowUpDto;
+import com.optiflow.crm.followup.dto.CreateFollowUpDto;
 import com.optiflow.crm.followup.dto.FollowUpDto;
 import com.optiflow.crm.followup.dto.FollowUpSearchDto;
 
@@ -23,7 +24,7 @@ public interface FollowUpService {
     FollowUp findById(Long id);
 
     // Crear seguimiento
-    FollowUp create(Long quoteId, FollowUpDto followUpDto);
+    FollowUp create(Long quoteId, CreateFollowUpDto createFollowUpDto);
 
     // Actualizar presupuesto
     FollowUp update(Long id, FollowUpDto followUpDto);

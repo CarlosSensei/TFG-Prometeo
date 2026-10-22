@@ -20,6 +20,7 @@ public class OrderSpecification {
         return Specification.allOf(
                 orderNumberContains(searchDto.getOrderNumber()),
                 clientIdEquals(searchDto.getClientId()),
+                sellerIdEquals(searchDto.getSellerId()),
                 quoteIdEquals(searchDto.getQuoteId()),
                 statusEquals(searchDto.getStatus()),
                 orderDateFrom(searchDto.getOrderDateFrom()),
@@ -52,6 +53,19 @@ public class OrderSpecification {
             if (clientId == null) { return null; }
 
             return criteriaBuilder.equal(root.get("client").get("id"), clientId );
+        };
+    }
+
+    // Busqueda de seller por Id
+    private static Specification<Order> sellerIdEquals(Long sellerId) {
+
+        return (root, query, cb) -> {
+
+            if (sellerId == null) {
+                return null;
+            }
+
+            return cb.equal(root.get("seller").get("id"), sellerId);
         };
     }
 

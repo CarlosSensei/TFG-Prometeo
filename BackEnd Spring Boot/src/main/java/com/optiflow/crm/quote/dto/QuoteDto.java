@@ -16,7 +16,6 @@ public class QuoteDto {
 
     private Long id;
 
-    @NotBlank
     private String quoteNumber;
 
     @NotNull(message = "El cliente es obligatorio")

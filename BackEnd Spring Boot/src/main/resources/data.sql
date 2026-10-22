@@ -123,7 +123,7 @@ MERGE INTO users (
 MERGE INTO clients (
     id,
     name,
-    first_surname,
+    surname,
     last_surname,
     dni,
     phone_number,
@@ -160,7 +160,7 @@ MERGE INTO clients (
 MERGE INTO clients (
     id,
     name,
-    first_surname,
+    surname,
     last_surname,
     dni,
     phone_number,
@@ -197,7 +197,7 @@ MERGE INTO clients (
 MERGE INTO clients (
     id,
     name,
-    first_surname,
+    surname,
     last_surname,
     dni,
     phone_number,
@@ -234,7 +234,7 @@ MERGE INTO clients (
 MERGE INTO clients (
     id,
     name,
-    first_surname,
+    surname,
     last_surname,
     dni,
     phone_number,
@@ -271,7 +271,7 @@ MERGE INTO clients (
 MERGE INTO clients (
     id,
     name,
-    first_surname,
+    surname,
     last_surname,
     dni,
     phone_number,
@@ -308,7 +308,7 @@ MERGE INTO clients (
 MERGE INTO clients (
     id,
     name,
-    first_surname,
+    surname,
     last_surname,
     dni,
     phone_number,

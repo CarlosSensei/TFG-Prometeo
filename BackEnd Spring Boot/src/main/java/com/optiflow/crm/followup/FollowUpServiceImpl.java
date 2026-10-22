@@ -1,6 +1,7 @@
 package com.optiflow.crm.followup;
 
 import com.optiflow.crm.followup.dto.CompleteFollowUpDto;
+import com.optiflow.crm.followup.dto.CreateFollowUpDto;
 import com.optiflow.crm.followup.dto.FollowUpDto;
 import com.optiflow.crm.followup.dto.FollowUpSearchDto;
 import com.optiflow.crm.followup.mapper.FollowUpMapper;
@@ -13,6 +14,7 @@ import com.optiflow.crm.quote.QuoteRepository;
 import com.optiflow.crm.quote.model.Quote;
 
 import com.optiflow.crm.shared.exception.FollowUpNotFoundException;
+import com.optiflow.crm.shared.exception.QuoteNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -88,25 +90,20 @@ public class FollowUpServiceImpl implements FollowUpService {
     // Metodo de creacion de seguimiento
     @Override
     @Transactional
-    public FollowUp create(Long quoteId, FollowUpDto followUpDto) {
+    public FollowUp create(Long quoteId, CreateFollowUpDto dto) {
 
         Quote quote = quoteRepository.findById(quoteId).orElseThrow(() ->
-                        new FollowUpNotFoundException(quoteId));
+                        new QuoteNotFoundException(quoteId));
 
-        FollowUp followUp = followUpMapper.toEntity(followUpDto);
+        FollowUp followUp = new FollowUp();
 
         followUp.setQuote(quote);
+        followUp.setType(dto.getType());
+        followUp.setScheduledAt(dto.getScheduledAt());
+        followUp.setNotes(dto.getNotes());
 
-        if (followUp.getStatus() == null) {
-
-            followUp.setStatus(FollowUpStatus.PENDING);
-        }
-
-        if (followUp.getAutomated() == null) {
-
-            followUp.setAutomated(false);
-        }
-
+        followUp.setStatus(FollowUpStatus.PENDING);
+        followUp.setAutomated(Boolean.TRUE.equals(dto.getAutomated()));
         followUp.setActive(true);
 
         return followUpRepository.save(followUp);
@@ -115,14 +112,25 @@ public class FollowUpServiceImpl implements FollowUpService {
     // Actualizacion de seguimientos
     @Override
     @Transactional
-    public FollowUp update(Long id, FollowUpDto followUpDto) {
+    public FollowUp update(Long id, FollowUpDto dto) {
 
         FollowUp existingFollowUp = findById(id);
 
-        followUpMapper.updateEntity(followUpDto, existingFollowUp);
+        LocalDateTime previousScheduledAt = existingFollowUp.getScheduledAt();
+
+        followUpMapper.updateEntity(dto, existingFollowUp);
+
+        // Si cambia la programación, habilitamos
+        // nuevamente la generación del aviso.
+        if (!java.util.Objects.equals(previousScheduledAt,
+                existingFollowUp.getScheduledAt())) {
+
+            existingFollowUp.setDueEventPublishedAt(null);
+        }
 
         return followUpRepository.save(existingFollowUp);
     }
+
 
     // Metodo para completar un seguimiento
     @Override

@@ -24,6 +24,7 @@ public class ClientMapper {
         dto.setAddress(client.getAddress());
         dto.setCity(client.getCity());
         dto.setPostalCode(client.getPostalCode());
+        dto.setNotes(client.getNotes());
         dto.setActive(client.getActive());
         dto.setCreatedAt(client.getCreatedAt());
         dto.setUpdatedAt(client.getUpdatedAt());
@@ -46,6 +47,7 @@ public class ClientMapper {
         client.setAddress(dto.getAddress());
         client.setCity(dto.getCity());
         client.setPostalCode(dto.getPostalCode());
+        client.setNotes(dto.getNotes());
 
         return client;
     }

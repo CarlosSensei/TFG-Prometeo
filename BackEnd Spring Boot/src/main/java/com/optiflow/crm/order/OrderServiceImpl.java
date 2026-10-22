@@ -1,5 +1,6 @@
 package com.optiflow.crm.order;
 
+import com.optiflow.crm.auth.CurrentUserService;
 import com.optiflow.crm.client.ClientRepository;
 import com.optiflow.crm.client.model.Client;
 
@@ -22,6 +23,7 @@ import com.optiflow.crm.quote.model.Quote;
 
 import com.optiflow.crm.shared.exception.*;
 
+import com.optiflow.crm.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderDomainService orderDomainService;
     private final InventoryService inventoryService;
+    private final CurrentUserService currentUserService;
 
     public OrderServiceImpl(
             OrderRepository orderRepository,
@@ -56,7 +59,8 @@ public class OrderServiceImpl implements OrderService {
             InventoryRepository inventoryRepository,
             OrderMapper orderMapper,
             OrderDomainService orderDomainService,
-            InventoryService inventoryService
+            InventoryService inventoryService,
+            CurrentUserService currentUserService
     ) {
         this.orderRepository = orderRepository;
         this.clientRepository = clientRepository;
@@ -65,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
         this.orderMapper = orderMapper;
         this.orderDomainService = orderDomainService;
         this.inventoryService = inventoryService;
+        this.currentUserService = currentUserService;
     }
 
     // Busqueda paginada de pedidos
@@ -116,9 +121,11 @@ public class OrderServiceImpl implements OrderService {
         Client client = clientRepository.findById(orderDto.getClientId()).orElseThrow(() ->
                         new ClientNotFoundException(orderDto.getClientId()));
 
+        User seller = currentUserService.getCurrentUser();
         Order order = orderMapper.toEntity(orderDto);
 
         order.setClient(client);
+        order.setSeller(seller);
         order.setOrderNumber(generateOrderNumber());
         orderDomainService.initializeOrder(order);
 
@@ -135,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
 
                 if (Boolean.FALSE.equals(inventoryItem.getActive())) {
 
-                    throw new InventoryItemNotFoundException(inventoryItem.getId());
+                    throw new InventoryItemNotAvailableException(inventoryItem.getId());
                 }
 
                 OrderItem orderItem = new OrderItem();

@@ -3,8 +3,7 @@ package com.optiflow.crm.shared.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class SpanishDocumentValidator
-        implements ConstraintValidator<ValidSpanishDocument, String> {
+public class SpanishDocumentValidator implements ConstraintValidator<ValidSpanishDocument, String> {
 
     private static final String LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
 

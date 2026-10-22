@@ -6,6 +6,7 @@ import com.optiflow.crm.followup.dto.FollowUpSearchDto;
 import com.optiflow.crm.followup.mapper.FollowUpMapper;
 import com.optiflow.crm.followup.model.FollowUp;
 import com.optiflow.crm.followup.model.FollowUpService;
+import com.optiflow.crm.followup.dto.CreateFollowUpDto;
 
 import jakarta.validation.Valid;
 
@@ -14,9 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 // Controller de seguimientos
 @RestController
+@Validated
 public class FollowUpController {
 
     // Inyeccion del service y el mapper
@@ -71,14 +75,15 @@ public class FollowUpController {
 
     // Crear seguimiento para un presupuesto
     @PostMapping("/quotes/{quoteId}/followups")
-    public ResponseEntity<FollowUpDto> create(
-            @PathVariable Long quoteId, @Valid @RequestBody FollowUpDto followUpDto) {
+    public ResponseEntity<FollowUpDto> create(@PathVariable @Positive Long quoteId,
+            @Valid @RequestBody CreateFollowUpDto dto) {
 
-        FollowUp savedFollowUp = followUpService.create(quoteId, followUpDto);
+        FollowUp savedFollowUp = followUpService.create(quoteId, dto);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED).body(followUpMapper.toDto(savedFollowUp));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(followUpMapper.toDto(savedFollowUp));
     }
+
 
     // Actualizar seguimiento
     @PutMapping("/followups/{id}")

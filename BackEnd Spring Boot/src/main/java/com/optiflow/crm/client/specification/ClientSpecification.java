@@ -4,6 +4,8 @@ import com.optiflow.crm.client.dto.ClientSearchDto;
 import com.optiflow.crm.client.model.Client;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Locale;
+
 // Especificaciones para busquedas personalizadas
 public class ClientSpecification {
 
@@ -33,7 +35,8 @@ public class ClientSpecification {
 
             if (name == null || name.isBlank()) { return null; }
 
-            return criteriaBuilder.like(root.get("name").as(String.class), "%" + name + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")),
+                    "%" + name.toLowerCase(Locale.ROOT) + "%");
         };
     }
 
@@ -62,14 +65,14 @@ public class ClientSpecification {
     }
 
     // Metodo para buscar por DNI
-    private static Specification<Client> DniContains(String Dni) {
+    private static Specification<Client> DniContains(String dni) {
 
         return (root, query, criteriaBuilder) -> {
 
-            if (Dni == null || Dni.isBlank()) { return null; }
+            if (dni == null || dni.isBlank()) { return null; }
 
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("Dni")),
-                    "%" + Dni.toLowerCase() + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("dni")),
+                    "%" + dni.toLowerCase() + "%");
         };
     }
 

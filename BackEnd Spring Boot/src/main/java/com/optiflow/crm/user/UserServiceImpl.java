@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,10 @@ public class UserServiceImpl implements UserService {
 
     // Buscar todos los users
     @Override
+    @Transactional(readOnly = true)
     public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+
+        return userRepository.findByActiveTrue(pageable);
     }
 
     // BUscar por id
@@ -54,16 +57,17 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User create(CreateUserDto dto) {
 
-        if (userRepository.existsByEmailIgnoreCase(dto.getEmail())) {
+        String normalizedEmail = dto.getEmail().trim().toLowerCase(Locale.ROOT);
 
-            throw new UserAlreadyCreatedException(dto.getEmail());
+        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
+            throw new UserAlreadyCreatedException(normalizedEmail);
         }
 
         User user = new User();
 
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail().trim().toLowerCase());
+        user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole(dto.getRole());
         user.setActive(true);

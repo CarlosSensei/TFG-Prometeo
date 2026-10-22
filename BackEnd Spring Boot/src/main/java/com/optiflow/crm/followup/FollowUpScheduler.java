@@ -7,40 +7,59 @@ import com.optiflow.crm.followup.model.FollowUpStatus;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-// Componente de revision periodica de seguimientos
 @Component
 public class FollowUpScheduler {
 
-    // Inyeccion de repository y el publisher de eventos internos de spring
     private final FollowUpRepository followUpRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public FollowUpScheduler(FollowUpRepository followUpRepository,
-                             ApplicationEventPublisher eventPublisher) {
+    public FollowUpScheduler(
+            FollowUpRepository followUpRepository,
+            ApplicationEventPublisher eventPublisher) {
 
         this.followUpRepository = followUpRepository;
         this.eventPublisher = eventPublisher;
     }
 
-    // metodo de chequeo de seguimientos activos configurado a cada hora
+    // Revisa los seguimientos cada hora.
     @Scheduled(cron = "0 0 * * * *")
+    @Transactional
     public void checkPendingFollowUps() {
 
         LocalDateTime now = LocalDateTime.now();
 
-        List<FollowUp> followUps =
-                followUpRepository.findByStatusAndScheduledAtLessThanEqualAndActiveTrue(
-                                FollowUpStatus.PENDING, now);
+        // 1. Buscar solamente seguimientos
+        // que todavía no han generado un evento.
+        List<FollowUp> followUps = followUpRepository
+                .findByStatusAndScheduledAtLessThanEqualAndActiveTrueAndDueEventPublishedAtIsNull(
+                        FollowUpStatus.PENDING, now);
 
+        // 2. Procesar cada seguimiento.
         for (FollowUp followUp : followUps) {
 
-            FollowUpDueEvent event =
-                    new FollowUpDueEvent(followUp.getId(), followUp.getQuote().getId(),
-                            followUp.getScheduledAt());
+            // Reclamarlo de forma atómica.
+            int claimed = followUpRepository.claimDueEvent(
+                    followUp.getId(), FollowUpStatus.PENDING,
+                    followUp.getScheduledAt(), now);
+
+            // Otro proceso ya lo reclamó,
+            // o dejó de cumplir las condiciones.
+            if (claimed != 1) {
+                continue;
+            }
+
+            // 3. Publicar el evento únicamente
+            // cuando la reclamación ha tenido éxito.
+            FollowUpDueEvent event = new FollowUpDueEvent(
+                    followUp.getId(),
+                    followUp.getQuote().getId(),
+                    followUp.getScheduledAt()
+            );
 
             eventPublisher.publishEvent(event);
         }
