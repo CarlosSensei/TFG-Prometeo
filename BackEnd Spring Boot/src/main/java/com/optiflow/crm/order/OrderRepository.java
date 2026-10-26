@@ -21,4 +21,6 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 
     Long countByClientIdAndActiveTrue(Long clientId);
 
+    Optional<Order> findByQuoteId(Long quoteId);
+
 }

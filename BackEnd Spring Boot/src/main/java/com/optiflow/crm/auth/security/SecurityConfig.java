@@ -8,7 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,7 +24,10 @@ public class SecurityConfig {
 
     // Añade los filtros personalizados como el acceso restringido solo a ADMIN de ciertos metodos
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtAuthenticationConverter jwtAuthenticationConverter
+    ) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
@@ -44,9 +48,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
                         .anyRequest()
                         .authenticated())
-                .oauth2ResourceServer(oauth ->
-                        oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(
-                                        jwtAuthenticationConverter())))
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(
+                                jwtAuthenticationConverter)))
                 .headers(headers ->
                         headers.frameOptions(frame -> frame.sameOrigin()));
 
@@ -55,18 +59,16 @@ public class SecurityConfig {
 
     // Convierte el rol JWT
     @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    public JwtAuthenticationConverter jwtAuthenticationConverter(
+            JwtUserAuthoritiesConverter userAuthoritiesConverter) {
 
-        JwtGrantedAuthoritiesConverter authoritiesConverter =
-                new JwtGrantedAuthoritiesConverter();
-
-        authoritiesConverter.setAuthoritiesClaimName("role");
-        authoritiesConverter.setAuthorityPrefix("ROLE_");
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        converter.setJwtGrantedAuthoritiesConverter(userAuthoritiesConverter);
 
         return converter;
     }
+
 
     // Configuracion del CrossOrigins del Backend
     @Bean

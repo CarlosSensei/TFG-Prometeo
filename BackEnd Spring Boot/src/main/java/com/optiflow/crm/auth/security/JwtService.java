@@ -31,7 +31,7 @@ public class JwtService {
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("optiflow")
+                .issuer("https://optiflow.example")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expirationSeconds))
                 .subject(user.getEmail())
