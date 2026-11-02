@@ -1,0 +1,21 @@
+# Dependencias
+/node_modules/
+
+# Angular
+/.angular/
+/dist/
+/out-tsc/
+
+# Tests
+/coverage/
+
+# Variables de entorno
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
