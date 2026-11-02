@@ -30,7 +30,8 @@
   --color-info: #0284c7;
   --color-info-soft: #f0f9ff;
 
-  /* SPACING */
+  /* SPACING SCALE - Base 4px */
+  --space-0: 0;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -40,6 +41,44 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
+  --space-16: 64px;
+
+  /* PADDING - Componentes */
+  --padding-xs: var(--space-1);
+  --padding-sm: var(--space-2);
+  --padding-md: var(--space-4);
+  --padding-lg: var(--space-6);
+  --padding-xl: var(--space-8);
+
+  /* Padding semántico */
+  --padding-button-x: var(--space-4);
+  --padding-button-y: var(--space-2);
+
+  --padding-input-x: var(--space-3);
+  --padding-input-y: var(--space-2);
+
+  --padding-card: var(--space-6);
+  --padding-panel: var(--space-6);
+  --padding-page: var(--space-8);
+
+  /* MARGIN - Separaciones exteriores */
+  --margin-xs: var(--space-1);
+  --margin-sm: var(--space-2);
+  --margin-md: var(--space-4);
+  --margin-lg: var(--space-6);
+  --margin-xl: var(--space-8);
+
+  /* Margin semántico */
+  --margin-section: var(--space-8);
+  --margin-heading: var(--space-4);
+  --margin-paragraph: var(--space-3);
+
+  /* GAP - Flexbox y Grid */
+  --gap-xs: var(--space-1);
+  --gap-sm: var(--space-2);
+  --gap-md: var(--space-4);
+  --gap-lg: var(--space-6);
+  --gap-xl: var(--space-8);
 
   /* TYPOGRAPHY */
   --font-family: Inter, system-ui, sans-serif;
@@ -77,4 +116,13 @@
   /* TRANSITIONS */
   --transition-fast: 150ms ease;
   --transition-normal: 220ms ease;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --padding-page: var(--space-4);
+    --padding-card: var(--space-4);
+    --padding-panel: var(--space-4);
+    --margin-section: var(--space-6);
+  }
 }

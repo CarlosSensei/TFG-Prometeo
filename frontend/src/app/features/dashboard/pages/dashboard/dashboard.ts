@@ -1,8 +1,13 @@
-
 import { Component } from '@angular/core';
+
+import { Button } from '../../../../shared/ui/button/button';
+import { Badge } from '../../../../shared/ui/badge/badge';
+import { Card } from '../../../../shared/ui/card/card';
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
+  imports: [Button, Badge, Card],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })

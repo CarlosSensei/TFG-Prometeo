@@ -1,60 +1,65 @@
+
 <section class="dashboard">
+
   <div class="page-heading">
     <div>
       <p class="eyebrow">VISIÓN GENERAL</p>
       <h1>Dashboard</h1>
       <p class="subtitle">
-        Bienvenido a OptiFlow. Tu actividad comercial
-        de un vistazo.
+        Gestiona la actividad comercial de tu óptica.
       </p>
     </div>
+    <app-badge variant="info">
+      Datos de demostración
+    </app-badge>
   </div>
 
   <div class="metrics-grid">
     @for (metric of metrics; track metric.label) {
-      <article class="metric-card">
+      <app-card>
         <p class="metric-label">{{ metric.label }}</p>
         <strong class="metric-value">{{ metric.value }}</strong>
-        <span class="metric-description">
+        <p class="metric-description">
           {{ metric.description }}
-        </span>
-      </article>
+        </p>
+      </app-card>
     }
   </div>
 
   <div class="dashboard-grid">
-    <section class="panel">
+
+    <app-card>
       <div class="panel-header">
         <h2>Actividad reciente</h2>
-        <span>Últimos movimientos</span>
+        <app-badge>Sin actividad</app-badge>
       </div>
       <div class="empty-state">
-        <div class="empty-icon">▤</div>
-        <h3>Sin actividad reciente</h3>
-        <p>
-          Los presupuestos y pedidos recientes
-          aparecerán aquí.
-        </p>
+        <p>Los últimos movimientos aparecerán aquí.</p>
       </div>
-    </section>
+    </app-card>
 
-    <section class="panel">
+    <app-card>
       <div class="panel-header">
-        <h2>Próximos seguimientos</h2>
-        <span>Tareas pendientes</span>
+        <h2>Seguimientos pendientes</h2>
+        <app-badge variant="warning">
+          Pendientes
+        </app-badge>
       </div>
       <div class="empty-state">
-        <div class="empty-icon">◷</div>
-        <h3>Todo al día</h3>
-        <p>
-          Aquí aparecerán los seguimientos
-          programados de clientes.
-        </p>
+        <p>Los seguimientos programados aparecerán aquí.</p>
       </div>
-    </section>
+    </app-card>
+
   </div>
 
-  <p class="demo-note">
-    Datos de demostración. Sin conexión al backend.
-  </p>
+  <div class="dashboard-actions">
+    <app-button variant="primary" [disabled]="true">
+      Nuevo presupuesto
+    </app-button>
+
+    <app-button variant="secondary" [disabled]="true">
+      Nuevo cliente
+    </app-button>
+  </div>
+
 </section>

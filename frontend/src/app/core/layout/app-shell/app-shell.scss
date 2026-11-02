@@ -23,8 +23,8 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 12px;
+  gap: var(--space-3);
+  padding: var(--space-0) var(--space-3);
   color: var(--color-text);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
@@ -38,8 +38,8 @@
   place-items: center;
   color: var(--color-text-inverse);
   background: var(--color-primary);
-  border-radius: 11px;
-  font-size: 19px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xl);
 }
 
 .navigation {
@@ -86,15 +86,15 @@
 .sidebar-footer {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: var(--space-3);
   margin-top: auto;
-  padding: 16px 10px 0;
+  padding: var(--space-4) var(--space-3) var(--space-0);
   border-top: 1px solid var(--color-border-subtle);
 }
 
 .avatar, .topbar-avatar {
-  width: 34px;
-  height: 34px;
+  width: var(--space-8);
+  height: var(--space-8);
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -107,10 +107,10 @@
 .user-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--space-1);
 
-  strong { font-size: 13px; }
-  small { font-size: 11px; color: var(--color-text-muted); }
+  strong { font-size: var(--font-size-md); }
+  small { font-size: var(--font-size-sm); color: var(--color-text-muted); }
 }
 
 .main-wrapper {
@@ -119,11 +119,11 @@
 }
 
 .topbar {
-  height: 72px;
+  height: var(--topbar-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 var(--space-8);
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border-subtle);
 }
@@ -131,16 +131,16 @@
 .topbar-left, .topbar-right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: var(--space-4);
 }
 
 .workspace-name {
-  font-size: 13px;
+  font-size: var(--font-size-md);
   color: var(--color-text-secondary);
 }
 
 .environment-label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
@@ -153,8 +153,8 @@
 }
 
 .page-content {
-  padding: 36px;
-  max-width: 1600px;
+  padding: var(--space-8);
+  max-width: var(--content-max-width);
   margin: 0 auto;
 }
 
