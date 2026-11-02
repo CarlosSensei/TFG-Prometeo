@@ -1,0 +1,39 @@
+
+<section class="playground">
+  <header>
+    <h1>OptiFlow UI</h1>
+    <p>Entorno de pruebas de componentes compartidos.</p>
+  </header>
+
+  <div class="toolbar">
+    <app-input
+      id="client-search"
+      label="Buscar cliente"
+      placeholder="Nombre del cliente..."
+      [value]="search()"
+      (valueChange)="onSearch($event)"
+    />
+
+    <app-select
+      id="client-status"
+      label="Estado"
+      [options]="statusOptions"
+      [value]="status()"
+      (valueChange)="onStatus($event)"
+    />
+  </div>
+
+  <app-data-table
+    [columns]="columns"
+    [rows]="pageRows()"
+    (rowSelected)="onRowSelected($event)"
+  />
+
+  <app-pagination
+    [page]="page()"
+    [size]="size"
+    [totalElements]="filtered().length"
+    (pageChange)="onPageChange($event)"
+  />
+</section>
+

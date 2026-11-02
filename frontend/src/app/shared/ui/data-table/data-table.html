@@ -1,0 +1,49 @@
+<div class="table-container">
+  <div class="table-scroll">
+    <table class="ui-table">
+      <thead>
+        <tr>
+          @for (column of columns(); track column.key) {
+            <th scope="col">{{ column.label }}</th>
+          }
+        </tr>
+      </thead>
+
+      <tbody>
+        @if (!loading()) {
+          @for (row of rows(); track row.id) {
+            <tr>
+              @for (column of columns(); track column.key) {
+                <td>
+                  <button
+                    type="button"
+                    class="cell-button"
+                    [attr.aria-label]="'Ver registro ' + row.id"
+                    (click)="selectRow(row)">
+                    {{ row[column.key] ?? '—' }}
+                  </button>
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty-cell"
+                  [attr.colspan]="columns().length">
+                {{ emptyMessage() }}
+              </td>
+            </tr>
+          }
+        } @else {
+          <tr>
+            <td class="empty-cell"
+                [attr.colspan]="columns().length"
+                role="status">
+              Cargando registros...
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+

@@ -1,0 +1,30 @@
+<nav class="pagination" aria-label="Paginación">
+  <p class="pagination-info">
+    Mostrando {{ firstItem() }}–{{ lastItem() }}
+    de {{ totalElements() }} registros
+  </p>
+
+  <div class="pagination-actions">
+    <button
+      type="button"
+      class="pagination-button"
+      [disabled]="page() === 0"
+      (click)="previous()">
+      Anterior
+    </button>
+
+    <span class="page-indicator">
+      Página {{ page() + 1 }}
+      de {{ totalPages() || 1 }}
+    </span>
+
+    <button
+      type="button"
+      class="pagination-button"
+      [disabled]="page() + 1 >= totalPages()"
+      (click)="next()">
+      Siguiente
+    </button>
+  </div>
+</nav>
+

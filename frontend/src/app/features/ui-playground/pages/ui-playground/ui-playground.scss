@@ -1,0 +1,23 @@
+
+.playground {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+header p {
+  margin-top: var(--margin-sm);
+  color: var(--color-text-secondary);
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--gap-md);
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+}

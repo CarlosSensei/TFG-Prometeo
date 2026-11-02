@@ -4,6 +4,7 @@
 @use './styles/reset';
 @use './styles/typography';
 @use './styles/utilities';
+@use './styles/forms';
 
 html {
   background: var(--color-background);

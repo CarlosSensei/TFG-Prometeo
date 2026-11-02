@@ -1,0 +1,35 @@
+<div class="form-field">
+  @if (label()) {
+    <label class="form-label" [for]="id()">
+      {{ label() }}
+      @if (required()) {
+        <span class="required">*</span>
+      }
+    </label>
+  }
+
+  <input
+    class="form-control"
+    [class.is-invalid]="!!error()"
+    [id]="id()"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [value]="value()"
+    [disabled]="disabled()"
+    [required]="required()"
+    [attr.aria-invalid]="!!error()"
+    [attr.aria-describedby]="error() || hint() ? id() + '-help' : null"
+    (input)="onInput($event)"
+  />
+
+  @if (error()) {
+    <span class="form-error" [id]="id() + '-help'">
+      {{ error() }}
+    </span>
+  } @else if (hint()) {
+    <span class="form-hint" [id]="id() + '-help'">
+      {{ hint() }}
+    </span>
+  }
+</div>
+

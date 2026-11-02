@@ -18,6 +18,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/dashboard/pages/dashboard/dashboard')
             .then(m => m.Dashboard)
+      },
+      {
+        path: 'ui-playground',
+        title: 'UI Playground | OptiFlow',
+        loadComponent: () =>
+          import('./features/ui-playground/pages/ui-playground/ui-playground')
+            .then(m => m.UiPlayground)
       }
     ]
   },
