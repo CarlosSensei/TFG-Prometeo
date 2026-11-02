@@ -1,1 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+
+@use './styles/tokens';
+@use './styles/themes';
+@use './styles/reset';
+@use './styles/typography';
+@use './styles/utilities';
+
+html {
+  background: var(--color-background);
+}
+
+body {
+  background: var(--color-background);
+}
+

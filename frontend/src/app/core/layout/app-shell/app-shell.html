@@ -1,0 +1,77 @@
+<div class="app-layout">
+
+  @if (sidebarOpen()) {
+    <button
+      type="button"
+      class="sidebar-overlay"
+      aria-label="Cerrar menú"
+      (click)="closeSidebar()">
+    </button>
+  }
+
+  <aside class="sidebar" [class.sidebar-open]="sidebarOpen()">
+
+    <a class="brand" routerLink="/dashboard"
+       (click)="closeSidebar()">
+      <span class="brand-logo">O</span>
+      <span>OptiFlow</span>
+    </a>
+
+    <nav class="navigation" aria-label="Navegación principal">
+
+      <span class="nav-section">GENERAL</span>
+
+      <a routerLink="/dashboard"
+         routerLinkActive="active"
+         (click)="closeSidebar()">
+        <span>◫</span> Dashboard
+      </a>
+
+      <span class="nav-section">GESTIÓN COMERCIAL</span>
+
+      <span class="nav-placeholder">♙ &nbsp; Clientes</span>
+      <span class="nav-placeholder">▤ &nbsp; Presupuestos</span>
+      <span class="nav-placeholder">▣ &nbsp; Pedidos</span>
+
+      <span class="nav-section">OPERACIONES</span>
+
+      <span class="nav-placeholder">◷ &nbsp; Seguimientos</span>
+      <span class="nav-placeholder">◇ &nbsp; Inventario</span>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="avatar">AD</div>
+      <div class="user-info">
+        <strong>Administrador</strong>
+        <small>Entorno de desarrollo</small>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <button
+          type="button"
+          class="menu-button"
+          aria-label="Abrir menú"
+          (click)="toggleSidebar()">
+          ☰
+        </button>
+        <span class="workspace-name">Workspace / OptiFlow</span>
+      </div>
+
+      <div class="topbar-right">
+        <span class="environment-label">Desarrollo</span>
+        <span class="topbar-avatar">AD</span>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <router-outlet />
+    </main>
+
+  </div>
+</div>
