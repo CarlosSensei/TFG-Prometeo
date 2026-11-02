@@ -1,7 +1,7 @@
 -- =========================================================
 -- OPTIFLOW CRM
--- MOCK DATA
--- H2 DATABASE
+-- DATOS DEMO PARA BACKEND Y FRONTEND
+-- H2 DATABASE (SOLO PERFIL DE DESARROLLO)
 -- =========================================================
 
 
@@ -9,6 +9,7 @@
 -- USERS
 -- =========================================================
 
+-- Credenciales de demostración: nunca usar en producción.
 -- Password para todos los usuarios mock:
 -- password
 --
@@ -33,7 +34,7 @@ MERGE INTO users (
     'Carlos',
     'Administrador',
     'admin@optiflow.com',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2a$10$Wp.FxiBkFVGqrHWceLCqLebmS1OU1r89uaTlFQs3XxZrymEX0iZXm',
     'ADMIN',
     TRUE,
     CURRENT_TIMESTAMP,
@@ -254,7 +255,7 @@ MERGE INTO clients (
     'Elena',
     'Navarro',
     'Soler',
-    '33445566Y',
+    '33445566R',
     '600444555',
     'elena.navarro@email.com',
     DATE '1987-05-10',
@@ -328,7 +329,7 @@ MERGE INTO clients (
     'Cristina',
     'Fernández',
     'Mas',
-    '66778899R',
+    '66778899D',
     '600666777',
     'cristina.fernandez@email.com',
     DATE '1979-01-30',
@@ -979,3 +980,61 @@ MERGE INTO orders (
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
     );
+
+
+-- =========================================================
+-- QUOTE ITEMS
+-- Los importes de las líneas reflejan el precio pactado para
+-- cada presupuesto (el catálogo puede tener otro precio actual).
+-- subtotal de cabecera = bruto; discount = descuento global;
+-- subtotal de línea = neto, total de línea = neto + IVA.
+-- =========================================================
+MERGE INTO quote_items (id, quote_id, inventory_item_id, description, quantity, unit_price, discount, tax_rate, subtotal, tax_amount, total) KEY(id) VALUES
+(1, 1, 1, 'Pack montura y lentes progresivas', 1, 350.00, 0.00, 21.00, 350.00, 73.50, 423.50),
+(2, 2, 2, 'Pack montura y lentes monofocales', 1, 220.00, 20.00, 21.00, 200.00, 42.00, 242.00),
+(3, 3, 4, 'Pack óptico monofocal', 1, 180.00, 0.00, 21.00, 180.00, 37.80, 217.80),
+(4, 4, 3, 'Pack óptico progresivo premium', 1, 500.00, 50.00, 21.00, 450.00, 94.50, 544.50),
+(5, 5, 1, 'Pack óptico presupuestado', 1, 300.00, 25.00, 21.00, 275.00, 57.75, 332.75),
+(6, 6, 3, 'Pack óptico progresivo', 1, 275.00, 0.00, 21.00, 275.00, 57.75, 332.75);
+
+-- =========================================================
+-- ORDER ITEMS
+-- =========================================================
+MERGE INTO order_items (id, order_id, inventory_item_id, description, quantity, unit_price, discount, tax_rate, subtotal, tax_amount, total) KEY(id) VALUES
+(1, 1, 3, 'Pack óptico progresivo premium', 1, 500.00, 50.00, 21.00, 450.00, 94.50, 544.50),
+(2, 2, 3, 'Pack óptico progresivo', 1, 275.00, 0.00, 21.00, 275.00, 57.75, 332.75),
+(3, 3, 5, 'Gafas de sol', 1, 120.00, 0.00, 21.00, 120.00, 25.20, 145.20),
+(4, 4, 2, 'Pack de gafas graduadas', 1, 150.00, 10.00, 21.00, 140.00, 29.40, 169.40);
+
+-- =========================================================
+-- FOLLOW UPS
+-- Incluye pendiente futuro, completado y vencido ya notificado.
+-- El scheduler no debe duplicar el tercero.
+-- =========================================================
+MERGE INTO follow_ups (id, quote_id, type, status, scheduled_at, completed_at, notes, result, automated, active, created_at, updated_at, due_event_published_at) KEY(id) VALUES
+(1, 2, 'CALL', 'PENDING', DATEADD('DAY', 2, CURRENT_TIMESTAMP), NULL, 'Llamar para conocer decisión del presupuesto.', NULL, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL),
+(2, 3, 'EMAIL', 'COMPLETED', DATE '2026-10-05', TIMESTAMP '2026-10-05 11:30:00', 'Confirmación de aceptación.', 'Cliente acepta presupuesto.', FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL),
+(3, 5, 'CALL', 'PENDING', DATE '2026-10-20', NULL, 'Seguimiento de presupuesto rechazado.', NULL, TRUE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- =========================================================
+-- NOTIFICATIONS
+-- Notificación vinculada al seguimiento 3 ya publicado.
+-- =========================================================
+MERGE INTO notifications (id, type, title, message, follow_up_id, quote_id, read, read_at, active, created_at) KEY(id) VALUES
+(1, 'FOLLOW_UP_DUE', 'Seguimiento pendiente', 'El seguimiento 3 del presupuesto 5 está pendiente.', 3, 5, FALSE, NULL, TRUE, CURRENT_TIMESTAMP);
+
+-- =========================================================
+-- IDENTITY SEQUENCES H2
+-- Evita que nuevas altas de JPA intenten reutilizar IDs demo.
+-- Aplicar sobre una BBDD de desarrollo dedicada a estos datos.
+-- =========================================================
+ALTER TABLE users ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE clients ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE inventory_items ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE quotes ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE quote_items ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE orders ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE order_items ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE follow_ups ALTER COLUMN id RESTART WITH 1001;
+ALTER TABLE notifications ALTER COLUMN id RESTART WITH 1001;
+

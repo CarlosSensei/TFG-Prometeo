@@ -11,6 +11,7 @@ import com.optiflow.crm.user.model.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 // Service de la autenticacion
@@ -35,8 +36,23 @@ public class AuthService {
 
         String email = request.getEmail().trim().toLowerCase();
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, request.getPassword()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            email,
+                            request.getPassword()
+                    )
+            );
+
+        } catch (AuthenticationException ex) {
+
+            System.err.println(
+                    "Error de autenticación: " +
+                            ex.getClass().getSimpleName()
+            );
+
+            throw ex;
+        }
 
         User user = userRepository.findByEmailIgnoreCase(email)
                         .orElseThrow(() -> new UserNotFoundException(email));
