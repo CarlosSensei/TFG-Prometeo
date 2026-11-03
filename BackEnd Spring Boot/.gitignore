@@ -1,0 +1,11 @@
+# H2 - bases de datos locales
+*.mv.db
+*.trace.db
+*.lock.db
+
+# Copias de seguridad locales
+/BackEnd Spring Boot/backup/
+
+# Variables y secretos locales
+.env
+.env.local
