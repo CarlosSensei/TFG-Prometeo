@@ -1,0 +1,103 @@
+
+<section class="clients-page">
+
+  <header class="page-header">
+
+    <div class="page-heading">
+      <p class="eyebrow">GESTIÓN COMERCIAL</p>
+
+      <h1>Clientes</h1>
+
+      <p class="page-description">
+        Consulta y gestiona la cartera de clientes
+        de tu óptica.
+      </p>
+    </div>
+
+    <div class="header-actions">
+
+      <app-badge variant="info">
+        {{ totalElements() }} clientes
+      </app-badge>
+
+      <app-button
+        variant="primary"
+        (pressed)="createClient()"
+      >
+        + Nuevo cliente
+      </app-button>
+
+    </div>
+
+  </header>
+
+  @if (error()) {
+    <div class="error-panel" role="alert">
+
+      <p>{{ error() }}</p>
+
+      <app-button
+        variant="secondary"
+        size="sm"
+        (pressed)="retry()"
+      >
+        Reintentar
+      </app-button>
+
+    </div>
+  }
+
+  <app-card [padded]="false">
+
+    <div class="table-heading">
+      <div>
+        <h2>Listado de clientes</h2>
+        <p>Información comercial y de contacto</p>
+      </div>
+    </div>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="tableRows"
+      [loading]="loading()"
+      emptyMessage="No hay clientes disponibles"
+      (rowSelected)="selectClient($event)"
+      (rowAction)="handleRowAction($event)"
+    />
+
+    <div class="pagination-wrapper">
+      <app-pagination
+        [page]="page()"
+        [size]="size"
+        [totalElements]="totalElements()"
+        (pageChange)="changePage($event)"
+      />
+    </div>
+
+  </app-card>
+
+  @if (selectedClientId() !== null) {
+
+    <div class="selection-actions">
+
+      <p class="selection-note" role="status">
+        Cliente seleccionado: #{{ selectedClientId() }}
+      </p>
+
+      <app-button
+        variant="secondary"
+        (pressed)="editSelectedClient()"
+      >
+        Editar cliente
+      </app-button>
+
+    </div>
+
+  }
+
+  <app-client-detail-drawer
+    [clientId]="detailClientId()"
+    (closed)="closeClientDetail()"
+  />
+
+</section>

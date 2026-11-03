@@ -61,10 +61,12 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "optiflow-frontend:build:production"
+              "buildTarget": "optiflow-frontend:build:production",
+              "proxyConfig": "proxy.conf.json"
             },
             "development": {
-              "buildTarget": "optiflow-frontend:build:development"
+              "buildTarget": "optiflow-frontend:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

@@ -9,17 +9,16 @@
   }
 
   <input
-    class="form-control"
-    [class.is-invalid]="!!error()"
     [id]="id()"
     [type]="type()"
     [placeholder]="placeholder()"
-    [value]="value()"
-    [disabled]="disabled()"
+    [value]="internalValue()"
+    [disabled]="disabled() || formDisabled()"
     [required]="required()"
-    [attr.aria-invalid]="!!error()"
-    [attr.aria-describedby]="error() || hint() ? id() + '-help' : null"
+    [attr.aria-invalid]="error() ? 'true' : null"
+    [attr.aria-describedby]="error() ? id() + '-error' : null"
     (input)="onInput($event)"
+    (blur)="onBlur()"
   />
 
   @if (error()) {

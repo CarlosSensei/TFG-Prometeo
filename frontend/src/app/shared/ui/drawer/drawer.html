@@ -1,0 +1,28 @@
+<dialog
+  #dialog
+  class="ui-drawer"
+  aria-modal="true"
+  aria-labelledby="drawer-title"
+  (close)="onDialogClose()"
+>
+  <div class="drawer-layout">
+
+    <header class="drawer-header">
+      <h2 id="drawer-title">{{ title() }}</h2>
+
+      <button
+        type="button"
+        class="drawer-close"
+        aria-label="Cerrar panel"
+        (click)="close()"
+      >
+        x
+      </button>
+    </header>
+
+    <div class="drawer-content">
+      <ng-content />
+    </div>
+
+  </div>
+</dialog>

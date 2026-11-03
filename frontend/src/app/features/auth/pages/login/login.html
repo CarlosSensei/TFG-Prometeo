@@ -1,0 +1,119 @@
+<div class="login-layout">
+
+  <div class="login-container">
+
+    <header class="login-brand">
+      <div class="brand-logo">O</div>
+      <span>OptiFlow</span>
+    </header>
+
+    <section class="login-card">
+
+      <div class="login-heading">
+        <h1>Bienvenido de nuevo</h1>
+        <p>Accede a tu espacio de trabajo.</p>
+      </div>
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        novalidate>
+
+        @if (error()) {
+          <div class="login-error" role="alert">
+            {{ error() }}
+          </div>
+        }
+
+        <div class="form-field">
+          <label class="form-label" for="email">
+            Correo electrónico
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="nombre@optica.com"
+            autocomplete="username"
+            [attr.aria-invalid]="
+              form.controls.email.invalid &&
+              form.controls.email.touched
+            "
+          />
+
+          @if (
+            form.controls.email.invalid &&
+            form.controls.email.touched
+          ) {
+            <span class="form-error">
+              Introduce un correo electrónico válido.
+            </span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="password">
+            Contraseña
+          </label>
+
+          <div class="password-field">
+            <input
+              id="password"
+              class="form-control"
+              formControlName="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              autocomplete="current-password"
+              [attr.aria-invalid]="
+                form.controls.password.invalid &&
+                form.controls.password.touched
+              "
+            />
+
+            <button
+              type="button"
+              class="password-toggle"
+              [attr.aria-label]="
+                showPassword()
+                  ? 'Ocultar contraseña'
+                  : 'Mostrar contraseña'
+              "
+              (click)="togglePassword()">
+              {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
+            </button>
+          </div>
+
+          @if (
+            form.controls.password.invalid &&
+            form.controls.password.touched
+          ) {
+            <span class="form-error">
+              La contraseña es obligatoria.
+            </span>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="login-submit"
+          [disabled]="loading()">
+
+          {{ loading()
+              ? 'Iniciando sesión...'
+              : 'Iniciar sesión'
+          }}
+
+        </button>
+
+      </form>
+
+    </section>
+
+    <footer class="login-footer">
+      OptiFlow · Gestión inteligente para ópticas
+    </footer>
+
+  </div>
+
+</div>

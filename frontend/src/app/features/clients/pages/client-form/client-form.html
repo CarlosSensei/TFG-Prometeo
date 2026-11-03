@@ -1,0 +1,173 @@
+<section class="client-form-page">
+
+  <header class="page-header">
+    <div>
+      <app-button
+        variant="secondary"
+        size="sm"
+        (pressed)="goBack()"
+      >
+        ← Volver a clientes
+      </app-button>
+
+      <h1>{{ title }}</h1>
+      <p>Información personal y comercial del cliente.</p>
+    </div>
+  </header>
+
+  @if (loading) {
+    <p role="status">Cargando información del cliente...</p>
+  } @else {
+
+    @if (errorMessage) {
+      <div class="error-alert" role="alert">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()"
+      novalidate
+    >
+
+      <section class="form-section">
+        <h2>Datos personales</h2>
+
+        <div class="form-grid">
+
+          <app-input
+            id="name"
+            label="Nombre"
+            formControlName="name"
+            [required]="true"
+            [error]="hasError('name') ? 'Introduce un nombre válido.' : ''"
+          />
+
+          <app-input
+            id="surname"
+            label="Primer apellido"
+            formControlName="surname"
+            [required]="true"
+            [error]="hasError('surname') ? 'El primer apellido es obligatorio.' : ''"
+          />
+
+          <app-input
+            id="lastSurname"
+            label="Segundo apellido"
+            formControlName="lastSurname"
+            [error]="hasError('lastSurname') ? 'El apellido es demasiado largo.' : ''"
+          />
+
+          <app-input
+            id="dni"
+            label="DNI / NIE"
+            formControlName="dni"
+            [required]="true"
+            [error]="hasError('dni') ? 'Introduce un DNI/NIE válido.' : ''"
+          />
+
+          <app-input
+            id="birthDate"
+            label="Fecha de nacimiento"
+            type="date"
+            formControlName="birthDate"
+            [required]="true"
+            [error]="hasError('birthDate') ? 'Selecciona una fecha de nacimiento.' : ''"
+          />
+
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2>Información de contacto</h2>
+
+        <div class="form-grid">
+
+          <app-input
+            id="phoneNumber"
+            label="Teléfono"
+            type="tel"
+            formControlName="phoneNumber"
+            [required]="true"
+            [error]="hasError('phoneNumber') ? 'Introduce un teléfono válido.' : ''"
+          />
+
+          <app-input
+            id="email"
+            label="Correo electrónico"
+            type="email"
+            formControlName="email"
+            [error]="hasError('email') ? 'Introduce un email válido.' : ''"
+          />
+
+          <div class="field-full">
+            <app-input
+              id="address"
+              label="Dirección"
+              formControlName="address"
+              [error]="hasError('address') ? 'La dirección es demasiado larga.' : ''"
+            />
+          </div>
+
+          <app-input
+            id="city"
+            label="Población"
+            formControlName="city"
+            [error]="hasError('city') ? 'El nombre es demasiado largo.' : ''"
+          />
+
+          <app-input
+            id="postalCode"
+            label="Código postal"
+            formControlName="postalCode"
+            [error]="hasError('postalCode') ? 'Debe contener 5 cifras.' : ''"
+          />
+
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2>Información adicional</h2>
+
+        <div class="notes-field">
+          <label for="notes">Observaciones</label>
+
+          <textarea
+            id="notes"
+            formControlName="notes"
+            rows="4"
+          ></textarea>
+
+          @if (hasError('notes')) {
+            <small class="field-error">
+              Las observaciones son demasiado largas.
+            </small>
+          }
+        </div>
+      </section>
+
+      <footer class="form-actions">
+
+        <app-button
+          variant="secondary"
+          type="button"
+          (pressed)="goBack()"
+        >
+          Cancelar
+        </app-button>
+
+        <app-button
+          variant="primary"
+          type="submit"
+          [disabled]="form.invalid || loading || saving"
+          [loading]="saving"
+        >
+          {{ isEditMode ? 'Guardar cambios' : 'Crear cliente' }}
+        </app-button>
+
+      </footer>
+
+    </form>
+  }
+</section>

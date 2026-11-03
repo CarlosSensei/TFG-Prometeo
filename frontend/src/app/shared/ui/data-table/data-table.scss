@@ -58,3 +58,34 @@ tbody tr:hover {
   text-align: center;
   color: var(--color-text-muted);
 }
+
+.table-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: var(--space-2) var(--space-3);
+
+  color: var(--color-primary);
+  background: transparent;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 8px);
+
+  font: inherit;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-surface);
+    border-color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: var(--space-1);
+  }
+}

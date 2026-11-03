@@ -152,6 +152,31 @@
   font-size: var(--font-size-xl);
 }
 
+.user-info {
+  min-width: 0;
+  flex: 1;
+
+  strong, small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.logout-button {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  padding: var(--padding-sm);
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-danger);
+  }
+}
+
 .page-content {
   padding: var(--space-8);
   max-width: var(--content-max-width);

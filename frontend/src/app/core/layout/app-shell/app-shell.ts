@@ -1,6 +1,9 @@
 
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-app-shell',
@@ -10,7 +13,16 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 
 export class AppShell {
-  sidebarOpen = signal(false);
+
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  logout(): void {
+    this.auth.logout();
+    void this.router.navigate(['/login']);
+  }
+
+  sidebarOpen = signal(false);  
 
   toggleSidebar(): void {
     this.sidebarOpen.update(open => !open);

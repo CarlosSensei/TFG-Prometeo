@@ -29,7 +29,8 @@
 
       <span class="nav-section">GESTIÓN COMERCIAL</span>
 
-      <span class="nav-placeholder">♙ &nbsp; Clientes</span>
+      <a routerLink="/clients" routerLinkActive="active"
+        (click)="closeSidebar()"><span>♙</span>Clientes</a>
       <span class="nav-placeholder">▤ &nbsp; Presupuestos</span>
       <span class="nav-placeholder">▣ &nbsp; Pedidos</span>
 
@@ -41,12 +42,27 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="avatar">AD</div>
-      <div class="user-info">
-        <strong>Administrador</strong>
-        <small>Entorno de desarrollo</small>
+
+      <div class="avatar">
+        {{ auth.initials() }}
       </div>
+
+      <div class="user-info">
+        <strong>{{ auth.fullName() }}</strong>
+        <small>{{ auth.user()?.role }}</small>
+      </div>
+
+      <button
+        type="button"
+        class="logout-button"
+        aria-label="Cerrar sesión"
+        title="Cerrar sesión"
+        (click)="logout()">
+        Salir
+      </button>
+
     </div>
+
   </aside>
 
   <div class="main-wrapper">
@@ -65,7 +81,7 @@
 
       <div class="topbar-right">
         <span class="environment-label">Desarrollo</span>
-        <span class="topbar-avatar">AD</span>
+        <span class="topbar-avatar">{{ auth.initials() }}</span>
       </div>
     </header>
 

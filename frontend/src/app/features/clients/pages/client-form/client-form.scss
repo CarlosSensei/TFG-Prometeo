@@ -1,0 +1,123 @@
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.client-form-page {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  padding-bottom: var(--space-8);
+}
+
+.page-header {
+  margin-bottom: var(--space-6);
+
+  h1 {
+    margin: var(--space-4) 0 var(--space-2);
+  }
+
+  p {
+    color: var(--color-text-secondary);
+  }
+}
+
+.form-section {
+  margin-bottom: var(--space-5);
+  padding: var(--padding-card);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 12px);
+
+  h2 {
+    margin: 0 0 var(--space-5);
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.notes-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  label {
+    color: var(--color-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+  }
+
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 100px;
+    resize: vertical;
+
+    padding: var(--space-3);
+
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md, 8px);
+
+    font: inherit;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: var(--space-1);
+    }
+  }
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+.error-alert {
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md, 8px);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field-full {
+    grid-column: auto;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
