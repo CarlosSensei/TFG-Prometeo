@@ -5,7 +5,8 @@ import com.optiflow.crm.client.dto.ClientSearchDto;
 import com.optiflow.crm.client.mapper.ClientMapper;
 import com.optiflow.crm.client.model.Client;
 import com.optiflow.crm.client.model.ClientService;
-
+import com.optiflow.crm.client.dto.ClientTimelineEventDto;
+import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -88,5 +89,12 @@ public class ClientController {
         clientService.delete(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/timeline")
+    public ResponseEntity<List<ClientTimelineEventDto>> getTimeline(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(clientService.getTimeline(id));
     }
 }

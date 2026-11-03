@@ -1,8 +1,11 @@
 package com.optiflow.crm.client.model;
 
 import com.optiflow.crm.client.dto.ClientSearchDto;
+import com.optiflow.crm.client.dto.ClientTimelineEventDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 // interfaz de la capa de servicio del cliente
 public interface ClientService {
@@ -12,6 +15,8 @@ public interface ClientService {
 
     // Busqueda personalizada de clientes
     Page<Client> search(ClientSearchDto searchDto);
+
+    List<ClientTimelineEventDto> getTimeline(Long clientId);
 
     // Buscar por Id
     Client findById(Long id);

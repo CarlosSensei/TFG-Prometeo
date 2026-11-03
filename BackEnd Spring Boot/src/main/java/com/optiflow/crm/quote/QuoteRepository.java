@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 // Interfaz de repository de presupuestos
@@ -14,6 +15,8 @@ public interface QuoteRepository extends JpaRepository<Quote, Long>, JpaSpecific
     Page<Quote> findByActiveTrue(Pageable pageable);
 
     Page<Quote> findByClientIdAndActiveTrue(Long clientId, Pageable pageable);
+
+    List<Quote> findByClientIdAndActiveTrue(Long clientId);
 
     Optional<Quote> findTopByQuoteNumberStartingWithOrderByQuoteNumberDesc(String prefix);
 

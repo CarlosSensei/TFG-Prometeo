@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 // Repository de pedidos con consultas
@@ -14,6 +15,8 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     Page<Order> findByActiveTrue(Pageable pageable);
 
     Page<Order> findByClientIdAndActiveTrue(Long clientId, Pageable pageable);
+
+    List<Order> findByClientIdAndActiveTrue(Long clientId);
 
     boolean existsByQuoteId(Long quoteId);
 

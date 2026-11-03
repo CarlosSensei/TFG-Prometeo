@@ -3,15 +3,20 @@ package com.optiflow.crm.client;
 import com.optiflow.crm.client.dto.ClientDto;
 import com.optiflow.crm.client.dto.ClientSearchDto;
 import com.optiflow.crm.client.dto.ClientTimeLineItemDto;
+import com.optiflow.crm.client.dto.ClientTimelineEventDto;
 import com.optiflow.crm.client.mapper.ClientMapper;
 import com.optiflow.crm.client.model.Client;
 import com.optiflow.crm.client.model.ClientService;
 import com.optiflow.crm.client.specification.ClientSpecification;
+import com.optiflow.crm.followup.model.FollowUp;
+import com.optiflow.crm.followup.FollowUpRepository;
 import com.optiflow.crm.order.OrderRepository;
+import com.optiflow.crm.order.model.Order;
 import com.optiflow.crm.quote.QuoteRepository;
+import com.optiflow.crm.quote.model.Quote;
 import com.optiflow.crm.shared.exception.ClientAlreadyExistsException;
 import com.optiflow.crm.shared.exception.ClientNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,15 +38,18 @@ public class ClientServiceImpl implements ClientService {
     private final ClientMapper clientMapper;
     private final QuoteRepository quoteRepository;
     private final OrderRepository orderRepository;
+    private final FollowUpRepository followUpRepository;
 
     public ClientServiceImpl(ClientRepository clientRepository,
                              ClientMapper clientMapper,
                              QuoteRepository quoteRepository,
-                             OrderRepository orderRepository) {
+                             OrderRepository orderRepository,
+                             FollowUpRepository followUpRepository) {
         this.clientRepository = clientRepository;
         this.clientMapper = clientMapper;
         this.quoteRepository = quoteRepository;
         this.orderRepository = orderRepository;
+        this.followUpRepository = followUpRepository;
     }
 
     // metodo de busqueda paginada
@@ -131,17 +139,37 @@ public class ClientServiceImpl implements ClientService {
     }
 
     // Metodo para el timeline de pedidos y presupuestos
-    public List<ClientTimeLineItemDto> getTimeline(Long clientId) {
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClientTimelineEventDto> getTimeline(Long clientId) {
 
+        // Comprobar que el cliente existe
         findById(clientId);
 
-        List<ClientTimeLineItemDto> timeline = new ArrayList<>();
+        List<ClientTimelineEventDto> timeline = new ArrayList<>();
 
-        long quotesCount = quoteRepository.countByClientIdAndActiveTrue(clientId);
+        // Recuperar presupuestos del cliente
+        List<Quote> quotes =
+                quoteRepository.findByClientIdAndActiveTrue(clientId);
 
-        long ordersCount = orderRepository.countByClientIdAndActiveTrue(clientId);
+        // Recuperar pedidos del cliente
+        List<Order> orders =
+                orderRepository.findByClientIdAndActiveTrue(clientId);
 
-        timeline.sort(Comparator.comparing(ClientTimeLineItemDto::getDate).reversed());
+        // Recuperar seguimientos asociados a sus presupuestos
+        List<FollowUp> followUps =
+                followUpRepository.findByQuoteClientIdAndActiveTrue(clientId);
+
+        // Transformar las entidades en eventos del timeline
+        // timeline.add(...) para cada presupuesto
+        // timeline.add(...) para cada pedido
+        // timeline.add(...) para cada seguimiento
+
+        timeline.sort(
+                Comparator.comparing(
+                        ClientTimelineEventDto::date
+                ).reversed()
+        );
 
         return timeline;
     }

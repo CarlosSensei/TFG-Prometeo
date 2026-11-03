@@ -21,6 +21,8 @@ public interface FollowUpRepository extends JpaRepository<FollowUp, Long>, JpaSp
 
     Page<FollowUp> findByQuoteIdAndActiveTrue(Long quoteId, Pageable pageable);
 
+    List<FollowUp> findByQuoteClientIdAndActiveTrue(Long clientId);
+
     List<FollowUp> findByStatusAndScheduledAtLessThanEqualAndActiveTrue(
             FollowUpStatus status, LocalDateTime scheduledAt);
 
