@@ -14,19 +14,22 @@ import com.optiflow.crm.quote.model.Quote;
 import com.optiflow.crm.quote.model.QuoteItem;
 import com.optiflow.crm.quote.model.QuoteService;
 
+import com.optiflow.crm.quote.model.QuoteStatus;
 import com.optiflow.crm.quote.specification.QuoteSpecification;
 import com.optiflow.crm.shared.exception.ClientNotFoundException;
 import com.optiflow.crm.shared.exception.InventoryItemNotFoundException;
 import com.optiflow.crm.shared.exception.QuoteItemNotFoundException;
 import com.optiflow.crm.shared.exception.QuoteNotFoundException;
 import com.optiflow.crm.user.model.User;
-import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -89,8 +92,19 @@ public class QuoteServiceImpl implements QuoteService {
         int size = searchDto.getSize() != null
                 ? searchDto.getSize() : 10;
 
-        String sortBy = searchDto.getSortBy() != null
-                ? searchDto.getSortBy() : "quoteDate";
+
+        String requestedSort = searchDto.getSortBy();
+
+        String sortBy = switch (
+                requestedSort != null ? requestedSort : ""
+                ) {
+            case "quoteNumber", "quoteDate",
+                 "expirationDate", "status",
+                 "total", "createdAt" -> requestedSort;
+
+            default -> "quoteDate";
+        };
+
 
         Sort.Direction direction =
                 "asc".equalsIgnoreCase(searchDto.getSortDirection())
@@ -100,6 +114,21 @@ public class QuoteServiceImpl implements QuoteService {
 
         return quoteRepository.findAll(specification, pageable);
     }
+
+
+    // Recupera el detalle completo del presupuesto.
+    @Override
+    @Transactional(readOnly = true)
+    public QuoteDto findDetailById(Long id) {
+
+        Quote quote = quoteRepository.findById(id)
+                .orElseThrow(() ->
+                        new QuoteNotFoundException(id)
+                );
+
+        return quoteMapper.toDto(quote);
+    }
+
 
     // Buscar por cliente
     @Override
@@ -165,8 +194,23 @@ public class QuoteServiceImpl implements QuoteService {
 
         Quote existingQuote = findById(id);
 
+        if (existingQuote.getStatus() != QuoteStatus.DRAFT) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Solo se pueden editar presupuestos en borrador"
+            );
+        }
+
+        if (Boolean.FALSE.equals(existingQuote.getActive())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "No se puede editar un presupuesto inactivo"
+            );
+        }
+
         // Actualizamos campos generales del presupuesto
         quoteMapper.updateEntity(quoteDto, existingQuote);
+        existingQuote.setStatus(QuoteStatus.DRAFT);
 
         // Cambio de cliente, si se recibe
         if (quoteDto.getClientId() != null) {
@@ -272,5 +316,7 @@ public class QuoteServiceImpl implements QuoteService {
             quoteDomainService.calculateItem(quoteItem);
         }
     }
+
+
 
 }

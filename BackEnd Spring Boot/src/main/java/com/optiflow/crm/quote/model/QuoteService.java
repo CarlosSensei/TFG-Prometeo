@@ -23,6 +23,9 @@ public interface QuoteService {
     // Crear un presupuesto
     Quote create(QuoteDto quoteDto);
 
+    // Buscar dto por id
+    QuoteDto findDetailById(Long id);
+
     // Actualizar un presupuesto
     Quote update(Long id, QuoteDto quoteDto);
 

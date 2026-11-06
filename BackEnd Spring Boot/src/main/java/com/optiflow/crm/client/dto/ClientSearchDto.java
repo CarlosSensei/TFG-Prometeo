@@ -9,6 +9,8 @@ public class ClientSearchDto {
 
     private String lastSurname;
 
+    private String fullName;
+
     private String dni;
 
     private String phoneNumber;
@@ -48,6 +50,10 @@ public class ClientSearchDto {
     public void setLastSurname(String lastSurname) {
         this.lastSurname = lastSurname;
     }
+
+    public String getFullName() { return fullName; }
+
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
     public String getDni() {
         return dni;

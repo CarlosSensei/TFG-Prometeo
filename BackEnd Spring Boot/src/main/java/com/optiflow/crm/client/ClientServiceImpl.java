@@ -76,7 +76,18 @@ public class ClientServiceImpl implements ClientService {
 
         int size = searchDto.getSize() != null ? searchDto.getSize() : 10;
 
-        String sortBy = searchDto.getSortBy() != null ? searchDto.getSortBy() : "surname";
+
+        String requestedSort = searchDto.getSortBy();
+
+        String sortBy = switch (
+                requestedSort != null ? requestedSort : ""
+                ) {
+            case "name", "surname", "lastSurname",
+                 "dni", "email", "phoneNumber",
+                 "city", "createdAt" -> requestedSort;
+
+            default -> "surname";
+        };
 
         Sort.Direction direction = "desc".equalsIgnoreCase(searchDto.getSortDirection())
                         ? Sort.Direction.DESC : Sort.Direction.ASC;

@@ -4,6 +4,7 @@ public record SearchResultDto(
         Long id,
         String type,
         String title,
-        String subtitle
+        String subtitle,
+        Long clientId
 ) {
 }

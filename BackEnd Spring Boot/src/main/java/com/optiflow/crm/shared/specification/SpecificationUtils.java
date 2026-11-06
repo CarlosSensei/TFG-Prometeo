@@ -112,4 +112,45 @@ public final class SpecificationUtils {
             return cb.equal(root.get(field), 0);
         };
     }
+
+
+    /**
+     * Busca texto en el nombre completo de una entidad relacionada.
+     * Ejemplo:
+     * seller.firstName + " " + seller.lastName
+     * Permite buscar tanto por nombre como por apellido.
+     */
+    public static <T> Specification<T> relatedFullNameContains(
+            String relation,
+            String firstNameField,
+            String lastNameField,
+            String value
+    ) {
+        return (root, query, cb) -> {
+
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+
+            String normalized = value.trim()
+                    .toLowerCase(Locale.ROOT)
+                    .replace("\\", "\\\\")
+                    .replace("%", "\\%")
+                    .replace("_", "\\_");
+
+            String pattern = "%" + normalized + "%";
+
+            var related = root.get(relation);
+            var firstName = cb.lower(related.<String>get(firstNameField));
+            var lastName = cb.lower(related.<String>get(lastNameField));
+            var fullName = cb.concat(cb.concat(firstName, " "), lastName);
+
+            return cb.or(
+                    cb.like(firstName, pattern, '\\'),
+                    cb.like(lastName, pattern, '\\'),
+                    cb.like(fullName, pattern, '\\')
+            );
+        };
+    }
+
 }

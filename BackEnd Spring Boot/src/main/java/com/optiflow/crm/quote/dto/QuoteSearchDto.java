@@ -1,8 +1,9 @@
 package com.optiflow.crm.quote.dto;
 
 import com.optiflow.crm.quote.model.QuoteStatus;
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 // Entidad dto de busqueda de inventario
 public class QuoteSearchDto {
@@ -17,6 +18,8 @@ public class QuoteSearchDto {
 
     private QuoteStatus status;
 
+    private Set<QuoteStatus> statuses;
+
     private LocalDate quoteDateFrom;
 
     private LocalDate quoteDateTo;
@@ -24,6 +27,10 @@ public class QuoteSearchDto {
     private LocalDate expirationDateFrom;
 
     private LocalDate expirationDateTo;
+
+    private BigDecimal minTotal;
+
+    private BigDecimal maxTotal;
 
     private Boolean active = true;
 
@@ -77,6 +84,10 @@ public class QuoteSearchDto {
         this.status = status;
     }
 
+    public Set<QuoteStatus> getStatuses() { return statuses; }
+
+    public void setStatuses(Set<QuoteStatus> statuses) { this.statuses = statuses; }
+
     public LocalDate getQuoteDateFrom() {
         return quoteDateFrom;
     }
@@ -108,6 +119,14 @@ public class QuoteSearchDto {
     public void setExpirationDateTo(LocalDate expirationDateTo) {
         this.expirationDateTo = expirationDateTo;
     }
+
+    public BigDecimal getMinTotal() { return minTotal; }
+
+    public void setMinTotal(BigDecimal minTotal) { this.minTotal = minTotal; }
+
+    public BigDecimal getMaxTotal() { return maxTotal; }
+
+    public void setMaxTotal(BigDecimal maxTotal) { this.maxTotal = maxTotal; }
 
     public Boolean getActive() {
         return active;

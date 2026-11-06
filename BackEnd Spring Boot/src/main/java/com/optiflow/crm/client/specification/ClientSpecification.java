@@ -21,6 +21,7 @@ public final class ClientSpecification {
                 containsIgnoreCase("name", dto.getName()),
                 containsIgnoreCase("surname", dto.getSurname()),
                 containsIgnoreCase("lastSurname", dto.getLastSurname()),
+                fullNameContains(dto.getFullName()),
                 containsIgnoreCase("dni", dto.getDni()),
                 containsIgnoreCase("phoneNumber", dto.getPhoneNumber()),
                 containsIgnoreCase("email", dto.getEmail()),
@@ -29,4 +30,38 @@ public final class ClientSpecification {
                 equal("active", dto.getActive())
         );
     }
+
+
+    private static Specification<Client> fullNameContains(String value) {
+        return (root, query, cb) -> {
+
+            if (value == null || value.isBlank()) {
+                return null;
+            }
+
+            String pattern = "%" + value.trim()
+                    .toLowerCase(java.util.Locale.ROOT)
+                    .replace("\\", "\\\\")
+                    .replace("%", "\\%")
+                    .replace("_", "\\_") + "%";
+
+            var name = cb.lower(root.<String>get("name"));
+            var surname = cb.lower(root.<String>get("surname"));
+            var lastSurname = cb.lower(
+                    cb.coalesce(root.<String>get("lastSurname"), "")
+            );
+            var fullName = cb.concat(
+                    cb.concat(cb.concat(name, " "), surname),
+                    cb.concat(" ", lastSurname)
+            );
+
+            return cb.or(
+                    cb.like(name, pattern, '\\'),
+                    cb.like(surname, pattern, '\\'),
+                    cb.like(lastSurname, pattern, '\\'),
+                    cb.like(fullName, pattern, '\\')
+            );
+        };
+    }
+
 }

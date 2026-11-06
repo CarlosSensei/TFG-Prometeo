@@ -28,7 +28,9 @@ public class QuoteMapper {
         if (quote.getClient() != null) {
             dto.setClientId(quote.getClient().getId());
         }
-
+        if (quote.getSeller() != null) {
+            dto.setSellerId(quote.getSeller().getId());
+        }
         dto.setStatus(quote.getStatus());
         dto.setQuoteDate(quote.getQuoteDate());
         dto.setExpirationDate(quote.getExpirationDate());
@@ -80,4 +82,47 @@ public class QuoteMapper {
 
         quote.setNotes(dto.getNotes());
     }
+
+
+    /**
+     * Mapea un presupuesto para listados y búsquedas.
+     * No carga la colección de líneas (items).
+     */
+    public QuoteDto toSummaryDto(Quote quote) {
+
+        QuoteDto dto = new QuoteDto();
+
+        dto.setId(quote.getId());
+        dto.setQuoteNumber(quote.getQuoteNumber());
+
+        if (quote.getClient() != null) {
+            dto.setClientId(quote.getClient().getId());
+        }
+
+        if (quote.getSeller() != null) {
+            dto.setSellerId(quote.getSeller().getId());
+        }
+
+        dto.setStatus(quote.getStatus());
+        dto.setQuoteDate(quote.getQuoteDate());
+        dto.setExpirationDate(quote.getExpirationDate());
+
+        dto.setSubtotal(quote.getSubtotal());
+        dto.setDiscount(quote.getDiscount());
+        dto.setTaxRate(quote.getTaxRate());
+        dto.setTaxAmount(quote.getTaxAmount());
+        dto.setTotal(quote.getTotal());
+
+        dto.setNotes(quote.getNotes());
+        dto.setActive(quote.getActive());
+
+        dto.setCreatedAt(quote.getCreatedAt());
+        dto.setUpdatedAt(quote.getUpdatedAt());
+
+        // Las líneas se recuperan en el detalle.
+        dto.setItems(null);
+
+        return dto;
+    }
+
 }

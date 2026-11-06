@@ -1,14 +1,17 @@
 package com.optiflow.crm.quote.specification;
+
 import com.optiflow.crm.quote.dto.QuoteSearchDto;
 import com.optiflow.crm.quote.model.Quote;
-
+import com.optiflow.crm.quote.model.QuoteStatus;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.Set;
 
 import static com.optiflow.crm.shared.specification.SpecificationUtils.*;
 
 /**
- * Filtros de búsqueda avanzada de presupuestos.
- * Combina las condiciones mediante AND.
+ * Búsqueda avanzada de presupuestos.
+ * Combina todos los filtros informados mediante AND.
  */
 public final class QuoteSpecification {
 
@@ -21,18 +24,40 @@ public final class QuoteSpecification {
 
                 // Número de presupuesto
                 containsIgnoreCase("quoteNumber", dto.getQuoteNumber()),
-                // Cliente asociado
+                // Cliente
                 relatedIdEquals("client", dto.getClientId()),
-                // Estado del presupuesto
+                // Vendedor por ID
+                relatedIdEquals("seller", dto.getSellerId()),
+                // Vendedor por nombre o apellido
+                relatedFullNameContains("seller",
+                        "firstName", "lastName", dto.getSellerName()),
+                // Estado comercial
                 equal("status", dto.getStatus()),
-                // Fechas del presupuesto
+                statusesIn(dto.getStatuses()),
+                greaterThanOrEqual("total", dto.getMinTotal()),
+                lessThanOrEqual("total", dto.getMaxTotal()),
+                // Fecha de presupuesto
                 greaterThanOrEqual("quoteDate", dto.getQuoteDateFrom()),
                 lessThanOrEqual("quoteDate", dto.getQuoteDateTo()),
-                // Fechas de caducidad
+                // Fecha de caducidad
                 greaterThanOrEqual("expirationDate", dto.getExpirationDateFrom()),
                 lessThanOrEqual("expirationDate", dto.getExpirationDateTo()),
                 // Baja lógica
                 equal("active", dto.getActive())
         );
     }
+
+
+    private static Specification<Quote> statusesIn(Set<QuoteStatus> statuses) {
+        return (root, query, cb) -> {
+
+            if (statuses == null || statuses.isEmpty()) {
+                return null;
+            }
+
+            return root.get("status").in(statuses);
+        };
+    }
+
 }
+

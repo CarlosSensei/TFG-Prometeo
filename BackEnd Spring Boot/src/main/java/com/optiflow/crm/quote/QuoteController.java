@@ -35,7 +35,7 @@ public class QuoteController {
 
         Page<QuoteDto> result = quoteService
                 .findAll(pageable)
-                .map(quoteMapper::toDto);
+                .map(quoteMapper::toSummaryDto);
 
         return ResponseEntity.ok(result);
     }
@@ -46,19 +46,22 @@ public class QuoteController {
 
         Page<QuoteDto> result = quoteService
                 .search(searchDto)
-                .map(quoteMapper::toDto);
+                .map(quoteMapper::toSummaryDto);
 
         return ResponseEntity.ok(result);
     }
 
     // Buscar presupuesto por id
     @GetMapping("/{id}")
-    public ResponseEntity<QuoteDto> findById(@PathVariable Long id) {
+    public ResponseEntity<QuoteDto> findById(
+            @PathVariable Long id
+    ) {
 
-        Quote quote = quoteService.findById(id);
+        QuoteDto detail = quoteService.findDetailById(id);
 
-        return ResponseEntity.ok(quoteMapper.toDto(quote));
+        return ResponseEntity.ok(detail);
     }
+
 
     // Crear presupuesto
     @PostMapping
@@ -97,7 +100,7 @@ public class QuoteController {
     @Transactional(readOnly = true)
     public ResponseEntity<Page<QuoteDto>> findByClient(@PathVariable Long clientId, Pageable pageable) {
 
-        Page<QuoteDto> result = quoteService.findByClientId(clientId, pageable).map(quoteMapper::toDto);
+        Page<QuoteDto> result = quoteService.findByClientId(clientId, pageable).map(quoteMapper::toSummaryDto);
 
         return ResponseEntity.ok(result);
     }

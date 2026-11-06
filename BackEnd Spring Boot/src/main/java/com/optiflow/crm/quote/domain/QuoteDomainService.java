@@ -14,27 +14,31 @@ import java.time.LocalDate;
 public class QuoteDomainService {
 
     // Calcular los totales del presupuesto
+
     public void calculateTotals(Quote quote) {
 
-        BigDecimal subtotal = quote.getItems()
-                        .stream()
-                        .map(QuoteItem::getSubtotal)
-                        .filter(value -> value != null)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal subtotal = BigDecimal.ZERO;
+        BigDecimal discount = BigDecimal.ZERO;
+        BigDecimal taxAmount = BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
 
-        BigDecimal taxAmount = quote.getItems()
-                        .stream()
-                        .map(QuoteItem::getTaxAmount)
-                        .filter(value -> value != null)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (QuoteItem item : quote.getItems()) {
 
-        BigDecimal total = quote.getItems()
-                        .stream()
-                        .map(QuoteItem::getTotal)
-                        .filter(value -> value != null)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+            subtotal = subtotal.add(item.getSubtotal() != null
+                    ? item.getSubtotal() : BigDecimal.ZERO);
+
+            discount = discount.add(item.getDiscount() != null
+                    ? item.getDiscount() : BigDecimal.ZERO);
+
+            taxAmount = taxAmount.add(item.getTaxAmount() != null
+                    ? item.getTaxAmount() : BigDecimal.ZERO);
+
+            total = total.add(item.getTotal() != null
+                    ? item.getTotal() : BigDecimal.ZERO);
+        }
 
         quote.setSubtotal(subtotal);
+        quote.setDiscount(discount);
         quote.setTaxAmount(taxAmount);
         quote.setTotal(total);
     }

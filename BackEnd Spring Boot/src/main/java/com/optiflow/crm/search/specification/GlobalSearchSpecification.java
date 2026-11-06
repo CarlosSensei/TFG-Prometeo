@@ -1,39 +1,61 @@
 package com.optiflow.crm.search.specification;
 
 import com.optiflow.crm.client.model.Client;
-import org.springframework.data.jpa.domain.Specification;
+import com.optiflow.crm.quote.model.Quote;
+import com.optiflow.crm.order.model.Order;
 
-import java.util.Locale;
+import org.springframework.data.jpa.domain.Specification;
+import static com.optiflow.crm.shared.specification.SpecificationUtils.*;
 
 public final class GlobalSearchSpecification {
 
     private GlobalSearchSpecification() {
     }
 
-    public static Specification<Client> clientsMatching(String query) {
+    public static Specification<Client> clientsMatching(String term) {
 
-        String normalized = query.trim()
-                .toLowerCase(Locale.ROOT)
-                .replace("\\", "\\\\")
-                .replace("%", "\\%")
-                .replace("_", "\\_");
+        return Specification.allOf(
+                equal("active", true),
+                Specification.anyOf(
+                        containsIgnoreCase("name", term),
+                        containsIgnoreCase("surname", term),
+                        containsIgnoreCase("lastSurname", term),
+                        containsIgnoreCase("dni", term),
+                        containsIgnoreCase("phoneNumber", term),
+                        containsIgnoreCase("email", term),
+                        containsIgnoreCase("city", term)
+                )
+        );
+    }
 
-        String pattern = "%" + normalized + "%";
+    public static Specification<Quote> quotesMatching(String term) {
 
-        return (root, criteriaQuery, cb) -> cb.and(
+        return Specification.allOf(
+                equal("active", true),
+                Specification.anyOf(
+                        containsIgnoreCase("quoteNumber", term),
+                        relatedFullNameContains(
+                                "seller",
+                                "firstName",
+                                "lastName",
+                                term
+                        )
+                )
+        );
+    }
 
-                // Solo clientes activos.
-                cb.isTrue(root.get("active")),
+    public static Specification<Order> ordersMatching(String term) {
 
-                // Coincidencia en cualquiera de los campos.
-                cb.or(
-                        cb.like(cb.lower(root.get("name")), pattern, '\\'),
-                        cb.like(cb.lower(root.get("surname")), pattern, '\\'),
-                        cb.like(cb.lower(root.get("lastSurname")), pattern, '\\'),
-                        cb.like(cb.lower(root.get("dni")), pattern, '\\'),
-                        cb.like(root.get("phoneNumber"), pattern, '\\'),
-                        cb.like(cb.lower(root.get("email")), pattern, '\\'),
-                        cb.like(cb.lower(root.get("city")), pattern, '\\')
+        return Specification.allOf(
+                equal("active", true),
+                Specification.anyOf(
+                        containsIgnoreCase("orderNumber", term),
+                        relatedFullNameContains(
+                                "seller",
+                                "firstName",
+                                "lastName",
+                                term
+                        )
                 )
         );
     }
