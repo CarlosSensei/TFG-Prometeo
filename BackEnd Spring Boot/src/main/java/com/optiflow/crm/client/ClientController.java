@@ -4,6 +4,7 @@ import com.optiflow.crm.client.dto.ClientDto;
 import com.optiflow.crm.client.dto.ClientSearchDto;
 import com.optiflow.crm.client.mapper.ClientMapper;
 import com.optiflow.crm.client.model.Client;
+import com.optiflow.crm.client.dto.ClientStatsDto;
 import com.optiflow.crm.client.model.ClientService;
 import com.optiflow.crm.client.dto.ClientTimelineEventDto;
 import java.util.List;
@@ -58,15 +59,15 @@ public class ClientController {
 
     // Crear cliente
     @PostMapping
-    public ResponseEntity<ClientDto> create(@Valid @RequestBody ClientDto clientDto) {
+    public ResponseEntity<ClientDto> create(
+            @Valid @RequestBody ClientDto clientDto
+    ) {
 
-        Client client = clientMapper.toEntity(clientDto);
+        Client savedClient = clientService.create(clientDto);
 
-        Client savedClient = clientService.save(client);
-
-        ClientDto response = clientMapper.toDto(savedClient);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(clientMapper.toDto(savedClient));
     }
 
     // Actualizar cliente
@@ -96,5 +97,12 @@ public class ClientController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(clientService.getTimeline(id));
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<ClientStatsDto> getStats(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(clientService.getStats(id));
     }
 }

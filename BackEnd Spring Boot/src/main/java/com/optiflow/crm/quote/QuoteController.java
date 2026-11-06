@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 // Controller de presupuestos
 @RestController
@@ -93,6 +94,7 @@ public class QuoteController {
 
     // Buscar presupuestos por cliente
     @GetMapping("/client/{clientId}")
+    @Transactional(readOnly = true)
     public ResponseEntity<Page<QuoteDto>> findByClient(@PathVariable Long clientId, Pageable pageable) {
 
         Page<QuoteDto> result = quoteService.findByClientId(clientId, pageable).map(quoteMapper::toDto);

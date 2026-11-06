@@ -87,6 +87,16 @@ public class FollowUpServiceImpl implements FollowUpService {
                         new FollowUpNotFoundException(id));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<FollowUp> findByClientId(
+            Long clientId,
+            Pageable pageable
+    ) {
+        return followUpRepository
+                .findByQuoteClientIdAndActiveTrue(clientId, pageable);
+    }
+
     // Metodo de creacion de seguimiento
     @Override
     @Transactional

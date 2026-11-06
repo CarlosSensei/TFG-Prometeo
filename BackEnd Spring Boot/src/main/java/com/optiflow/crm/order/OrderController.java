@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 // Controller de pedidos
 @RestController
@@ -59,6 +60,7 @@ public class OrderController {
 
     // Pedidos de un cliente
     @GetMapping("/client/{clientId}")
+    @Transactional(readOnly = true)
     public ResponseEntity<Page<OrderDto>> findByClient(@PathVariable Long clientId, Pageable pageable) {
 
         Page<OrderDto> result = orderService.findByClientId(clientId, pageable)

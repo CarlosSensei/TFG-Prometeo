@@ -62,6 +62,19 @@ public class FollowUpController {
         return ResponseEntity.ok(followUpMapper.toDto(followUp));
     }
 
+    // Buscar por cliente
+    @GetMapping("/clients/{clientId}/followups")
+    public ResponseEntity<Page<FollowUpDto>> findByClient(
+            @PathVariable Long clientId,
+            Pageable pageable
+    ) {
+        Page<FollowUpDto> result = followUpService
+                .findByClientId(clientId, pageable)
+                .map(followUpMapper::toDto);
+
+        return ResponseEntity.ok(result);
+    }
+
     // Seguimientos de un presupuesto
     @GetMapping("/quotes/{quoteId}/followups")
     public ResponseEntity<Page<FollowUpDto>> findByQuote(

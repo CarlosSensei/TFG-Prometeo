@@ -1,6 +1,8 @@
 package com.optiflow.crm.client.model;
 
+import com.optiflow.crm.client.dto.ClientDto;
 import com.optiflow.crm.client.dto.ClientSearchDto;
+import com.optiflow.crm.client.dto.ClientStatsDto;
 import com.optiflow.crm.client.dto.ClientTimelineEventDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +20,12 @@ public interface ClientService {
 
     List<ClientTimelineEventDto> getTimeline(Long clientId);
 
+    ClientStatsDto getStats(Long clientId);
+
     // Buscar por Id
     Client findById(Long id);
+
+    Client create(ClientDto dto);
 
     // Guardar un cliente
     Client save(Client client);

@@ -23,6 +23,8 @@ public interface FollowUpService {
     // Busqueda de seguimiento por id
     FollowUp findById(Long id);
 
+    Page<FollowUp> findByClientId(Long clientId, Pageable pageable);
+
     // Crear seguimiento
     FollowUp create(Long quoteId, CreateFollowUpDto createFollowUpDto);
 

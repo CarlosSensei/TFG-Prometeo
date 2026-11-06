@@ -1,119 +1,38 @@
 package com.optiflow.crm.quote.specification;
-
 import com.optiflow.crm.quote.dto.QuoteSearchDto;
 import com.optiflow.crm.quote.model.Quote;
-import com.optiflow.crm.quote.model.QuoteStatus;
+
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDate;
+import static com.optiflow.crm.shared.specification.SpecificationUtils.*;
 
-// Especificaciones personalizadas para busqueda avanzada de presupuestos
-public class QuoteSpecification {
+/**
+ * Filtros de búsqueda avanzada de presupuestos.
+ * Combina las condiciones mediante AND.
+ */
+public final class QuoteSpecification {
 
     private QuoteSpecification() {
     }
 
-    // Filtrar por:
-    public static Specification<Quote> filterBy(QuoteSearchDto searchDto) {
+    public static Specification<Quote> filterBy(QuoteSearchDto dto) {
 
         return Specification.allOf(
-                quoteNumberContains(searchDto.getQuoteNumber()),
-                clientIdEquals(searchDto.getClientId()),
-                statusEquals(searchDto.getStatus()),
-                quoteDateFrom(searchDto.getQuoteDateFrom()),
-                quoteDateTo(searchDto.getQuoteDateTo()),
-                expirationDateFrom(searchDto.getExpirationDateFrom()),
-                expirationDateTo(searchDto.getExpirationDateTo()),
-                activeEquals(searchDto.getActive())
+
+                // Número de presupuesto
+                containsIgnoreCase("quoteNumber", dto.getQuoteNumber()),
+                // Cliente asociado
+                relatedIdEquals("client", dto.getClientId()),
+                // Estado del presupuesto
+                equal("status", dto.getStatus()),
+                // Fechas del presupuesto
+                greaterThanOrEqual("quoteDate", dto.getQuoteDateFrom()),
+                lessThanOrEqual("quoteDate", dto.getQuoteDateTo()),
+                // Fechas de caducidad
+                greaterThanOrEqual("expirationDate", dto.getExpirationDateFrom()),
+                lessThanOrEqual("expirationDate", dto.getExpirationDateTo()),
+                // Baja lógica
+                equal("active", dto.getActive())
         );
-    }
-
-    // Buscar por numero de presupuesto
-    private static Specification<Quote> quoteNumberContains(String quoteNumber) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (quoteNumber == null || quoteNumber.isBlank()) { return null; }
-
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("quoteNumber")),
-                    "%" + quoteNumber.toLowerCase() + "%");
-        };
-    }
-
-    // buscar por cliente
-    private static Specification<Quote> clientIdEquals(Long clientId) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (clientId == null) { return null; }
-
-            return criteriaBuilder.equal(root.get("client").get("id"), clientId);
-        };
-    }
-
-    // Buscar por estado
-    private static Specification<Quote> statusEquals(QuoteStatus status) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (status == null) { return null; }
-
-            return criteriaBuilder.equal(root.get("status"), status);
-        };
-    }
-
-    // Buscar por fecha de creacion desde
-    private static Specification<Quote> quoteDateFrom(LocalDate quoteDateFrom) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (quoteDateFrom == null) { return null; }
-
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("quoteDate"), quoteDateFrom);
-        };
-    }
-
-    // Buscar por fecha de creacion hasta
-    private static Specification<Quote> quoteDateTo(LocalDate quoteDateTo) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (quoteDateTo == null) { return null; }
-
-            return criteriaBuilder.lessThanOrEqualTo(root.get("quoteDate"), quoteDateTo);
-        };
-    }
-
-    // Buscar por fecha de caducidad desde
-    private static Specification<Quote> expirationDateFrom(LocalDate expirationDateFrom) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (expirationDateFrom == null) { return null; }
-
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("expirationDate"), expirationDateFrom);
-        };
-    }
-
-    // Buscar por fecha de caducidad hasta
-    private static Specification<Quote> expirationDateTo(LocalDate expirationDateTo) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (expirationDateTo == null) { return null; }
-
-            return criteriaBuilder.lessThanOrEqualTo(root.get("expirationDate"), expirationDateTo);
-        };
-    }
-
-    // Buscar activos
-    private static Specification<Quote> activeEquals(Boolean active) {
-
-        return (root, query, criteriaBuilder) -> {
-
-            if (active == null) { return null; }
-
-            return criteriaBuilder.equal(root.get("active"), active);
-        };
     }
 }
