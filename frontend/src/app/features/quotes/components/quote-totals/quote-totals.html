@@ -1,0 +1,65 @@
+@if (estimated()) {
+  <div class="totals">
+    <div>
+      <span>Subtotal estimado</span>
+      <strong>
+        {{ totals().subtotal | currency: "EUR" : "symbol" : "1.2-2" }}
+      </strong>
+    </div>
+
+    <div>
+      <span>Descuentos aplicados</span>
+      <strong>
+        {{ totals().discount | currency: "EUR" : "symbol" : "1.2-2" }}
+      </strong>
+    </div>
+
+    <div>
+      <span>IVA estimado</span>
+      <strong>
+        {{ totals().tax | currency: "EUR" : "symbol" : "1.2-2" }}
+      </strong>
+    </div>
+
+    <div class="grand-total">
+      <strong>Total estimado</strong>
+      <strong>
+        {{ totals().total | currency: "EUR" : "symbol" : "1.2-2" }}
+      </strong>
+    </div>
+  </div>
+
+  <p class="total-note">
+    Los importes definitivos se calculan en Spring Boot al guardar el
+    presupuesto.
+  </p>
+} @else {
+  <div class="quote-totals">
+    <div>
+      <span>Subtotal</span>
+      <span>
+        {{ totals().subtotal | currency: "EUR" : "symbol" : "1.2-2" }}
+      </span>
+    </div>
+
+    <div>
+      <span>Descuento</span>
+      <span>
+        {{ totals().discount | currency: "EUR" : "symbol" : "1.2-2" }}
+      </span>
+    </div>
+
+    <div>
+      <span>IVA ({{ taxRate() }} %)</span>
+      <span> {{ totals().tax | currency: "EUR" : "symbol" : "1.2-2" }} </span>
+    </div>
+
+    <div class="quote-total">
+      <strong>Total</strong>
+
+      <strong>
+        {{ totals().total | currency: "EUR" : "symbol" : "1.2-2" }}
+      </strong>
+    </div>
+  </div>
+}

@@ -1,0 +1,43 @@
+<section class="detail-section">
+  <div class="section-heading">
+    <h4>Artículos</h4>
+
+    <span> {{ items()?.length ?? 0 }} líneas </span>
+  </div>
+
+  @if ((items()?.length ?? 0) > 0) {
+    <div class="items-list">
+      @for (item of items(); track item.id ?? $index) {
+        <article class="quote-item">
+          <div class="item-heading">
+            <strong>
+              {{ item.description || "Artículo sin descripción" }}
+            </strong>
+
+            <span>
+              {{ item.total | currency: "EUR" : "symbol" : "1.2-2" }}
+            </span>
+          </div>
+
+          <div class="item-metadata">
+            <span> Cantidad: {{ item.quantity }} </span>
+
+            <span>
+              P. unitario:
+              {{ item.unitPrice | currency: "EUR" : "symbol" : "1.2-2" }}
+            </span>
+
+            <span>
+              Descuento:
+              {{ item.discount | currency: "EUR" : "symbol" : "1.2-2" }}
+            </span>
+
+            <span> IVA: {{ item.taxRate }} % </span>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="empty-section">El presupuesto no contiene artículos.</p>
+  }
+</section>

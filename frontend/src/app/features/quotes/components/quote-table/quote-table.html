@@ -1,0 +1,34 @@
+<app-card [padded]="false">
+  <div class="table-heading">
+    <div>
+      <h2>Listado de presupuestos</h2>
+
+      <p>Utiliza las cabeceras para filtrar los registros.</p>
+    </div>
+
+    <app-button variant="secondary" size="sm" (pressed)="filtersCleared.emit()">
+      Limpiar filtros
+    </app-button>
+  </div>
+
+  <app-data-table
+    [columns]="columns"
+    [rows]="tableRows()"
+    [loading]="loading()"
+    [filters]="filters()"
+    [sort]="sort()"
+    emptyMessage="No hay presupuestos disponibles"
+    (filterChange)="filterChanged.emit($event)"
+    (sortChange)="sortChanged.emit($event)"
+    (rowAction)="rowAction.emit($event)"
+  />
+
+  <div class="pagination-wrapper">
+    <app-pagination
+      [page]="page()"
+      [size]="pageSize()"
+      [totalElements]="totalElements()"
+      (pageChange)="pageChanged.emit($event)"
+    />
+  </div>
+</app-card>

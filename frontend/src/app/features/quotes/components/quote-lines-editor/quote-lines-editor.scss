@@ -1,0 +1,118 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.quote-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.quote-line {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.line-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+
+  small {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--color-text-secondary);
+  }
+}
+
+.line-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: end;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.line-amount {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: right;
+
+  span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+}
+
+.remove-button {
+  padding: var(--space-2);
+  border: none;
+  background: transparent;
+  color: var(--color-danger);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.form-field,
+.lookup-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+
+  label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: var(--space-3);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    font: inherit;
+    font-size: var(--font-size-sm);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}
+
+.empty-lines {
+  margin-top: var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+@media (max-width: 640px) {
+  .line-fields {
+    grid-template-columns: 1fr;
+  }
+  .line-amount {
+    text-align: left;
+  }
+}

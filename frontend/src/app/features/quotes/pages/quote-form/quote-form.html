@@ -1,150 +1,44 @@
 <section class="quote-form-page">
-
   <header class="page-header">
-    <app-button
-      variant="secondary"
-      size="sm"
-      (pressed)="goBack()"
-    >
+    <app-button variant="secondary" size="sm" (pressed)="goBack()">
       ← Volver a presupuestos
     </app-button>
 
     <h1>{{ title() }}</h1>
 
-    <p>
-      Gestiona los datos comerciales y las líneas
-      del presupuesto.
-    </p>
+    <p>Gestiona los datos comerciales y las líneas del presupuesto.</p>
   </header>
 
   @if (error()) {
-    <div class="error-alert" role="alert">
-      {{ error() }}
-    </div>
+    <div class="error-alert" role="alert">{{ error() }}</div>
   }
-
   @if (loading()) {
-
     <p role="status">Cargando presupuesto...</p>
-
   } @else {
-
-    <form
-      [formGroup]="form"
-      (ngSubmit)="save()"
-      novalidate
-    >
-
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
       <!-- CLIENTE Y FECHAS -->
 
       <section class="form-section">
-
         <h2>Información del presupuesto</h2>
 
         <div class="form-grid">
+          <app-quote-client-selector
+            class="field-full"
+            [selectedClient]="selectedClient()"
+            [invalid]="
+              form.controls.clientId.touched && form.controls.clientId.invalid
+            "
+            (clientChanged)="selectClient($event)"
+          />
 
-          <div class="field-full lookup-field">
-            <label for="client-query">
-              Cliente *
-            </label>
+          <div class="form-field">
+            <label for="quote-date"> Fecha del presupuesto * </label>
 
-            <div class="lookup-controls">
-              <input
-                id="client-query"
-                type="search"
-                autocomplete="off"
-                placeholder="Nombre o apellidos del cliente..."
-                [value]="clientQuery()"
-                (input)="updateClientQuery($any($event.target).value)"
-              />
-
-              @if (searchingClients()) {
-                <small role="status">
-                  Buscando clientes...
-                </small>
-              }
-
-              @if (selectedClient(); as client) {
-                <p class="selected-record">
-                  Cliente seleccionado:
-                  <strong>{{ clientName(client) }}</strong>
-                </p>
-              }
-
-              @if (clients().length > 0) {
-
-                <div class="lookup-results">
-
-                  @for (client of clients(); track client.id) {
-
-                    <button
-                      type="button"
-                      class="lookup-result"
-                      (click)="selectClient(client)"
-                    >
-                      <strong>{{ clientName(client) }}</strong>
-                      <small>{{ client.dni }}</small>
-                    </button>
-
-                  }
-
-                </div>
-              }
-
-            </div>
-
-            @if (searchingClients()) {
-              <small role="status">Buscando clientes...</small>
-            }
-
-            @if (selectedClient(); as client) {
-              <p class="selected-record">
-                Cliente seleccionado:
-                <strong>{{ clientName(client) }}</strong>
-              </p>
-            }
-
-            @if (clients().length > 0) {
-              <div class="lookup-results">
-                @for (client of clients(); track client.id) {
-                  <button
-                    type="button"
-                    class="lookup-result"
-                    (click)="selectClient(client)"
-                  >
-                    <strong>{{ clientName(client) }}</strong>
-                    <small>{{ client.dni }}</small>
-                  </button>
-                }
-              </div>
-            }
-
-            @if (
-              form.controls.clientId.touched &&
-              form.controls.clientId.invalid
-            ) {
-              <small class="field-error">
-                Selecciona un cliente válido.
-              </small>
-            }
+            <input id="quote-date" type="date" formControlName="quoteDate" />
           </div>
 
           <div class="form-field">
-            <label for="quote-date">
-              Fecha del presupuesto *
-            </label>
-
-            <input
-              id="quote-date"
-              type="date"
-              formControlName="quoteDate"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="expiration-date">
-              Fecha de caducidad *
-            </label>
+            <label for="expiration-date"> Fecha de caducidad * </label>
 
             <input
               id="expiration-date"
@@ -152,231 +46,42 @@
               formControlName="expirationDate"
             />
           </div>
-
         </div>
       </section>
 
       <!-- ARTÍCULOS -->
 
       <section class="form-section">
-
         <h2>Artículos del presupuesto</h2>
 
-        <div class="lookup-field">
-          <label for="inventory-query">
-            Añadir artículo
-          </label>
-
-          <div class="lookup-controls">
-            <input
-              id="inventory-query"
-              type="search"
-              placeholder="Buscar artículo por nombre"
-              [value]="inventoryQuery()"
-              (input)="updateInventoryQuery($any($event.target).value)"
-            />
-
-            <app-button
-              variant="secondary"
-              type="button"
-              [disabled]="inventoryQuery().trim().length < 2 || searchingInventory()"
-              (pressed)="searchInventory()"
-            >
-              Buscar
-            </app-button>
-          </div>
-
-          @if (searchingInventory()) {
-            <small role="status">Buscando artículos...</small>
-          }
-
-          @if (inventoryResults().length > 0) {
-
-            <div class="lookup-results">
-
-              @for (item of inventoryResults(); track item.id) {
-
-                <button
-                  type="button"
-                  class="lookup-result"
-                  (click)="addItem(item)"
-                >
-                  <span>
-                    <strong>{{ item.name }}</strong>
-                    <small>
-                      {{ item.sku }}
-                      · Stock: {{ item.stock }}
-                    </small>
-                  </span>
-
-                  <strong>
-                    {{ item.salePrice | currency:'EUR':'symbol':'1.2-2' }}
-                  </strong>
-                </button>
-
-              }
-
-            </div>
-
-          }
-        </div>
-
-        @if (lines().length === 0) {
-
-          <p class="empty-lines">
-            Todavía no has añadido ningún artículo.
-          </p>
-
-        } @else {
-
-          <div class="quote-lines">
-
-            @for (line of lines(); track line.key) {
-
-              <article class="quote-line">
-
-                <div class="line-heading">
-
-                  <div>
-                    <strong>{{ line.inventoryItem.name }}</strong>
-
-                    <small>
-                      {{ line.inventoryItem.sku }}
-                      ·
-                      {{ line.inventoryItem.salePrice | currency:'EUR':'symbol':'1.2-2' }}
-                      / unidad
-                    </small>
-                  </div>
-
-                  <button
-                    type="button"
-                    class="remove-button"
-                    [attr.aria-label]="'Eliminar ' + line.inventoryItem.name"
-                    (click)="removeItem(line.key)"
-                  >
-                    Eliminar
-                  </button>
-
-                </div>
-
-                <div class="line-fields">
-
-                  <div class="form-field">
-                    <label [for]="'qty-' + line.key">
-                      Cantidad
-                    </label>
-
-                    <input
-                      [id]="'qty-' + line.key"
-                      type="number"
-                      min="1"
-                      step="1"
-                      [value]="line.quantity"
-                      (input)="updateQuantity(line.key, $any($event.target).value)"
-                    />
-                  </div>
-
-                  <div class="form-field">
-                    <label [for]="'discount-' + line.key">
-                      Descuento (€)
-                    </label>
-
-                    <input
-                      [id]="'discount-' + line.key"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      [value]="line.discount"
-                      (input)="updateDiscount(line.key, $any($event.target).value)"
-                    />
-                  </div>
-
-                  <div class="line-amount">
-                    <span>Total estimado</span>
-                    <strong>
-                      {{ calculateLine(line).total | currency:'EUR':'symbol':'1.2-2' }}
-                    </strong>
-                  </div>
-
-                </div>
-
-                @if (
-                  line.quantity < 1 ||
-                  line.quantity % 1 !== 0 ||
-                  line.discount < 0 ||
-                  line.discount >
-                    line.inventoryItem.salePrice * line.quantity ||
-                  !line.inventoryItem.active
-                ) {
-                  <p class="field-error">
-                    Revisa la cantidad, el descuento o la
-                    disponibilidad del artículo.
-                  </p>
-                }
-
-              </article>
-
-            }
-
-          </div>
-
-        }
+        <app-quote-inventory-search
+          (itemSelected)="addItem($event)"
+          (searchFailed)="error.set($event)"
+          (searchStarted)="error.set(null)"
+        />
+        <app-quote-lines-editor
+          [lines]="lines()"
+          (removed)="removeItem($event)"
+          (quantityChanged)="updateQuantity($event.key, $event.value)"
+          (discountChanged)="updateDiscount($event.key, $event.value)"
+        />
       </section>
 
       <!-- RESUMEN ECONÓMICO -->
 
       <section class="form-section">
-
         <h2>Resumen económico</h2>
 
-        <div class="totals">
-
-          <div>
-            <span>Subtotal estimado</span>
-            <strong>
-              {{ totals().subtotal | currency:'EUR':'symbol':'1.2-2' }}
-            </strong>
-          </div>
-
-          <div>
-            <span>Descuentos aplicados</span>
-            <strong>
-              {{ totals().discount | currency:'EUR':'symbol':'1.2-2' }}
-            </strong>
-          </div>
-
-          <div>
-            <span>IVA estimado</span>
-            <strong>
-              {{ totals().tax | currency:'EUR':'symbol':'1.2-2' }}
-            </strong>
-          </div>
-
-          <div class="grand-total">
-            <strong>Total estimado</strong>
-            <strong>
-              {{ totals().total | currency:'EUR':'symbol':'1.2-2' }}
-            </strong>
-          </div>
-
-        </div>
-
-        <p class="total-note">
-          Los importes definitivos se calculan
-          en Spring Boot al guardar el presupuesto.
-        </p>
+        <app-quote-totals [totals]="totals()" [estimated]="true" />
       </section>
 
       <!-- OBSERVACIONES -->
 
       <section class="form-section">
-
         <h2>Observaciones</h2>
 
         <div class="form-field">
-          <label for="quote-notes">
-            Notas internas
-          </label>
+          <label for="quote-notes"> Notas internas </label>
 
           <textarea
             id="quote-notes"
@@ -386,18 +91,12 @@
             placeholder="Observaciones comerciales..."
           ></textarea>
         </div>
-
       </section>
 
       <!-- ACCIONES -->
 
       <footer class="form-actions">
-
-        <app-button
-          variant="secondary"
-          type="button"
-          (pressed)="goBack()"
-        >
+        <app-button variant="secondary" type="button" (pressed)="goBack()">
           Cancelar
         </app-button>
 
@@ -407,12 +106,9 @@
           [disabled]="form.invalid || !validLines() || saving()"
           [loading]="saving()"
         >
-          {{ isEditMode() ? 'Guardar cambios' : 'Crear presupuesto' }}
+          {{ isEditMode() ? "Guardar cambios" : "Crear presupuesto" }}
         </app-button>
-
       </footer>
-
     </form>
   }
-
 </section>

@@ -1,0 +1,92 @@
+@if (lines().length === 0) {
+  <p class="empty-lines">Todavía no has añadido ningún artículo.</p>
+} @else {
+  <div class="quote-lines">
+    @for (line of lines(); track line.key) {
+      <article class="quote-line">
+        <div class="line-heading">
+          <div>
+            <strong>{{ line.inventoryItem.name }}</strong>
+
+            <small>
+              {{ line.inventoryItem.sku }} ·
+              {{
+                line.inventoryItem.salePrice
+                  | currency: "EUR" : "symbol" : "1.2-2"
+              }}
+              / unidad
+            </small>
+          </div>
+
+          <button
+            type="button"
+            class="remove-button"
+            [attr.aria-label]="'Eliminar ' + line.inventoryItem.name"
+            (click)="removed.emit(line.key)"
+          >
+            Eliminar
+          </button>
+        </div>
+
+        <div class="line-fields">
+          <div class="form-field">
+            <label [for]="'qty-' + line.key"> Cantidad </label>
+
+            <input
+              [id]="'qty-' + line.key"
+              type="number"
+              min="1"
+              step="1"
+              [value]="line.quantity"
+              (input)="
+                quantityChanged.emit({
+                  key: line.key,
+                  value: $any($event.target).value,
+                })
+              "
+            />
+          </div>
+
+          <div class="form-field">
+            <label [for]="'discount-' + line.key"> Descuento (€) </label>
+
+            <input
+              [id]="'discount-' + line.key"
+              type="number"
+              min="0"
+              step="0.01"
+              [value]="line.discount"
+              (input)="
+                discountChanged.emit({
+                  key: line.key,
+                  value: $any($event.target).value,
+                })
+              "
+            />
+          </div>
+
+          <div class="line-amount">
+            <span>Total estimado</span>
+            <strong>
+              {{
+                calculateLine(line).total | currency: "EUR" : "symbol" : "1.2-2"
+              }}
+            </strong>
+          </div>
+        </div>
+
+        @if (
+          line.quantity < 1 ||
+          line.quantity % 1 !== 0 ||
+          line.discount < 0 ||
+          line.discount > line.inventoryItem.salePrice * line.quantity ||
+          !line.inventoryItem.active
+        ) {
+          <p class="field-error">
+            Revisa la cantidad, el descuento o la disponibilidad del artículo.
+          </p>
+        }
+      </article>
+    }
+  </div>
+}

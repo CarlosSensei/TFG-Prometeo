@@ -1,0 +1,41 @@
+<div class="lookup-field">
+  <label for="client-query"> Cliente * </label>
+
+  <div class="lookup-controls">
+    <input
+      id="client-query"
+      type="search"
+      autocomplete="off"
+      placeholder="Nombre o apellidos del cliente..."
+      [value]="clientQuery()"
+      (input)="updateClientQuery($any($event.target).value)"
+    />
+  </div>
+
+  @if (searchingClients()) {
+    <small role="status"> Buscando clientes... </small>
+  }
+  @if (selectedClient(); as client) {
+    <p class="selected-record">
+      Cliente seleccionado:
+      <strong>{{ clientName(client) }}</strong>
+    </p>
+  }
+  @if (clients().length > 0) {
+    <div class="lookup-results">
+      @for (client of clients(); track client.id) {
+        <button
+          type="button"
+          class="lookup-result"
+          (click)="selectClient(client)"
+        >
+          <strong>{{ clientName(client) }}</strong>
+          <small>{{ client.dni }}</small>
+        </button>
+      }
+    </div>
+  }
+  @if (invalid()) {
+    <small class="field-error"> Selecciona un cliente válido. </small>
+  }
+</div>

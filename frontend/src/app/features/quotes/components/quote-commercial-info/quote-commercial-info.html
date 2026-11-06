@@ -1,0 +1,33 @@
+<section class="detail-section">
+  <h4>Información comercial</h4>
+
+  <dl class="detail-grid">
+    <div>
+      <dt>Cliente</dt>
+      <dd>{{ clientName() }}</dd>
+    </div>
+
+    <div>
+      <dt>Vendedor</dt>
+      <dd>{{ sellerName() }}</dd>
+    </div>
+
+    <div>
+      <dt>Fecha del presupuesto</dt>
+      <dd>{{ formatDate(quote().quoteDate) }}</dd>
+    </div>
+
+    <div>
+      <dt>Fecha de caducidad</dt>
+      <dd>{{ formatDate(quote().expirationDate) }}</dd>
+    </div>
+  </dl>
+
+  <app-button
+    variant="secondary"
+    size="sm"
+    (pressed)="clientRequested.emit(quote().clientId)"
+  >
+    Ver ficha del cliente
+  </app-button>
+</section>

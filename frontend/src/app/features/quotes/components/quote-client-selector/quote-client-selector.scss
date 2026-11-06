@@ -1,0 +1,128 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.form-field,
+.lookup-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+
+  label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: var(--space-3);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    font: inherit;
+    font-size: var(--font-size-sm);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+
+.lookup-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.lookup-results {
+  display: flex;
+  flex-direction: column;
+  max-height: 250px;
+  overflow-y: auto;
+
+  margin-top: var(--space-2);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.lookup-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+
+  width: 100%;
+  padding: var(--space-3);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+
+  text-align: left;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover {
+    background: var(--color-surface-secondary, var(--color-surface));
+  }
+
+  span {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  small {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--color-text-secondary);
+  }
+}
+
+.selected-record {
+  margin: 0;
+  padding: var(--space-3);
+
+  background: var(--color-surface-secondary, var(--color-surface));
+
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 640px) {
+  .lookup-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
