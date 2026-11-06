@@ -1,0 +1,120 @@
+<app-drawer
+  [open]="clientId() !== null"
+  title="Ficha de cliente"
+  (closed)="close()"
+>
+  @if (loading()) {
+  <p role="status">Cargando ficha del cliente...</p>
+  } @if (error()) {
+  <div class="detail-error" role="alert">{{ error() }}</div>
+  } @if (client(); as currentClient) {
+
+  <div class="client-detail">
+    <!-- Identificación -->
+    <section class="client-identity">
+      <div class="client-avatar" aria-hidden="true">
+        {{ currentClient.name.charAt(0) }}{{ currentClient.surname.charAt(0) }}
+      </div>
+
+      <div class="client-identity-content">
+        <h3>{{ fullName(currentClient) }}</h3>
+        <p>{{ currentClient.dni }}</p>
+
+        <app-badge [variant]="currentClient.active ? 'success' : 'neutral'">
+          {{ currentClient.active ? 'Activo' : 'Inactivo' }}
+        </app-badge>
+      </div>
+    </section>
+
+    <!-- Acciones principales -->
+    <div class="detail-actions">
+
+      <app-button
+        variant="primary"
+        [disabled]="!currentClient.active"
+        (pressed)="createQuote()"
+      >
+        + Nuevo presupuesto
+      </app-button>
+
+      <app-button
+        variant="secondary"
+        [disabled]="!currentClient.active"
+        (pressed)="createOrder()"
+      >
+        + Nuevo pedido
+      </app-button>
+
+      <app-button
+        variant="secondary"
+        (pressed)="editClient()"
+      >
+        Editar cliente
+      </app-button>
+
+    </div>
+
+    <!-- Navegación -->
+    <nav class="detail-tabs" aria-label="Secciones del cliente">
+      <button
+        type="button"
+        [class.active]="activeTab() === 'summary'"
+        [attr.aria-current]="activeTab() === 'summary' ? 'page' : null"
+        (click)="selectTab('summary')"
+      >
+        Resumen
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab() === 'timeline'"
+        [attr.aria-current]="activeTab() === 'timeline' ? 'page' : null"
+        (click)="selectTab('timeline')"
+      >
+        Timeline
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab() === 'quotes'"
+        [attr.aria-current]="activeTab() === 'quotes' ? 'page' : null"
+        (click)="selectTab('quotes')"
+      >
+        Presupuestos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab() === 'orders'"
+        [attr.aria-current]="activeTab() === 'orders' ? 'page' : null"
+        (click)="selectTab('orders')"
+      >
+        Pedidos
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab() === 'followups'"
+        [attr.aria-current]="activeTab() === 'followups' ? 'page' : null"
+        (click)="selectTab('followups')"
+      >
+        Seguimientos
+      </button>
+    </nav>
+
+    <!-- Contenido -->
+    @switch (activeTab()) { 
+      @case ('summary') {
+    <app-client-summary [client]="currentClient" />
+    } @case ('timeline') {
+    <app-client-timeline [clientId]="currentClient.id" />
+    } @case ('quotes') {
+    <app-client-quotes [clientId]="currentClient.id" />
+    } @case ('orders') {
+    <app-client-orders [clientId]="currentClient.id" />
+    } @case ('followups') {
+    <app-client-followups [clientId]="currentClient.id" />
+    } }
+  </div>
+  }
+</app-drawer>

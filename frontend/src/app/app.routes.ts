@@ -48,6 +48,27 @@ export const routes: Routes = [
             .then(m => m.ClientForm)
       },
       {
+        path: 'quotes',
+        title: 'Presupuestos | OptiFlow',
+        loadComponent: () =>
+          import('./features/quotes/pages/quote-list/quote-list')
+            .then(m => m.QuoteList)
+      },
+      {
+        path: 'quotes/new',
+        title: 'Nuevo presupuesto | OptiFlow',
+        loadComponent: () =>
+          import('./features/quotes/pages/quote-form/quote-form')
+            .then(m => m.QuoteForm)
+      },
+      {
+        path: 'quotes/:id/edit',
+        title: 'Editar presupuesto | OptiFlow',
+        loadComponent: () =>
+          import('./features/quotes/pages/quote-form/quote-form')
+            .then(m => m.QuoteForm)
+      },
+      {
         path: 'ui-playground',
         title: 'UI Playground | OptiFlow',
         loadComponent: () =>

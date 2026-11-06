@@ -1,3 +1,12 @@
+:root {
+  --glass-background: rgb(255 255 255 / 68%);
+  --glass-border: rgb(255 255 255 / 55%);
+}
+
+[data-theme='dark'] {
+  --glass-background: rgb(22 28 40 / 72%);
+  --glass-border: rgb(255 255 255 / 12%);
+}
 
 :root,
 [data-theme="light"] {

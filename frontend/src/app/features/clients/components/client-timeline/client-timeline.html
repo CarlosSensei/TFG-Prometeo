@@ -1,0 +1,60 @@
+<section class="detail-section">
+  <h4>Historial de actividad</h4>
+
+  @if (timelineLoading()) {
+  <p role="status">Cargando actividad comercial...</p>
+
+  } @else if (timelineError()) {
+  <p class="detail-error" role="alert">{{ timelineError() }}</p>
+
+  } @else if (timelineLoaded()) { @if (timeline().length === 0) {
+
+  <p class="empty-section">
+    Este cliente todavía no tiene actividad comercial.
+  </p>
+
+  } @else {
+
+  <ol class="timeline-list">
+    @for ( event of timeline().slice(0, visibleTimelineCount()); track event.id
+    ) {
+
+    <li class="timeline-event">
+      <div class="timeline-marker">
+        @switch (event.type) { @case ('QUOTE') { <span>P</span> } @case
+        ('ORDER') { <span>C</span> } @case ('FOLLOW_UP') { <span>S</span> } }
+      </div>
+
+      <div class="timeline-body">
+        <div class="timeline-heading">
+          <strong>{{ event.title }}</strong>
+          <time [attr.datetime]="event.date">
+            {{ event.date | date:'dd/MM/yyyy HH:mm' }}
+          </time>
+        </div>
+
+        @if (event.description) {
+        <p>{{ event.description }}</p>
+        }
+
+        <div class="timeline-metadata">
+          @if (event.status) {
+          <span> {{ formatStatus(event.status) }} </span>
+          } @if (event.amount !== null) {
+          <strong>
+            {{ event.amount | currency:'EUR':'symbol':'1.2-2':'es' }}
+          </strong>
+          }
+        </div>
+      </div>
+    </li>
+
+    }
+  </ol>
+
+  @if (visibleTimelineCount() < timeline().length) {
+  <app-button variant="secondary" (pressed)="showMoreTimeline()">
+    Mostrar más actividad
+  </app-button>
+  } } }
+</section>

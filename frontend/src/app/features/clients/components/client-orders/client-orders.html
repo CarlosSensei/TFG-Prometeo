@@ -1,0 +1,28 @@
+<section class="detail-section">
+  <div class="section-heading">
+    <h4>Pedidos del cliente</h4>
+    <span>{{ ordersTotal() }} pedidos</span>
+  </div>
+
+  @if (documentsError()) {
+
+  <p class="detail-error" role="alert">{{ documentsError() }}</p>
+
+  } @else {
+
+  <app-data-table
+    [columns]="orderColumns"
+    [rows]="orderRows"
+    [loading]="documentsLoading()"
+    emptyMessage="Este cliente no tiene pedidos"
+  />
+
+  @if (ordersTotal() > documentPageSize) {
+  <app-pagination
+    [page]="orderPage()"
+    [size]="documentPageSize"
+    [totalElements]="ordersTotal()"
+    (pageChange)="changeOrderPage($event)"
+  />
+  } }
+</section>

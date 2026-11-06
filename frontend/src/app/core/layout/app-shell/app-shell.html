@@ -29,13 +29,29 @@
 
       <span class="nav-section">GESTIÓN COMERCIAL</span>
 
-      <a routerLink="/clients" routerLinkActive="active"
-        (click)="closeSidebar()"><span>♙</span>Clientes</a>
-      <span class="nav-placeholder">▤ &nbsp; Presupuestos</span>
+      
+      <a
+        routerLink="/clients"
+        routerLinkActive="active"
+        (click)="navigateToList('clients'); $event.preventDefault()"
+      >
+        <span>♙</span>
+        Clientes
+      </a>
+
+      <a
+        routerLink="/quotes"
+        routerLinkActive="active"
+        (click)="navigateToList('quotes'); $event.preventDefault()"
+      >
+        <span>▤</span>
+        Presupuestos
+      </a>
+
       <span class="nav-placeholder">▣ &nbsp; Pedidos</span>
 
       <span class="nav-section">OPERACIONES</span>
-
+      
       <span class="nav-placeholder">◷ &nbsp; Seguimientos</span>
       <span class="nav-placeholder">◇ &nbsp; Inventario</span>
 
@@ -48,7 +64,7 @@
       </div>
 
       <div class="user-info">
-        <strong>{{ auth.fullName() }}</strong>
+        <strong>{{ auth.user()?.firstName }}</strong>
         <small>{{ auth.user()?.role }}</small>
       </div>
 
@@ -68,6 +84,7 @@
   <div class="main-wrapper">
 
     <header class="topbar">
+
       <div class="topbar-left">
         <button
           type="button"
@@ -76,13 +93,21 @@
           (click)="toggleSidebar()">
           ☰
         </button>
-        <span class="workspace-name">Workspace / OptiFlow</span>
+
+        <span class="workspace-name">
+          Workspace / OptiFlow
+        </span>
       </div>
+
+      <app-global-search />
 
       <div class="topbar-right">
         <span class="environment-label">Desarrollo</span>
-        <span class="topbar-avatar">{{ auth.initials() }}</span>
+        <span class="topbar-avatar">
+          {{ auth.initials() }}
+        </span>
       </div>
+
     </header>
 
     <main class="page-content">

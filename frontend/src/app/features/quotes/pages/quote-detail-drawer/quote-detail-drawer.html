@@ -1,0 +1,241 @@
+
+<app-drawer
+  [open]="quoteId() !== null"
+  title="Detalle del presupuesto"
+  (closed)="close()"
+>
+
+  @if (loading()) {
+
+    <p class="detail-message" role="status">
+      Cargando presupuesto...
+    </p>
+
+  } @else if (error()) {
+
+    <div class="detail-error" role="alert">
+      <p>{{ error() }}</p>
+
+      <app-button
+        variant="secondary"
+        (pressed)="close()"
+      >
+        Cerrar
+      </app-button>
+    </div>
+
+  } @else if (quote(); as currentQuote) {
+
+    <div class="quote-detail">
+
+      <!-- IDENTIFICACIÓN -->
+
+      <header class="quote-identity">
+
+        <div>
+          <p class="eyebrow">PRESUPUESTO</p>
+
+          <h3>{{ currentQuote.quoteNumber }}</h3>
+
+          <p class="quote-date">
+            Creado el
+            {{ formatDate(currentQuote.quoteDate) }}
+          </p>
+        </div>
+
+        <app-badge
+          [variant]="statusVariant(currentQuote.status)"
+        >
+          {{ formatStatus(currentQuote.status) }}
+        </app-badge>
+
+      </header>
+
+      @if (currentQuote.status === 'DRAFT' && currentQuote.active) {
+        
+        <app-button
+          variant="secondary"
+          (pressed)="editQuote()"
+        >
+          Editar presupuesto
+        </app-button>
+      }
+
+      <!-- INFORMACIÓN COMERCIAL -->
+
+      <section class="detail-section">
+
+        <h4>Información comercial</h4>
+
+        <dl class="detail-grid">
+
+          <div>
+            <dt>Cliente</dt>
+            <dd>{{ clientName() }}</dd>
+          </div>
+
+          <div>
+            <dt>Vendedor</dt>
+            <dd>{{ sellerName() }}</dd>
+          </div>
+
+          <div>
+            <dt>Fecha del presupuesto</dt>
+            <dd>
+              {{ formatDate(currentQuote.quoteDate) }}
+            </dd>
+          </div>
+
+          <div>
+            <dt>Fecha de caducidad</dt>
+            <dd>
+              {{ formatDate(currentQuote.expirationDate) }}
+            </dd>
+          </div>
+
+        </dl>
+
+        <app-button
+          variant="secondary"
+          size="sm"
+          (pressed)="openClient()"
+        >
+          Ver ficha del cliente
+        </app-button>
+
+      </section>
+
+      <!-- ARTÍCULOS -->
+
+      <section class="detail-section">
+
+        <div class="section-heading">
+          <h4>Artículos</h4>
+
+          <span>
+            {{ currentQuote.items?.length ?? 0 }} líneas
+          </span>
+        </div>
+
+        @if (
+          currentQuote.items &&
+          currentQuote.items.length > 0
+        ) {
+
+          <div class="items-list">
+
+            @for (
+              item of currentQuote.items;
+              track item.id ?? $index
+            ) {
+
+              <article class="quote-item">
+
+                <div class="item-heading">
+
+                  <strong>
+                    {{ item.description || 'Artículo sin descripción' }}
+                  </strong>
+
+                  <span>
+                    {{ item.total | currency:'EUR':'symbol':'1.2-2' }}
+                  </span>
+
+                </div>
+
+                <div class="item-metadata">
+
+                  <span>
+                    Cantidad: {{ item.quantity }}
+                  </span>
+
+                  <span>
+                    P. unitario:
+                    {{ item.unitPrice | currency:'EUR':'symbol':'1.2-2' }}
+                  </span>
+
+                  <span>
+                    Descuento:
+                    {{ item.discount | currency:'EUR':'symbol':'1.2-2' }}
+                  </span>
+
+                  <span>
+                    IVA: {{ item.taxRate }} %
+                  </span>
+
+                </div>
+
+              </article>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <p class="empty-section">
+            El presupuesto no contiene artículos.
+          </p>
+
+        }
+
+      </section>
+
+      <!-- RESUMEN ECONÓMICO -->
+
+      <section class="detail-section">
+
+        <h4>Resumen económico</h4>
+
+        <div class="quote-totals">
+
+          <div>
+            <span>Subtotal</span>
+            <span>
+              {{ currentQuote.subtotal | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+          </div>
+
+          <div>
+            <span>Descuento</span>
+            <span>
+              {{ currentQuote.discount | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+          </div>
+
+          <div>
+            <span>IVA ({{ currentQuote.taxRate }} %)</span>
+            <span>
+              {{ currentQuote.taxAmount | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+          </div>
+
+          <div class="quote-total">
+            <strong>Total</strong>
+
+            <strong>
+              {{ currentQuote.total | currency:'EUR':'symbol':'1.2-2' }}
+            </strong>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- OBSERVACIONES -->
+
+      <section class="detail-section">
+
+        <h4>Observaciones</h4>
+
+        <p class="quote-notes">
+          {{ currentQuote.notes || 'Sin observaciones.' }}
+        </p>
+
+      </section>
+
+    </div>
+
+  }
+
+</app-drawer>

@@ -1,0 +1,238 @@
+
+:host {
+  display: contents;
+}
+
+.quote-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+/* IDENTIFICACIÓN */
+
+.quote-identity {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+
+  h3 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+}
+
+.quote-date {
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* SECCIONES */
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+
+  h4 {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+
+  div {
+    min-width: 0;
+  }
+
+  dt {
+    margin-bottom: var(--space-1);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    font-weight: var(--font-weight-semibold);
+    overflow-wrap: anywhere;
+  }
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+
+  span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* LÍNEAS DEL PRESUPUESTO */
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.quote-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  padding: var(--space-4);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.item-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+
+  strong {
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+  }
+
+  span {
+    white-space: nowrap;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-sm);
+  }
+}
+
+.item-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+/* TOTALES */
+
+.quote-totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  padding: var(--space-4);
+
+  background: var(
+    --color-surface-secondary,
+    var(--color-surface)
+  );
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .quote-total {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+
+    color: var(--color-text);
+    font-size: var(--font-size-lg, 1.125rem);
+
+    strong:last-child {
+      color: var(--color-primary);
+    }
+  }
+}
+
+/* NOTAS */
+
+.quote-notes {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* ESTADOS */
+
+.detail-message,
+.empty-section {
+  margin: 0;
+  padding: var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.detail-error {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  padding: var(--space-4);
+
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+
+  p {
+    margin: 0;
+    color: var(--color-danger);
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 640px) {
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .item-heading {
+    flex-direction: column;
+  }
+
+  .item-heading span {
+    white-space: normal;
+  }
+}

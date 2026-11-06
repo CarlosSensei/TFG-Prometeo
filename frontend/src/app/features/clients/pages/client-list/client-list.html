@@ -54,15 +54,27 @@
         <h2>Listado de clientes</h2>
         <p>Información comercial y de contacto</p>
       </div>
+       <app-button
+          variant="secondary"
+          size="sm"
+          (pressed)="clearAllFilters()"
+        >
+          Limpiar filtros
+        </app-button>
+
     </div>
 
     <app-data-table
       [columns]="columns"
       [rows]="tableRows"
       [loading]="loading()"
+      [filters]="filters()"
       emptyMessage="No hay clientes disponibles"
+      (filterChange)="handleFilterChange($event)"
       (rowSelected)="selectClient($event)"
       (rowAction)="handleRowAction($event)"
+      [sort]="sort()"
+      (sortChange)="changeSort($event)"
     />
 
     <div class="pagination-wrapper">

@@ -5,6 +5,19 @@ import { ClientStats, ClientTimelineEvent } from '../models/client-commercial.mo
 import { Client, ClientPayload } from '../models/client.model';
 import { Page } from '../models/page.model';
 
+export interface ClientTableSearch {
+  fullName?: string;
+  dni?: string;
+  email?: string;
+  phoneNumber?: string;
+  city?: string;
+  active: boolean;
+  page: number;
+  size: number;
+  sortBy: string;
+  sortDirection: 'asc' | 'desc';
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,11 +26,7 @@ export class ClientApiService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/clients';
 
-  findAll(
-    page = 0,
-    size = 10,
-    sort = 'surname,asc'
-  ): Observable<Page<Client>> {
+  findAll(page = 0, size = 10, sort = 'surname,asc'): Observable<Page<Client>> {
 
     const params = new HttpParams()
       .set('page', page)
@@ -31,33 +40,38 @@ export class ClientApiService {
   }
 
   findById(id: number): Observable<Client> {
-    return this.http.get<Client>(
-      `${this.apiUrl}/${id}`
-    );
+
+    return this.http.get<Client>(`${this.apiUrl}/${id}`);
+  }
+
+  search(filters: ClientTableSearch): Observable<Page<Client>> {
+
+    return this.http.post<Page<Client>>(`${this.apiUrl}/search`, filters);
   }
 
   getById(id: number): Observable<Client> {
+
     return this.http.get<Client>(`${this.apiUrl}/${id}`);
   }
 
   create(client: ClientPayload): Observable<Client> {
+
     return this.http.post<Client>(this.apiUrl, client);
   }
 
   update(id: number, client: ClientPayload): Observable<Client> {
+
     return this.http.put<Client>(`${this.apiUrl}/${id}`, client);
   }
 
   getStats(id: number): Observable<ClientStats> {
-    return this.http.get<ClientStats>(
-      `${this.apiUrl}/${id}/stats`
-    );
+
+    return this.http.get<ClientStats>(`${this.apiUrl}/${id}/stats`);
   }
 
   getTimeline(id: number): Observable<ClientTimelineEvent[]> {
-    return this.http.get<ClientTimelineEvent[]>(
-      `${this.apiUrl}/${id}/timeline`
-    );
+    
+    return this.http.get<ClientTimelineEvent[]>(`${this.apiUrl}/${id}/timeline`);
   }
 
 }

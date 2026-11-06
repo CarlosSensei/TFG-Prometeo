@@ -64,8 +64,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(
       `${this.apiUrl}/login`,
       credentials
-    ).pipe(
-      tap(response => {
+    ).pipe(tap(response => {
 
         const { token, tokenType, ...user } = response;
 

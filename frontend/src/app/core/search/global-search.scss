@@ -1,0 +1,137 @@
+
+:host {
+  display: block;
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 480px;
+}
+
+.global-search {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  position: relative;
+
+  .search-icon {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+    color: var(--color-text-muted);
+    font-size: 1.4rem;
+  }
+
+  app-input {
+    display: block;
+    width: 100%;
+  }
+}
+
+// El input interno pertenece a otro componente Angular.
+// Su aspecto base debe mantenerse en el design system.
+// Aquí aplicamos únicamente el espaciado del buscador.
+
+.search-results {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  max-height: 380px;
+  overflow-y: auto;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+
+  box-shadow: 0 12px 35px rgb(15 23 42 / 12%);
+  padding: var(--space-2);
+}
+
+.results-heading {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+
+  padding: var(--space-3);
+  border: 0;
+  border-radius: var(--radius-md);
+
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-surface-hover);
+    outline: none;
+  }
+}
+
+.result-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--space-1);
+
+  strong {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+}
+
+.search-message {
+  margin: 0;
+  padding: var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 768px) {
+  :host {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .search-results {
+    min-width: min(90vw, 380px);
+  }
+}

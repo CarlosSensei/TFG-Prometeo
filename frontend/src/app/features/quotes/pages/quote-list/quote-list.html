@@ -1,0 +1,114 @@
+<section class="quotes-page">
+
+  <!-- CABECERA -->
+
+  <header class="page-header">
+
+    <div class="page-heading">
+      <p class="eyebrow">GESTIÓN COMERCIAL</p>
+
+      <h1>Presupuestos</h1>
+
+      <p class="page-description">
+        Consulta y realiza el seguimiento de
+        los presupuestos de tu óptica.
+      </p>
+    </div>
+
+    <div class="header-actions">
+
+      <app-badge variant="info">
+        {{ totalElements() }} presupuestos
+      </app-badge>
+
+      <app-button
+        variant="primary"
+        (pressed)="createQuote()"
+      >
+        + Nuevo presupuesto
+      </app-button>
+
+    </div>
+
+  </header>
+
+  <!-- ERROR -->
+
+  @if (error()) {
+
+    <div class="error-panel" role="alert">
+
+      <p>{{ error() }}</p>
+
+      <app-button
+        variant="secondary"
+        size="sm"
+        (pressed)="retry()"
+      >
+        Reintentar
+      </app-button>
+
+    </div>
+
+  }
+
+  <!-- TABLA -->
+
+  <app-card [padded]="false">
+
+    <div class="table-heading">
+
+      <div>
+        <h2>Listado de presupuestos</h2>
+
+        <p>
+          Utiliza las cabeceras para filtrar
+          los registros.
+        </p>
+      </div>
+
+      <app-button
+        variant="secondary"
+        size="sm"
+        (pressed)="clearAllFilters()"
+      >
+        Limpiar filtros
+      </app-button>
+
+    </div>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="tableRows()"
+      [loading]="loading()"
+      [filters]="filters()"
+      [sort]="sort()"
+      emptyMessage="No hay presupuestos disponibles"
+      (filterChange)="handleFilterChange($event)"
+      (sortChange)="changeSort($event)"
+      (rowAction)="handleRowAction($event)"
+    />
+
+    <div class="pagination-wrapper">
+
+      <app-pagination
+        [page]="page()"
+        [size]="pageSize"
+        [totalElements]="totalElements()"
+        (pageChange)="changePage($event)"
+      />
+
+    </div>
+
+  </app-card>
+
+  <!-- FICHA DEL PRESUPUESTO -->
+
+  <app-quote-detail-drawer
+    [quoteId]="selectedQuoteId()"
+    (closed)="closeQuoteDetail()"
+    (clientRequested)="openClientDetail($event)"
+    (editRequested)="editQuote($event)"
+  />
+
+</section>

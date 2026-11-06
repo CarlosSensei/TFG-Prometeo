@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -24,9 +24,9 @@ export class ClientForm implements OnInit {
   private readonly router = inject(Router);
 
   clientId: number | null = null;
-  loading = false;
-  saving = false;
-  errorMessage = '';
+  readonly loading = signal(false);
+  readonly saving = signal(false);
+  readonly errorMessage = signal('');
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(50)]],
@@ -58,7 +58,7 @@ export class ClientForm implements OnInit {
     const id = Number(idParam);
 
     if (!Number.isSafeInteger(id) || id <= 0) {
-      this.errorMessage = 'Identificador de cliente inválido.';
+      this.errorMessage.set('Identificador de cliente inválido.');
       return;
     }
 
@@ -67,11 +67,13 @@ export class ClientForm implements OnInit {
   }
 
   private loadClient(id: number): void {
-    this.loading = true;
-    this.errorMessage = '';
+
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     this.api.getById(id).subscribe({
       next: client => {
+
         this.form.patchValue({
           name: client.name ?? '',
           surname: client.surname ?? '',
@@ -86,23 +88,29 @@ export class ClientForm implements OnInit {
           notes: client.notes ?? ''
         });
 
-        this.loading = false;
+        this.loading.set(false);
       },
-      error: () => {
-        this.errorMessage = 'No se ha podido cargar el cliente.';
-        this.loading = false;
+
+      error: error => {
+        console.error('Error recuperando cliente:', error);
+
+        this.errorMessage.set(
+          'No se ha podido cargar el cliente.'
+        );
+
+        this.loading.set(false);
       }
     });
   }
 
   save(): void {
-    if (this.form.invalid || this.loading || this.saving) {
+    if (this.form.invalid || this.loading() || this.saving()) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.saving = true;
-    this.errorMessage = '';
+    this.saving.set(true);
+    this.errorMessage.set('');
 
     const value = this.form.getRawValue();
 
@@ -129,11 +137,11 @@ export class ClientForm implements OnInit {
 
     request.subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.router.navigate(['/clients']);
       },
       error: (error: HttpErrorResponse) => {
-        this.saving = false;
+        this.saving.set(false);
         this.handleError(error);
       }
     });
@@ -141,15 +149,17 @@ export class ClientForm implements OnInit {
 
   private handleError(error: HttpErrorResponse): void {
     if (error.status === 409) {
-      this.errorMessage = 'Ya existe un cliente con este DNI/NIE.';
+      this.errorMessage.set('Ya existe un cliente con este DNI/NIE.');
     } else if (error.status === 400) {
-      this.errorMessage =
-        'Hay datos incorrectos. Revisa los campos del formulario.';
+      this.errorMessage.set(
+        'Hay datos incorrectos. Revisa los campos del formulario.'
+      );
     } else if (error.status === 404) {
-      this.errorMessage = 'El cliente ya no existe.';
+      this.errorMessage.set('El cliente ya no existe.');
     } else {
-      this.errorMessage =
-        'No se ha podido guardar. Inténtalo de nuevo.';
+      this.errorMessage.set(
+        'No se ha podido guardar. Inténtalo de nuevo.'
+      );
     }
   }
 

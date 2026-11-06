@@ -1,0 +1,28 @@
+<section class="detail-section">
+  <div class="section-heading">
+    <h4>Presupuestos del cliente</h4>
+    <span>{{ quotesTotal() }} presupuestos</span>
+  </div>
+
+  @if (documentsError()) {
+
+  <p class="detail-error" role="alert">{{ documentsError() }}</p>
+
+  } @else {
+
+  <app-data-table
+    [columns]="quoteColumns"
+    [rows]="quoteRows"
+    [loading]="documentsLoading()"
+    emptyMessage="Este cliente no tiene presupuestos"
+  />
+
+  @if (quotesTotal() > documentPageSize) {
+  <app-pagination
+    [page]="quotePage()"
+    [size]="documentPageSize"
+    [totalElements]="quotesTotal()"
+    (pageChange)="changeQuotePage($event)"
+  />
+  } }
+</section>

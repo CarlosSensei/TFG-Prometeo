@@ -15,13 +15,13 @@
     </div>
   </header>
 
-  @if (loading) {
+  @if (loading()) {
     <p role="status">Cargando información del cliente...</p>
   } @else {
 
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="error-alert" role="alert">
-        {{ errorMessage }}
+        {{ errorMessage() }}
       </div>
     }
 
@@ -160,8 +160,8 @@
         <app-button
           variant="primary"
           type="submit"
-          [disabled]="form.invalid || loading || saving"
-          [loading]="saving"
+          [disabled]="form.invalid || loading() || saving()"
+          [loading]="saving()"
         >
           {{ isEditMode ? 'Guardar cambios' : 'Crear cliente' }}
         </app-button>

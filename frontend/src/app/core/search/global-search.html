@@ -1,0 +1,112 @@
+
+<div class="global-search">
+
+  <!-- CAMPO DE BÚSQUEDA -->
+  <div class="search-input">
+
+    <span class="search-icon" aria-hidden="true">
+      ⌕
+    </span>
+
+    <app-input
+      id="global-search"
+      type="search"
+      placeholder="Buscar clientes, presupuestos, pedidos..."
+      [formControl]="query"
+      (focusin)="open.set(true)"
+      (keydown.escape)="closeResults()"
+    />
+
+  </div>
+
+  <!-- PANEL DE RESULTADOS -->
+  @if (open() && query.value.trim().length >= 2) {
+
+    <div class="search-results">
+
+      <!-- ESTADO DE CARGA -->
+      @if (loading()) {
+
+        <p class="search-message" role="status">
+          Buscando...
+        </p>
+
+      } @else if (error()) {
+
+        <!-- ERROR -->
+        <p class="search-message" role="alert">
+          {{ error() }}
+        </p>
+
+      } @else if (results().length === 0) {
+
+        <!-- SIN RESULTADOS -->
+        <p class="search-message">
+          No se han encontrado resultados.
+        </p>
+
+      } @else {
+
+        <!-- RESULTADOS AGRUPADOS POR TIPO -->
+        @for (category of categories; track category.type) {
+
+          @if (resultsByType(category.type); as items) {
+
+            @if (items.length > 0) {
+
+              <!-- CABECERA DE CATEGORÍA -->
+              <div class="results-heading">
+                {{ category.label }}
+                <span class="results-count">
+                  {{ items.length }}
+                </span>
+              </div>
+
+              <!-- RESULTADOS -->
+              @for (result of items; track result.id) {
+
+                <button
+                  type="button"
+                  class="search-result"
+                  (click)="selectResult(result)"
+                  [attr.aria-label]="
+                    'Abrir ' + category.label + ': ' + result.title
+                  "
+                >
+
+                  <span
+                    class="result-icon"
+                    aria-hidden="true"
+                  >
+                    {{ category.icon }}
+                  </span>
+
+                  <span class="result-content">
+
+                    <strong>
+                      {{ result.title }}
+                    </strong>
+
+                    <small>
+                      {{ result.subtitle }}
+                    </small>
+
+                  </span>
+
+                </button>
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    </div>
+
+  }
+
+</div>

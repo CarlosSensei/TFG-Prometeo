@@ -1,0 +1,75 @@
+<section class="detail-section">
+  <div class="section-heading">
+    <h4>Seguimientos comerciales</h4>
+    <span>{{ followUpsTotal() }} seguimientos</span>
+  </div>
+
+  @if (followUpsError()) {
+  <p class="detail-error" role="alert">{{ followUpsError() }}</p>
+  }
+
+  <app-data-table
+    [columns]="followUpColumns"
+    [rows]="followUpRows()"
+    [loading]="followUpsLoading()"
+    emptyMessage="Este cliente no tiene seguimientos"
+    (rowAction)="handleFollowUpAction($event)"
+  />
+
+  @if (followUpsTotal() > 5) {
+  <app-pagination
+    [page]="followUpPage()"
+    [size]="5"
+    [totalElements]="followUpsTotal()"
+    (pageChange)="changeFollowUpPage($event)"
+  />
+  } @if (completingFollowUpId() !== null) {
+
+  <div class="completion-form">
+    <h4>Completar seguimiento</h4>
+
+    <label for="followup-result"> Resultado </label>
+
+    <textarea
+      id="followup-result"
+      rows="3"
+      maxlength="500"
+      [value]="completionResult()"
+      (input)="completionResult.set($any($event.target).value)"
+      placeholder="Resultado de la gestión comercial"
+    >
+    </textarea>
+
+    <label for="followup-notes"> Notas </label>
+
+    <textarea
+      id="followup-notes"
+      rows="3"
+      maxlength="1000"
+      [value]="completionNotes()"
+      (input)="completionNotes.set($any($event.target).value)"
+      placeholder="Observaciones adicionales"
+    >
+    </textarea>
+
+    <div class="completion-actions">
+      <button
+        type="button"
+        (click)="cancelCompleteFollowUp()"
+        [disabled]="completing()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        (click)="completeFollowUp()"
+        [disabled]="completing()"
+      >
+        {{ completing() ? 'Guardando...' : 'Completar' }}
+      </button>
+    </div>
+  </div>
+
+  }
+</section>
