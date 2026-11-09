@@ -104,4 +104,22 @@ public class QuoteController {
 
         return ResponseEntity.ok(result);
     }
+
+    // Enviar un presupuesto
+    @PatchMapping("/{id}/send")
+    public ResponseEntity<QuoteDto> send(@PathVariable Long id) {
+        return ResponseEntity.ok(quoteService.send(id));}
+
+    // Aceptar un presupuesto
+    @PatchMapping("/{id}/accept")
+    public ResponseEntity<QuoteDto> accept(@PathVariable Long id) {
+        return ResponseEntity.ok(quoteService.accept(id));
+    }
+
+    // Marcar como rechazado
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<QuoteDto> reject(@PathVariable Long id) {
+        return ResponseEntity.ok(quoteService.reject(id));
+    }
+
 }

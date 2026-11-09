@@ -116,4 +116,50 @@ public class OrderMapper {
 
         return order;
     }
+
+    // Metodo para listados que no acceden por getItems
+
+    public OrderDto toSummaryDto(Order order) {
+
+        OrderDto dto = new OrderDto();
+
+        dto.setId(order.getId());
+        dto.setOrderNumber(order.getOrderNumber());
+
+        if (order.getClient() != null) {
+            dto.setClientId(order.getClient().getId());
+        }
+
+        if (order.getSeller() != null) {
+            dto.setSellerId(order.getSeller().getId());
+        }
+
+        if (order.getQuote() != null) {
+            dto.setQuoteId(order.getQuote().getId());
+        }
+
+        dto.setStatus(order.getStatus());
+
+        dto.setOrderDate(order.getOrderDate());
+        dto.setExpectedDeliveryDate(order.getExpectedDeliveryDate());
+        dto.setDeliveryDate(order.getDeliveryDate());
+
+        dto.setSubtotal(order.getSubtotal());
+        dto.setDiscount(order.getDiscount());
+        dto.setTaxRate(order.getTaxRate());
+        dto.setTaxAmount(order.getTaxAmount());
+        dto.setTotal(order.getTotal());
+
+        dto.setNotes(order.getNotes());
+        dto.setActive(order.getActive());
+
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setUpdatedAt(order.getUpdatedAt());
+
+        // No cargar la colección de artículos.
+        dto.setItems(null);
+
+        return dto;
+    }
+
 }

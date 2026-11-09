@@ -1,0 +1,57 @@
+<section class="detail-section">
+
+  <h4>Información comercial</h4>
+
+  <dl class="detail-grid">
+
+    <div>
+      <dt>Cliente</dt>
+      <dd>{{ clientName() }}</dd>
+    </div>
+
+    <div>
+      <dt>Vendedor</dt>
+      <dd>{{ sellerName() }}</dd>
+    </div>
+
+    <div>
+      <dt>Fecha del pedido</dt>
+      <dd>{{ formatDate(order().orderDate) }}</dd>
+    </div>
+
+    <div>
+      <dt>Entrega prevista</dt>
+      <dd>
+        {{ formatDate(order().expectedDeliveryDate) }}
+      </dd>
+    </div>
+
+    <div>
+      <dt>Entrega realizada</dt>
+      <dd>
+        {{ formatDate(order().deliveryDate) }}
+      </dd>
+    </div>
+
+    <div>
+      <dt>Presupuesto de origen</dt>
+      <dd>
+        @if (order().quoteId !== null) {
+          #{{ order().quoteId }}
+        } @else {
+          Pedido directo
+        }
+      </dd>
+    </div>
+
+  </dl>
+
+  <app-button
+    variant="secondary"
+    size="sm"
+    (pressed)="clientRequested.emit(order().clientId)"
+  >
+    Ver ficha del cliente
+  </app-button>
+
+</section>

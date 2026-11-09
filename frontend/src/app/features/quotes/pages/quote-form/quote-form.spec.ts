@@ -12,7 +12,7 @@ import {
   Router,
 } from '@angular/router';
 import { QuoteForm } from './quote-form';
-import { QuoteClientSelector } from '../../components/quote-client-selector/quote-client-selector';
+import { CommercialClientSelector } from '../../../../shared/commercial/components/commercial-client-selector/commercial-client-selector';
 import { Client } from '../../../clients/models/client.model';
 
 const client: Client = {
@@ -102,13 +102,11 @@ describe('QuoteForm component composition', () => {
     search.value = 'Montura';
     search.dispatchEvent(new Event('input'));
     await fixture.whenStable();
-    fixture.nativeElement
-      .querySelector('app-quote-inventory-search app-button button')
-      .click();
+    await new Promise((resolve) => setTimeout(resolve, 350));
     http.expectOne('/api/inventory/search').flush({ content: [item] });
     await fixture.whenStable();
     fixture.nativeElement
-      .querySelector('app-quote-inventory-search .lookup-result')
+      .querySelector('app-commercial-inventory-search .lookup-result')
       .click();
     await fixture.whenStable();
     const quantity: HTMLInputElement =
@@ -142,8 +140,8 @@ describe('QuoteForm component composition', () => {
     http.expectOne('/api/clients/7').flush(client);
     await fixture.whenStable();
     const selector = fixture.debugElement.query(
-      By.directive(QuoteClientSelector),
-    ).componentInstance as QuoteClientSelector;
+      By.directive(CommercialClientSelector),
+    ).componentInstance as CommercialClientSelector;
     selector.updateClientQuery('Ana');
     await new Promise((resolve) => setTimeout(resolve, 350));
     const pending = http.expectOne('/api/clients/search');

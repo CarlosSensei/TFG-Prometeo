@@ -31,12 +31,6 @@
         </app-badge>
       </header>
 
-      @if (currentQuote.status === "DRAFT" && currentQuote.active) {
-        <app-button variant="secondary" (pressed)="editQuote()">
-          Editar presupuesto
-        </app-button>
-      }
-
       <!-- INFORMACIÓN COMERCIAL -->
 
       <app-quote-commercial-info
@@ -52,7 +46,7 @@
       <section class="detail-section">
         <h4>Resumen económico</h4>
 
-        <app-quote-totals
+        <app-commercial-totals
           [totals]="{
             subtotal: currentQuote.subtotal,
             discount: currentQuote.discount,
@@ -62,6 +56,114 @@
           [taxRate]="currentQuote.taxRate"
         />
       </section>
+
+      <!-- CAMBIOS DE ESTADO -->
+      <section class="quote-workflow">
+
+        <h3>Acciones comerciales</h3>
+
+        @if (actionError()) {
+          <p class="workflow-error" role="alert">
+            {{ actionError() }}
+          </p>
+        }
+
+        @if (actionSuccess()) {
+          <p class="workflow-success" role="status">
+            {{ actionSuccess() }}
+          </p>
+        }
+
+        @if (currentQuote.active) {
+
+          <div class="workflow-actions">
+
+            @switch (currentQuote.status) {
+
+              @case ('DRAFT') {
+
+                <app-button
+                  variant="primary"
+                  [disabled]="processing()"
+                  (pressed)="sendQuote()"
+                >
+                  Marcar como enviado
+                </app-button>
+
+                <app-button
+                  variant="secondary"
+                  [disabled]="processing()"
+                  (pressed)="editQuote()"
+                >
+                  Editar presupuesto
+                </app-button>
+
+              }
+
+              @case ('SENT') {
+
+                <app-button
+                  variant="primary"
+                  [disabled]="processing()"
+                  (pressed)="acceptQuote()"
+                >
+                  Aceptar presupuesto
+                </app-button>
+
+                <app-button
+                  variant="danger"
+                  [disabled]="processing()"
+                  (pressed)="rejectQuote()"
+                >
+                  Rechazar
+                </app-button>
+
+              }
+
+              @case ('ACCEPTED') {
+
+                <app-button
+                  variant="primary"
+                  [disabled]="processing()"
+                  (pressed)="convertToOrder()"
+                >
+                  Convertir en pedido
+                </app-button>
+
+              }
+
+              @case ('CONVERTED') {
+
+                <p class="workflow-info">
+                  Este presupuesto ya se ha convertido en pedido.
+                </p>
+
+              }
+
+              @case ('REJECTED') {
+
+                <p class="workflow-info">
+                  El presupuesto está rechazado.
+                </p>
+
+              }
+
+              @case ('EXPIRED') {
+
+                <p class="workflow-info">
+                  El presupuesto está caducado.
+                </p>
+
+              }
+
+            }
+
+          </div>
+
+        }
+
+      </section>
+
 
       <!-- OBSERVACIONES -->
 

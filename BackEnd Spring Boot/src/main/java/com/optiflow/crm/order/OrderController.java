@@ -33,8 +33,7 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<Page<OrderDto>> findAll(Pageable pageable) {
 
-        Page<OrderDto> result = orderService.findAll(pageable)
-                .map(orderMapper::toDto);
+        Page<OrderDto> result = orderService.findAll(pageable).map(orderMapper::toSummaryDto);
 
         return ResponseEntity.ok(result);
     }
@@ -43,8 +42,7 @@ public class OrderController {
     @PostMapping("/search")
     public ResponseEntity<Page<OrderDto>> search(@Valid @RequestBody OrderSearchDto searchDto) {
 
-        Page<OrderDto> result = orderService.search(searchDto)
-                .map(orderMapper::toDto);
+        Page<OrderDto> result = orderService.search(searchDto).map(orderMapper::toSummaryDto);
 
         return ResponseEntity.ok(result);
     }
@@ -53,9 +51,7 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderDto> findById(@PathVariable Long id) {
 
-        Order order = orderService.findById(id);
-
-        return ResponseEntity.ok(orderMapper.toDto(order));
+        return ResponseEntity.ok(orderService.findDetailById(id));
     }
 
     // Pedidos de un cliente
@@ -63,8 +59,7 @@ public class OrderController {
     @Transactional(readOnly = true)
     public ResponseEntity<Page<OrderDto>> findByClient(@PathVariable Long clientId, Pageable pageable) {
 
-        Page<OrderDto> result = orderService.findByClientId(clientId, pageable)
-                .map(orderMapper::toDto);
+        Page<OrderDto> result = orderService.findByClientId(clientId, pageable).map(orderMapper::toSummaryDto);
 
         return ResponseEntity.ok(result);
     }
@@ -75,8 +70,7 @@ public class OrderController {
 
         Order savedOrder = orderService.create(orderDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderMapper.toDto(savedOrder));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.toDto(savedOrder));
     }
 
     // Convertir presupuesto aceptado en pedido
@@ -85,8 +79,7 @@ public class OrderController {
 
         Order savedOrder = orderService.createFromQuote(quoteId);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderMapper.toDto(savedOrder));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.toDto(savedOrder));
     }
 
     // Actualizar pedido
@@ -103,18 +96,35 @@ public class OrderController {
     @PatchMapping("/{id}/confirm")
     public ResponseEntity<OrderDto> confirm(@PathVariable Long id) {
 
-        Order order = orderService.confirm(id);
+        return ResponseEntity.ok(orderService.confirmDetail(id));
+    }
 
-        return ResponseEntity.ok(orderMapper.toDto(order));
+    // Preparar pedido
+    @PatchMapping("/{id}/start-preparation")
+    public ResponseEntity<OrderDto> startPreparation(@PathVariable Long id) {
+
+        return ResponseEntity.ok(orderService.startPreparationDetail(id));
+    }
+
+    // Marcar como preparado
+    @PatchMapping("/{id}/ready")
+    public ResponseEntity<OrderDto> markReady(@PathVariable Long id) {
+
+        return ResponseEntity.ok(orderService.markReadyDetail(id));
+    }
+
+    // Entregar
+    @PatchMapping("/{id}/deliver")
+    public ResponseEntity<OrderDto> deliver(@PathVariable Long id) {
+
+        return ResponseEntity.ok(orderService.deliverDetail(id));
     }
 
     // Cancelar pedido
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<OrderDto> cancel(@PathVariable Long id) {
 
-        Order order = orderService.cancel(id);
-
-        return ResponseEntity.ok(orderMapper.toDto(order));
+        return ResponseEntity.ok(orderService.cancelDetail(id));
     }
 
     // Baja del pedido

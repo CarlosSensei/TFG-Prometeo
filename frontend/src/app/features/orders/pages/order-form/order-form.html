@@ -1,0 +1,186 @@
+<section class="order-form-page">
+
+  <header class="page-header">
+
+    <app-button
+      variant="secondary"
+      size="sm"
+      (pressed)="goBack()"
+    >
+      ← Volver
+    </app-button>
+
+    <h1>Nuevo pedido</h1>
+
+    <p>
+      Crea un pedido directamente para un cliente.
+      El stock se descontará cuando se confirme.
+    </p>
+
+  </header>
+
+  @if (error()) {
+    <div class="error-alert" role="alert">
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+
+    <p role="status">
+      Cargando cliente...
+    </p>
+
+  } @else {
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()"
+      novalidate
+    >
+
+      <!-- DATOS COMERCIALES -->
+
+      <section class="form-section">
+
+        <h2>Información del pedido</h2>
+
+        <div class="form-grid">
+
+          <app-commercial-client-selector
+            class="field-full"
+            [selectedClient]="selectedClient()"
+            [invalid]="
+              form.controls.clientId.touched &&
+              form.controls.clientId.invalid
+            "
+            (clientChanged)="selectClient($event)"
+          />
+
+          <div class="form-field">
+
+            <label for="order-date">
+              Fecha del pedido *
+            </label>
+
+            <input
+              id="order-date"
+              type="date"
+              formControlName="orderDate"
+            />
+
+          </div>
+
+          <div class="form-field">
+
+            <label for="delivery-date">
+              Entrega prevista
+            </label>
+
+            <input
+              id="delivery-date"
+              type="date"
+              formControlName="expectedDeliveryDate"
+              [min]="form.controls.orderDate.value"
+            />
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ARTÍCULOS -->
+
+      <section class="form-section">
+
+        <h2>Artículos del pedido</h2>
+
+        <app-commercial-inventory-search
+          (itemSelected)="addItem($event)"
+          (searchFailed)="error.set($event)"
+          (searchStarted)="error.set(null)"
+        />
+
+        <app-commercial-lines-editor
+          [lines]="lines()"
+          (removed)="removeItem($event)"
+          (quantityChanged)="
+            updateQuantity($event.key, $event.value)
+          "
+          (discountChanged)="
+            updateDiscount($event.key, $event.value)
+          "
+        />
+
+      </section>
+
+      <!-- RESUMEN ECONÓMICO -->
+
+      <section class="form-section">
+
+        <h2>Resumen económico</h2>
+
+        <app-commercial-totals
+          [totals]="totals()"
+          [estimated]="true"
+        />
+
+      </section>
+
+      <!-- OBSERVACIONES -->
+
+      <section class="form-section">
+
+        <h2>Observaciones</h2>
+
+        <div class="form-field">
+
+          <label for="order-notes">
+            Notas internas
+          </label>
+
+          <textarea
+            id="order-notes"
+            formControlName="notes"
+            rows="4"
+            maxlength="1000"
+            placeholder="Instrucciones u observaciones del pedido..."
+          ></textarea>
+
+        </div>
+
+      </section>
+
+      <!-- ACCIONES -->
+
+      <footer class="form-actions">
+
+        <app-button
+          variant="secondary"
+          type="button"
+          (pressed)="goBack()"
+        >
+          Cancelar
+        </app-button>
+
+        <app-button
+          variant="primary"
+          type="submit"
+          [disabled]="
+            form.invalid ||
+            !validLines() ||
+            saving()
+          "
+          [loading]="saving()"
+        >
+          Crear pedido
+        </app-button>
+
+      </footer>
+
+    </form>
+
+  }
+
+</section>

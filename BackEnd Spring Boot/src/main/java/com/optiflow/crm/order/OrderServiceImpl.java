@@ -36,7 +36,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 // Implementacion del service de Pedidos
 @Service
@@ -88,8 +91,19 @@ public class OrderServiceImpl implements OrderService {
         int page = searchDto.getPage() != null ? searchDto.getPage() : 0;
         int size = searchDto.getSize() != null ? searchDto.getSize() : 10;
 
-        String sortBy = searchDto.getSortBy() != null
-                        ? searchDto.getSortBy() : "orderDate";
+
+        String requestedSort = searchDto.getSortBy();
+        String sortBy = switch (requestedSort != null ? requestedSort : "") {
+            case "orderNumber",
+                 "orderDate",
+                 "expectedDeliveryDate",
+                 "deliveryDate",
+                 "status",
+                 "total",
+                 "createdAt" -> requestedSort;
+
+            default -> "orderDate";
+        };
 
         Sort.Direction direction = "asc".equalsIgnoreCase(searchDto.getSortDirection())
                         ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -113,6 +127,15 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public OrderDto findDetailById(Long id) {
+
+        Order order = findById(id);
+
+        return orderMapper.toDto(order);
+    }
+
     // Crear un pedido desde cero
     @Override
     @Transactional
@@ -123,6 +146,7 @@ public class OrderServiceImpl implements OrderService {
 
         User seller = currentUserService.getCurrentUser();
         Order order = orderMapper.toEntity(orderDto);
+        order.setStatus(OrderStatus.PENDING);
 
         order.setClient(client);
         order.setSeller(seller);
@@ -197,39 +221,90 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // Actualizar un pedido
+    private Order findByIdForUpdate(Long id) {
+
+        return orderRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new OrderNotFoundException(id));
+    }
+
+
     @Override
     @Transactional
-    public Order update(Long id, OrderDto orderDto) {
+    public Order update(Long id, OrderDto dto) {
 
-        Order existingOrder = findById(id);
+        Order order = findByIdForUpdate(id);
 
-        orderMapper.updateEntity(orderDto, existingOrder);
+        orderDomainService.validateCanEdit(order);
 
-        if (orderDto.getClientId() != null) {
-
-            Client client = clientRepository.findById(orderDto.getClientId()).orElseThrow(() ->
-                                    new ClientNotFoundException(orderDto.getClientId()));
-
-            existingOrder.setClient(client);
+        if (dto.getClientId() == null || !dto.getClientId().equals(
+                        order.getClient().getId())) {
+            throw new InvalidOrderStatusException(
+                    "No se puede cambiar el cliente del pedido"
+            );
         }
 
-        orderDomainService.initializeOrder(existingOrder);
-        orderDomainService.calculateTotals(existingOrder);
+        if (dto.getStatus() != null && dto.getStatus() != OrderStatus.PENDING) {
+            throw new InvalidOrderStatusException(
+                    "El estado solo puede cambiar mediante el workflow"
+            );
+        }
 
-        return orderRepository.save(existingOrder);
+        if (dto.getItems() != null) {
+            throw new InvalidOrderStatusException(
+                    "Las líneas del pedido no se modifican " +
+                            "desde este endpoint"
+            );
+        }
+
+        if (dto.getOrderDate() != null && !dto.getOrderDate().equals(order.getOrderDate())) {
+            throw new InvalidOrderStatusException(
+                    "La fecha original del pedido no se puede modificar"
+            );
+        }
+
+        if (dto.getDeliveryDate() != null) {
+            throw new InvalidOrderStatusException(
+                    "La fecha de entrega la establece el workflow"
+            );
+        }
+
+        if (dto.getQuoteId() != null && (order.getQuote() == null ||
+                        !dto.getQuoteId().equals(order.getQuote().getId()))) {
+            throw new InvalidOrderStatusException(
+                    "No se puede modificar el presupuesto de origen"
+            );
+        }
+
+        LocalDate expected = dto.getExpectedDeliveryDate();
+
+        if (expected != null && expected.isBefore(order.getOrderDate())) {
+            throw new IllegalArgumentException(
+                    "La entrega prevista no puede ser anterior " +
+                            "a la fecha del pedido"
+            );
+        }
+
+        order.setExpectedDeliveryDate(expected);
+        order.setNotes(dto.getNotes());
+
+        return orderRepository.save(order);
     }
+
 
     // Borrar un pedido desactivandolo
     @Override
     @Transactional
     public void delete(Long id) {
 
-        Order order = findById(id);
+        Order order = findByIdForUpdate(id);
+
+        orderDomainService.validateCanDelete(order);
 
         order.setActive(false);
 
         orderRepository.save(order);
     }
+
 
     // Generar Numero de pedido
     private String generateOrderNumber() {
@@ -254,18 +329,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // Confirmar un pedido y reservar stock
+
     @Override
     @Transactional
     public Order confirm(Long id) {
 
-        Order order = findById(id);
+        Order order = findByIdForUpdate(id);
 
         orderDomainService.validateCanConfirm(order);
 
-        for (OrderItem orderItem : order.getItems()) {
+        // Consolidamos cantidades del mismo artículo
+        // y adquirimos los bloqueos en orden estable.
+        Map<Long, Integer> quantities = order.getItems()
+                .stream()
+                .collect(Collectors.toMap(
+                        item -> item.getInventoryItem().getId(),
+                        OrderItem::getQuantity,
+                        Integer::sum,
+                        TreeMap::new
+                ));
 
-            InventoryItem inventoryItem = orderItem.getInventoryItem();
-            inventoryService.decreaseStock(inventoryItem.getId(), orderItem.getQuantity());
+        for (var entry : quantities.entrySet()) {
+            inventoryService.decreaseStock(
+                    entry.getKey(),
+                    entry.getValue()
+            );
         }
 
         order.setStatus(OrderStatus.CONFIRMED);
@@ -273,31 +361,97 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
-    // Cancelar un pedido y subir stock
     @Override
     @Transactional
     public Order cancel(Long id) {
 
-        Order order = findById(id);
+        Order order = findByIdForUpdate(id);
 
         orderDomainService.validateCanCancel(order);
 
-        boolean stockWasDiscounted = order.getStatus() == OrderStatus.CONFIRMED
-                        || order.getStatus() == OrderStatus.IN_PROGRESS
-                        || order.getStatus() == OrderStatus.READY;
+        boolean stockWasDiscounted =
+                order.getStatus() == OrderStatus.CONFIRMED ||
+                        order.getStatus() == OrderStatus.IN_PROGRESS ||
+                        order.getStatus() == OrderStatus.READY;
 
         if (stockWasDiscounted) {
 
-            for (OrderItem orderItem : order.getItems()) {
+            Map<Long, Integer> quantities = order.getItems()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            item -> item.getInventoryItem().getId(),
+                            OrderItem::getQuantity,
+                            Integer::sum,
+                            TreeMap::new
+                    ));
 
-                InventoryItem inventoryItem = orderItem.getInventoryItem();
-                inventoryService.increaseStock(inventoryItem.getId(), orderItem.getQuantity());
+            for (var entry : quantities.entrySet()) {
+                inventoryService.increaseStock(entry.getKey(), entry.getValue());
             }
         }
 
         order.setStatus(OrderStatus.CANCELLED);
 
         return orderRepository.save(order);
+    }
+
+
+    @Override
+    @Transactional
+    public OrderDto confirmDetail(Long id) {
+
+        Order order = confirm(id);
+
+        return orderMapper.toDto(order);
+    }
+
+
+    @Override
+    @Transactional
+    public OrderDto startPreparationDetail(Long id) {
+
+        Order order = findById(id);
+
+        orderDomainService.startPreparation(order);
+
+        return orderMapper.toDto(
+                orderRepository.save(order)
+        );
+    }
+
+    @Override
+    @Transactional
+    public OrderDto markReadyDetail(Long id) {
+
+        Order order = findById(id);
+
+        orderDomainService.markReady(order);
+
+        return orderMapper.toDto(
+                orderRepository.save(order)
+        );
+    }
+
+    @Override
+    @Transactional
+    public OrderDto deliverDetail(Long id) {
+
+        Order order = findById(id);
+
+        orderDomainService.deliver(order);
+
+        return orderMapper.toDto(
+                orderRepository.save(order)
+        );
+    }
+
+    @Override
+    @Transactional
+    public OrderDto cancelDetail(Long id) {
+
+        Order order = cancel(id);
+
+        return orderMapper.toDto(order);
     }
 
 }

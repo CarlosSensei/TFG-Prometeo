@@ -4,6 +4,7 @@ import com.optiflow.crm.quote.model.QuoteItem;
 import com.optiflow.crm.quote.model.Quote;
 import com.optiflow.crm.quote.model.QuoteStatus;
 import org.springframework.stereotype.Service;
+import com.optiflow.crm.shared.exception.InvalidQuoteStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -95,5 +96,77 @@ public class QuoteDomainService {
         }
 
         quote.setActive(true);
+    }
+
+    public void send(Quote quote) {
+
+        validateActive(quote);
+
+        requireStatus(quote, QuoteStatus.DRAFT);
+
+        if (quote.getItems() == null || quote.getItems().isEmpty()) {
+
+            throw new InvalidQuoteStatusException(
+                    "No se puede enviar un presupuesto sin artículos"
+            );
+        }
+
+        if (quote.getExpirationDate() != null &&
+                quote.getExpirationDate().isBefore(LocalDate.now())) {
+
+            throw new InvalidQuoteStatusException(
+                    "No se puede enviar un presupuesto caducado"
+            );
+        }
+
+        quote.setStatus(QuoteStatus.SENT);
+    }
+
+    public void accept(Quote quote) {
+
+        validateActive(quote);
+
+        requireStatus(quote, QuoteStatus.SENT);
+
+        if (quote.getExpirationDate() != null &&
+                quote.getExpirationDate().isBefore(LocalDate.now())) {
+
+            throw new InvalidQuoteStatusException(
+                    "No se puede aceptar un presupuesto caducado"
+            );
+        }
+
+        quote.setStatus(QuoteStatus.ACCEPTED);
+    }
+
+    public void reject(Quote quote) {
+
+        validateActive(quote);
+
+        requireStatus(quote, QuoteStatus.SENT);
+
+        quote.setStatus(QuoteStatus.REJECTED);
+    }
+
+    private void validateActive(Quote quote) {
+
+        if (!Boolean.TRUE.equals(quote.getActive())) {
+
+            throw new InvalidQuoteStatusException(
+                    "El presupuesto está inactivo"
+            );
+        }
+    }
+
+    private void requireStatus(Quote quote, QuoteStatus expected) {
+
+        if (quote.getStatus() != expected) {
+
+            throw new InvalidQuoteStatusException(
+                    "Transición no permitida desde " +
+                            quote.getStatus() +
+                            ". Estado requerido: " + expected
+            );
+        }
     }
 }

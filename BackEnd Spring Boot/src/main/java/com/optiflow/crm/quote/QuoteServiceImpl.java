@@ -146,6 +146,7 @@ public class QuoteServiceImpl implements QuoteService {
                 .orElseThrow(() -> new ClientNotFoundException(quoteDto.getClientId()));
 
         Quote quote = quoteMapper.toEntity(quoteDto);
+        quote.setStatus(QuoteStatus.DRAFT);
         User seller = currentUserService.getCurrentUser();
 
         quote.setSeller(seller);
@@ -318,5 +319,43 @@ public class QuoteServiceImpl implements QuoteService {
     }
 
 
+    @Override
+    @Transactional
+    public QuoteDto send(Long id) {
+
+        Quote quote = findById(id);
+
+        quoteDomainService.send(quote);
+
+        Quote saved = quoteRepository.save(quote);
+
+        return quoteMapper.toDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public QuoteDto accept(Long id) {
+
+        Quote quote = findById(id);
+
+        quoteDomainService.accept(quote);
+
+        Quote saved = quoteRepository.save(quote);
+
+        return quoteMapper.toDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public QuoteDto reject(Long id) {
+
+        Quote quote = findById(id);
+
+        quoteDomainService.reject(quote);
+
+        Quote saved = quoteRepository.save(quote);
+
+        return quoteMapper.toDto(saved);
+    }
 
 }

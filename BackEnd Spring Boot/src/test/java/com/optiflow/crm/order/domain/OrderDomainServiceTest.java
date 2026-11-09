@@ -24,10 +24,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderDomainServiceTest {
 
     private OrderDomainService service;
+    private Order order;
 
     @BeforeEach
     void setUp() {
+
         service = new OrderDomainService();
+
+        order = new Order();
+        order.setActive(true);
+        order.setStatus(OrderStatus.PENDING);
+        order.getItems().add(new OrderItem());
     }
 
     // =====================================
@@ -492,5 +499,94 @@ class OrderDomainServiceTest {
                         () -> service.validateCanCancel(order));
 
         assertTrue(exception.getMessage().contains("entregado"));
+    }
+
+    // =====================================
+    // 7. VALIDATE STATUS CHANGES
+    // =====================================
+
+    @Test
+    void shouldAllowConfirmPendingOrder() {
+        assertDoesNotThrow(() -> service.validateCanConfirm(order));
+    }
+
+    @Test
+    void shouldNotConfirmEmptyOrder() {
+
+        order.getItems().clear();
+        assertThrows(InvalidOrderStatusException.class,
+                () -> service.validateCanConfirm(order));
+    }
+
+    @Test
+    void shouldStartPreparationFromConfirmed() {
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        service.startPreparation(order);
+        assertEquals(OrderStatus.IN_PROGRESS, order.getStatus());
+    }
+
+    @Test
+    void shouldNotStartPreparationFromPending() {
+
+        assertThrows(InvalidOrderStatusException.class,
+                () -> service.startPreparation(order));
+    }
+
+    @Test
+    void shouldMarkReadyFromInProgress() {
+
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        service.markReady(order);
+        assertEquals(OrderStatus.READY, order.getStatus());
+    }
+
+    @Test
+    void shouldDeliverReadyOrder() {
+
+        order.setStatus(OrderStatus.READY);
+        service.deliver(order);
+        assertEquals(OrderStatus.DELIVERED, order.getStatus());
+        assertEquals(LocalDate.now(), order.getDeliveryDate());
+    }
+
+    @Test
+    void shouldNotDeliverConfirmedOrder() {
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        assertThrows(InvalidOrderStatusException.class,
+                () -> service.deliver(order));
+    }
+
+    @Test
+    void shouldNotEditConfirmedOrder() {
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        assertThrows(InvalidOrderStatusException.class,
+                () -> service.validateCanEdit(order));
+    }
+
+    @Test
+    void shouldNotDeleteDeliveredOrder() {
+
+        order.setStatus(OrderStatus.DELIVERED);
+        assertThrows(InvalidOrderStatusException.class,
+                () -> service.validateCanDelete(order));
+    }
+
+    @Test
+    void shouldNotCancelDeliveredOrder() {
+
+        order.setStatus(OrderStatus.DELIVERED);
+        assertThrows(InvalidOrderStatusException.class,
+                () -> service.validateCanCancel(order));
+    }
+
+    @Test
+    void shouldRejectInactiveOrder() {
+
+        order.setActive(false);
+        assertThrows(InvalidOrderStatusException.class,
+                () -> service.validateCanConfirm(order));
     }
 }

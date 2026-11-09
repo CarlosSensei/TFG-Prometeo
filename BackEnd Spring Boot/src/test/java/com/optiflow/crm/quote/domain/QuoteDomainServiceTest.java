@@ -4,6 +4,7 @@ import com.optiflow.crm.quote.model.Quote;
 import com.optiflow.crm.quote.model.QuoteItem;
 import com.optiflow.crm.quote.model.QuoteStatus;
 
+import com.optiflow.crm.shared.exception.InvalidQuoteStatusException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,10 +17,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuoteDomainServiceTest {
 
     private QuoteDomainService service;
+    private Quote quote;
 
     @BeforeEach
     void setUp() {
+
         service = new QuoteDomainService();
+
+        quote = new Quote();
+
+        quote.setActive(true);
+        quote.setStatus(QuoteStatus.DRAFT);
+        quote.setExpirationDate(LocalDate.now().plusDays(30));
+
+        quote.getItems().add(new QuoteItem());
     }
 
     // =====================================
@@ -266,4 +277,86 @@ class QuoteDomainServiceTest {
         // THEN
         assertTrue(quote.getActive());
     }
+
+    // =====================================
+    // QUOTE ACTIONS
+    // =====================================
+
+    @Test
+    void shouldSendDraftQuote() {
+
+        service.send(quote);
+
+        assertEquals(QuoteStatus.SENT, quote.getStatus());
+    }
+
+    @Test
+    void shouldAcceptSentQuote() {
+
+        quote.setStatus(QuoteStatus.SENT);
+
+        service.accept(quote);
+
+        assertEquals(QuoteStatus.ACCEPTED, quote.getStatus());
+    }
+
+    @Test
+    void shouldRejectSentQuote() {
+
+        quote.setStatus(QuoteStatus.SENT);
+
+        service.reject(quote);
+
+        assertEquals(QuoteStatus.REJECTED, quote.getStatus());
+    }
+
+    @Test
+    void shouldNotAcceptDraftQuote() {
+
+        assertThrows(InvalidQuoteStatusException.class,
+                () -> service.accept(quote)
+        );
+    }
+
+    @Test
+    void shouldNotSendEmptyQuote() {
+
+        quote.getItems().clear();
+
+        assertThrows(InvalidQuoteStatusException.class,
+                () -> service.send(quote)
+        );
+    }
+
+    @Test
+    void shouldNotAcceptExpiredQuote() {
+
+        quote.setStatus(QuoteStatus.SENT);
+        quote.setExpirationDate(LocalDate.now().minusDays(1));
+
+        assertThrows(InvalidQuoteStatusException.class,
+                () -> service.accept(quote)
+        );
+    }
+
+    @Test
+    void shouldNotSendInactiveQuote() {
+
+        quote.setActive(false);
+
+        assertThrows(InvalidQuoteStatusException.class,
+                () -> service.send(quote)
+        );
+    }
+
+    @Test
+    void shouldNotRejectConvertedQuote() {
+
+        quote.setStatus(QuoteStatus.CONVERTED);
+
+        assertThrows(InvalidQuoteStatusException.class,
+                () -> service.reject(quote)
+        );
+    }
+
 }

@@ -74,6 +74,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/ui-playground/pages/ui-playground/ui-playground')
             .then(m => m.UiPlayground)
+      },
+      {
+        path: 'orders',
+        title: 'Pedidos | OptiFlow',
+        loadComponent: () =>
+          import('./features/orders/pages/order-list/order-list')
+            .then(m => m.OrderList)
+      },
+      {
+        path: 'orders/new',
+        title: 'Nuevo pedido | OptiFlow',
+        loadComponent: () =>
+          import('./features/orders/pages/order-form/order-form')
+            .then(m => m.OrderForm)
       }
     ]
   },

@@ -19,30 +19,32 @@ import java.time.LocalDate;
 public class OrderDomainService {
 
     // Calculo de totales del pedido a partir de sus items
+
     public void calculateTotals(Order order) {
 
-        BigDecimal subtotal = order.getItems()
-                        .stream()
-                        .map(OrderItem::getSubtotal)
-                        .filter(value -> value != null)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal subtotal = BigDecimal.ZERO;
+        BigDecimal discount = BigDecimal.ZERO;
+        BigDecimal taxAmount = BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
 
-        BigDecimal taxAmount = order.getItems()
-                        .stream()
-                        .map(OrderItem::getTaxAmount)
-                        .filter(value -> value != null)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (OrderItem item : order.getItems()) {
 
-        BigDecimal total = order.getItems()
-                        .stream()
-                        .map(OrderItem::getTotal)
-                        .filter(value -> value != null)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+            subtotal = subtotal.add(item.getSubtotal() != null
+                    ? item.getSubtotal() : BigDecimal.ZERO);
+            discount = discount.add(item.getDiscount() != null
+                    ? item.getDiscount() : BigDecimal.ZERO);
+            taxAmount = taxAmount.add(item.getTaxAmount() != null
+                    ? item.getTaxAmount() : BigDecimal.ZERO);
+            total = total.add(item.getTotal() != null
+                    ? item.getTotal() : BigDecimal.ZERO);
+        }
 
         order.setSubtotal(subtotal);
+        order.setDiscount(discount);
         order.setTaxAmount(taxAmount);
         order.setTotal(total);
     }
+
 
     public void calculateItem(OrderItem item) {
 
@@ -78,12 +80,19 @@ public class OrderDomainService {
     // Validar presupuestos
     public void validateQuoteConversion(Quote quote) {
 
-        if (quote.getStatus() != QuoteStatus.ACCEPTED) {
-
+        if (!Boolean.TRUE.equals(quote.getActive())) {
             throw new InvalidQuoteStatusException(
-                    "Solo se pueden convertir presupuestos ACCEPTED");
+                    "No se puede convertir un presupuesto inactivo"
+            );
+        }
+
+        if (quote.getStatus() != QuoteStatus.ACCEPTED) {
+            throw new InvalidQuoteStatusException(
+                    "Solo se pueden convertir presupuestos aceptados"
+            );
         }
     }
+
 
     // Metodo para inicializar presupuestos
     public void initializeOrder(Order order) {
@@ -141,33 +150,88 @@ public class OrderDomainService {
         return order;
     }
 
-    // Validacion de confirmacion de pedido
+
+    public void validateCanEdit(Order order) {
+
+        validateActive(order);
+
+        requireStatus(order, OrderStatus.PENDING);
+    }
+
+    public void validateCanDelete(Order order) {
+
+        validateCanEdit(order);
+    }
+
     public void validateCanConfirm(Order order) {
 
-        if (order.getStatus() != OrderStatus.PENDING) {
+        validateActive(order);
 
-            throw new InvalidOrderStatusException("Solo se pueden confirmar pedidos en estado PENDING");
-        }
+        requireStatus(order, OrderStatus.PENDING);
 
         if (order.getItems() == null || order.getItems().isEmpty()) {
-
-            throw new InvalidOrderStatusException("No se puede confirmar un pedido sin artículos");
+            throw new InvalidOrderStatusException
+                    ("No se puede confirmar un pedido sin artículos");
         }
     }
 
-    // Validacion de cancelacion de pedido
+    public void startPreparation(Order order) {
+
+        validateActive(order);
+        requireStatus(order, OrderStatus.CONFIRMED);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+    }
+
+    public void markReady(Order order) {
+
+        validateActive(order);
+        requireStatus(order, OrderStatus.IN_PROGRESS);
+        order.setStatus(OrderStatus.READY);
+    }
+
+    public void deliver(Order order) {
+
+        validateActive(order);
+        requireStatus(order, OrderStatus.READY);
+        order.setStatus(OrderStatus.DELIVERED);
+        order.setDeliveryDate(LocalDate.now());
+    }
+
     public void validateCanCancel(Order order) {
 
-        if (order.getStatus() == OrderStatus.CANCELLED) {
+        validateActive(order);
 
-            throw new InvalidOrderStatusException("El pedido ya está cancelado");
-        }
+        if (order.getStatus() == OrderStatus.CANCELLED ||
+                order.getStatus() == OrderStatus.DELIVERED) {
 
-        if (order.getStatus() == OrderStatus.DELIVERED) {
-
-            throw new InvalidOrderStatusException("No se puede cancelar un pedido ya entregado");
+            throw new InvalidOrderStatusException(
+                    "El pedido no se puede cancelar en estado " +
+                            order.getStatus()
+            );
         }
     }
+
+    private void validateActive(Order order) {
+
+        if (!Boolean.TRUE.equals(order.getActive())) {
+
+            throw new InvalidOrderStatusException(
+                    "El pedido está inactivo"
+            );
+        }
+    }
+
+    private void requireStatus(Order order, OrderStatus required) {
+
+        if (order.getStatus() != required) {
+
+            throw new InvalidOrderStatusException(
+                    "Se requiere el estado " + required +
+                            ". Estado actual: " + order.getStatus()
+            );
+        }
+    }
+
 
 
 }

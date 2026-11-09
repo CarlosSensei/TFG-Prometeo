@@ -37,7 +37,19 @@ public final class OrderSpecification {
                 greaterThanOrEqual("deliveryDate", dto.getDeliveryDateFrom()),
                 lessThanOrEqual("deliveryDate", dto.getDeliveryDateTo()),
                 // Baja lógica
-                equal("active", dto.getActive())
+                equal("active", dto.getActive()),
+                // Estados seleccionados (multiselección)
+                (root, query, cb) -> {
+
+                    if (dto.getStatuses() == null || dto.getStatuses().isEmpty()) {
+                        return null;
+                    }
+                    return root.get("status").in(dto.getStatuses());
+                },
+                // Importe mínimo
+                greaterThanOrEqual("total", dto.getMinTotal()),
+                // Importe máximo
+                lessThanOrEqual("total", dto.getMaxTotal())
         );
     }
 }

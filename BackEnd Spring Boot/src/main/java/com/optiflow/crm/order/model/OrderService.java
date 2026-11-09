@@ -20,6 +20,8 @@ public interface OrderService {
     // Buscar por Id de pedido
     Order findById(Long id);
 
+    OrderDto findDetailById(Long id);
+
     // Crear un nuevo pedido
     Order create(OrderDto orderDto);
 
@@ -32,9 +34,23 @@ public interface OrderService {
     // Confirmar un pedido
     Order confirm(Long id);
 
+    OrderDto confirmDetail(Long id);
+
+    // Preparar un pedido
+    OrderDto startPreparationDetail(Long id);
+
+    OrderDto markReadyDetail(Long id);
+
+    OrderDto deliverDetail(Long id);
+
     // Cancelar un pedido
     Order cancel(Long id);
 
+    OrderDto cancelDetail(Long id);
+
     // Borrar un pedido
     void delete(Long id);
+
+
+
 }

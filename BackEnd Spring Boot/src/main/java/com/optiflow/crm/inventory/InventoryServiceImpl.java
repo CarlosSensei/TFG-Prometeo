@@ -126,44 +126,58 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional
     public void decreaseStock(Long inventoryItemId, Integer quantity) {
 
-        InventoryItem item = findById(inventoryItemId);
+        validateQuantity(quantity);
+
+        InventoryItem item = inventoryRepository
+                .findByIdForUpdate(inventoryItemId)
+                .orElseThrow(() ->
+                        new InventoryItemNotFoundException(inventoryItemId));
 
         if (item.getType() == InventoryItemType.SERVICE) {
             return;
         }
 
-        if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor que 0");
+        if (!Boolean.TRUE.equals(item.getActive())) {
+            throw new IllegalArgumentException("El artículo está inactivo");
         }
 
         if (item.getStock() < quantity) {
-            throw new InsufficientStockException(item.getId(), item.getStock(), quantity);
+            throw new InsufficientStockException(
+                    item.getId(),
+                    item.getStock(),
+                    quantity
+            );
         }
 
         item.setStock(item.getStock() - quantity);
-
-        inventoryRepository.save(item);
     }
 
-    // Subir al stock
     @Override
     @Transactional
     public void increaseStock(Long inventoryItemId, Integer quantity) {
 
-        InventoryItem item = findById(inventoryItemId);
+        validateQuantity(quantity);
+
+        InventoryItem item = inventoryRepository
+                .findByIdForUpdate(inventoryItemId)
+                .orElseThrow(() ->
+                        new InventoryItemNotFoundException(inventoryItemId));
 
         if (item.getType() == InventoryItemType.SERVICE) {
             return;
         }
 
-        if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor que 0");
-        }
-
         item.setStock(item.getStock() + quantity);
-
-        inventoryRepository.save(item);
     }
+
+    private void validateQuantity(Integer quantity) {
+
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "La cantidad debe ser mayor que cero");
+        }
+    }
+
 
 
 }

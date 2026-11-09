@@ -1,0 +1,88 @@
+<div class="lookup-field">
+
+  <label for="inventory-query">Añadir artículo</label>
+
+  <div class="search-input">
+
+    <svg
+      class="search-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7"></circle>
+      <path d="m20 20-4-4"></path>
+    </svg>
+
+    <input
+      id="inventory-query"
+      type="search"
+      autocomplete="off"
+      placeholder="Buscar artículos por nombre..."
+      [value]="inventoryQuery()"
+      (input)="updateInventoryQuery($any($event.target).value)"
+    />
+
+  </div>
+
+  @if (searchingInventory()) {
+
+    <small role="status">
+      Buscando artículos...
+    </small>
+
+  }
+
+  @if (searchError()) {
+
+    <small class="search-error" role="alert">
+      {{ searchError() }}
+    </small>
+
+  }
+
+  @if (inventoryResults().length > 0) {
+
+    <div class="lookup-results">
+
+      @for (item of inventoryResults(); track item.id) {
+
+        <button
+          type="button"
+          class="lookup-result"
+          (click)="addItem(item)"
+        >
+
+          <span>
+            <strong>{{ item.name }}</strong>
+
+            <small>
+              {{ item.sku }} · Stock: {{ item.stock }}
+            </small>
+          </span>
+
+          <strong>
+            {{ item.salePrice | currency:'EUR':'symbol':'1.2-2' }}
+          </strong>
+
+        </button>
+
+      }
+
+    </div>
+
+  } @else if (
+    searchCompleted() &&
+    !searchError() &&
+    !searchingInventory()
+  ) {
+
+    <p class="empty-results">
+      No se han encontrado artículos con ese nombre.
+    </p>
+
+  }
+
+</div>

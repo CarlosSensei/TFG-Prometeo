@@ -2,7 +2,9 @@ package com.optiflow.crm.order.dto;
 
 import com.optiflow.crm.order.model.OrderStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 // Entidad Dto de busqueda de pedido
 public class OrderSearchDto {
@@ -16,6 +18,12 @@ public class OrderSearchDto {
     private Long quoteId;
 
     private OrderStatus status;
+
+    private Set<OrderStatus> statuses;
+
+    private BigDecimal minTotal;
+
+    private BigDecimal maxTotal;
 
     private LocalDate orderDateFrom;
 
@@ -80,6 +88,18 @@ public class OrderSearchDto {
     public void setStatus(OrderStatus status) {
         this.status = status;
     }
+
+    public Set<OrderStatus> getStatuses() { return statuses; }
+
+    public void setStatuses(Set<OrderStatus> statuses) { this.statuses = statuses; }
+
+    public BigDecimal getMinTotal() { return minTotal; }
+
+    public void setMinTotal(BigDecimal minTotal) { this.minTotal = minTotal; }
+
+    public BigDecimal getMaxTotal() { return maxTotal; }
+
+    public void setMaxTotal(BigDecimal maxTotal) { this.maxTotal = maxTotal; }
 
     public LocalDate getOrderDateFrom() {
         return orderDateFrom;

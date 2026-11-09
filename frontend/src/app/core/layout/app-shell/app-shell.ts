@@ -27,7 +27,7 @@ export class AppShell {
     void this.router.navigate(['/login']);
   }
 
-  navigateToList(module: 'clients' | 'quotes'): void {
+  navigateToList(module: 'clients' | 'quotes' | 'orders'): void {
 
     this.closeSidebar();
 

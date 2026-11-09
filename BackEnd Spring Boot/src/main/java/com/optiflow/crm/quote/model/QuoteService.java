@@ -31,4 +31,13 @@ public interface QuoteService {
 
     // Borrar un presupuesto
     void delete(Long id);
+
+    // Envia un presupuesto
+    QuoteDto send(Long id);
+
+    // Acepta un presupuesto
+    QuoteDto accept(Long id);
+
+    // Marcar como rechazado
+    QuoteDto reject(Long id);
 }

@@ -32,4 +32,19 @@ export class QuoteApiService {
     return this.http.put<Quote>(`${this.apiUrl}/${id}`, payload);
   }
 
+  send(id: number): Observable<Quote> {
+
+    return this.http.patch<Quote>(`${this.apiUrl}/${id}/send`, {});
+  }
+
+  accept(id: number): Observable<Quote> {
+
+    return this.http.patch<Quote>(`${this.apiUrl}/${id}/accept`, {});
+  }
+
+  reject(id: number): Observable<Quote> {
+    
+    return this.http.patch<Quote>(`${this.apiUrl}/${id}/reject`, {});
+  }
+
 }

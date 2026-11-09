@@ -1,29 +1,20 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, switchMap, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { QuoteApiService } from '../../services/quote-api.service';
-import {
-  InventoryItem,
-  QuoteLookupService,
-} from '../../services/quote-lookup.service';
+import { CommercialLookupService } from '../../../../shared/commercial/services/commercial-lookup.service';
+import { InventoryItem } from '../../../../shared/commercial/models/inventory-item.model';
 import { QuoteItemPayload, QuotePayload } from '../../models/quote.model';
 import { Client } from '../../../clients/models/client.model';
-import { QuoteLineDraft } from '../../models/quote-line-draft.model';
-import { calculateLine, roundMoney } from '../../utils/quote-calculations';
-import { QuoteClientSelector } from '../../components/quote-client-selector/quote-client-selector';
-import { QuoteInventorySearch } from '../../components/quote-inventory-search/quote-inventory-search';
-import { QuoteLinesEditor } from '../../components/quote-lines-editor/quote-lines-editor';
-import { QuoteTotals } from '../../components/quote-totals/quote-totals';
+import { CommercialLineDraft } from '../../../../shared/commercial/models/commercial-line.model';
+import { calculateTotals, roundMoney } from '../../../../shared/commercial/utils/commercial-calculations';
+import { CommercialClientSelector } from '../../../../shared/commercial/components/commercial-client-selector/commercial-client-selector';
+import { CommercialInventorySearch } from '../../../../shared/commercial/components/commercial-inventory-search/commercial-inventory-search';
+import { CommercialLinesEditor } from '../../../../shared/commercial/components/commercial-lines-editor/commercial-lines-editor';
+import { CommercialTotalsComponent } from '../../../../shared/commercial/components/commercial-totals/commercial-totals';
 import { Button } from '../../../../shared/ui/button/button';
 
 @Component({
@@ -31,10 +22,10 @@ import { Button } from '../../../../shared/ui/button/button';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    QuoteClientSelector,
-    QuoteInventorySearch,
-    QuoteLinesEditor,
-    QuoteTotals,
+    CommercialClientSelector,
+    CommercialInventorySearch,
+    CommercialLinesEditor,
+    CommercialTotalsComponent,
     Button,
   ],
   templateUrl: './quote-form.html',
@@ -47,7 +38,7 @@ export class QuoteForm implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly quoteApi = inject(QuoteApiService);
-  private readonly lookup = inject(QuoteLookupService);
+  private readonly lookup = inject(CommercialLookupService);
 
   private nextLineKey = 0;
 
@@ -57,7 +48,7 @@ export class QuoteForm implements OnInit {
   readonly error = signal<string | null>(null);
 
   readonly selectedClient = signal<Client | null>(null);
-  readonly lines = signal<QuoteLineDraft[]>([]);
+  readonly lines = signal<CommercialLineDraft[]>([]);
   readonly isEditMode = computed(() => this.quoteId() !== null);
 
   readonly title = computed(() =>
@@ -74,29 +65,7 @@ export class QuoteForm implements OnInit {
     notes: this.fb.nonNullable.control('', Validators.maxLength(1000)),
   });
 
-  readonly totals = computed(() => {
-    let subtotal = 0;
-    let tax = 0;
-    let discount = 0;
-
-    for (const line of this.lines()) {
-      const calculated = calculateLine(line);
-
-      subtotal += calculated.subtotal;
-      tax += calculated.tax;
-      discount += line.discount;
-    }
-
-    subtotal = roundMoney(subtotal);
-    tax = roundMoney(tax);
-
-    return {
-      subtotal,
-      tax,
-      discount: roundMoney(discount),
-      total: roundMoney(subtotal + tax),
-    };
-  });
+  readonly totals = computed(() => calculateTotals(this.lines()));
 
   readonly validLines = computed(
     () =>

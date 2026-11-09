@@ -1,0 +1,60 @@
+<section class="order-workflow">
+
+  <h4>Gestión del pedido</h4>
+
+  @if (!active()) {
+
+    <p>Este pedido está inactivo.</p>
+
+  } @else {
+
+    <div class="workflow-actions">
+
+      @if (primaryAction(); as action) {
+
+        <app-button
+          variant="primary"
+          [disabled]="processing()"
+          [loading]="processing()"
+          (pressed)="request(action.id)"
+        >
+          {{ action.label }}
+        </app-button>
+
+      }
+
+      @if (canCancel()) {
+
+        <app-button
+          variant="danger"
+          [disabled]="processing()"
+          (pressed)="request('cancel')"
+        >
+          Cancelar pedido
+        </app-button>
+
+      }
+
+      @if (status() === 'DELIVERED') {
+
+        <p>
+          Pedido entregado. El circuito comercial
+          ha finalizado.
+        </p>
+
+      }
+
+      @if (status() === 'CANCELLED') {
+
+        <p>
+          Pedido cancelado. No admite nuevas
+          transiciones.
+        </p>
+
+      }
+
+    </div>
+
+  }
+
+</section>

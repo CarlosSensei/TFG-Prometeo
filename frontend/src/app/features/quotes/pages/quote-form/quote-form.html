@@ -22,7 +22,7 @@
         <h2>Información del presupuesto</h2>
 
         <div class="form-grid">
-          <app-quote-client-selector
+          <app-commercial-client-selector
             class="field-full"
             [selectedClient]="selectedClient()"
             [invalid]="
@@ -54,12 +54,12 @@
       <section class="form-section">
         <h2>Artículos del presupuesto</h2>
 
-        <app-quote-inventory-search
+        <app-commercial-inventory-search
           (itemSelected)="addItem($event)"
           (searchFailed)="error.set($event)"
           (searchStarted)="error.set(null)"
         />
-        <app-quote-lines-editor
+        <app-commercial-lines-editor
           [lines]="lines()"
           (removed)="removeItem($event)"
           (quantityChanged)="updateQuantity($event.key, $event.value)"
@@ -72,7 +72,7 @@
       <section class="form-section">
         <h2>Resumen económico</h2>
 
-        <app-quote-totals [totals]="totals()" [estimated]="true" />
+        <app-commercial-totals [totals]="totals()" [estimated]="true" />
       </section>
 
       <!-- OBSERVACIONES -->

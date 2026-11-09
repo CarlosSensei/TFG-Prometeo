@@ -47,11 +47,18 @@
         <span>▤</span>
         Presupuestos
       </a>
-
-      <span class="nav-placeholder">▣ &nbsp; Pedidos</span>
+      
+      <a
+        routerLink="/orders"
+        routerLinkActive="active"
+        (click)="navigateToList('orders'); $event.preventDefault()"
+      >
+        <span>▣</span>
+        Pedidos
+      </a>
 
       <span class="nav-section">OPERACIONES</span>
-      
+    
       <span class="nav-placeholder">◷ &nbsp; Seguimientos</span>
       <span class="nav-placeholder">◇ &nbsp; Inventario</span>
 

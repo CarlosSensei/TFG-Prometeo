@@ -1,0 +1,121 @@
+<app-drawer
+  [open]="orderId() !== null"
+  title="Detalle del pedido"
+  (closed)="close()"
+>
+
+  @if (loading()) {
+
+    <p class="detail-message" role="status">
+      Cargando pedido...
+    </p>
+
+  } @else if (error()) {
+
+    <div class="detail-error" role="alert">
+      {{ error() }}
+    </div>
+
+  } @else if (order(); as currentOrder) {
+
+    <div class="order-detail">
+
+      <!-- CABECERA -->
+
+      <header class="order-identity">
+
+        <div>
+          <p class="eyebrow">PEDIDO</p>
+
+          <h3>{{ currentOrder.orderNumber }}</h3>
+
+          <p class="order-date">
+            Creado el {{ formatDate(currentOrder.orderDate) }}
+          </p>
+        </div>
+
+        <app-badge
+          [variant]="statusVariant(currentOrder.status)"
+        >
+          {{ formatStatus(currentOrder.status) }}
+        </app-badge>
+
+      </header>
+
+      <!-- INFORMACIÓN COMERCIAL -->
+
+      <app-order-commercial-info
+        [order]="currentOrder"
+        [client]="client()"
+        [seller]="seller()"
+        (clientRequested)="clientRequested.emit($event)"
+      />
+
+      <!-- ARTÍCULOS -->
+
+      <app-order-detail-items
+        [items]="currentOrder.items"
+      />
+
+      <!-- TOTALES -->
+
+      <section class="detail-section">
+
+        <h4>Resumen económico</h4>
+
+        <app-commercial-totals
+          [totals]="{
+            subtotal: currentOrder.subtotal,
+            discount: currentOrder.discount,
+            tax: currentOrder.taxAmount,
+            total: currentOrder.total
+          }"
+          [taxRate]="currentOrder.taxRate"
+        />
+
+      </section>
+
+      <!-- OBSERVACIONES -->
+
+      <section class="detail-section">
+
+        <h4>Observaciones</h4>
+
+        <p class="order-notes">
+          {{ currentOrder.notes || 'Sin observaciones.' }}
+        </p>
+
+      </section>
+
+      <!-- MENSAJES -->
+
+      @if (actionError()) {
+
+        <p class="action-error" role="alert">
+          {{ actionError() }}
+        </p>
+
+      }
+
+      @if (actionSuccess()) {
+
+        <p class="action-success" role="status">
+          {{ actionSuccess() }}
+        </p>
+
+      }
+
+      <!-- WORKFLOW -->
+
+      <app-order-workflow
+        [status]="currentOrder.status"
+        [active]="currentOrder.active"
+        [processing]="processing()"
+        (actionRequested)="executeWorkflow($event)"
+      />
+
+    </div>
+
+  }
+
+</app-drawer>

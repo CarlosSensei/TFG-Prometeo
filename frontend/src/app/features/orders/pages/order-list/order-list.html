@@ -1,0 +1,74 @@
+<section class="orders-page">
+
+  <header class="page-header">
+    <div class="page-heading">
+      <p class="eyebrow">GESTIÓN COMERCIAL</p>
+
+      <h1>Pedidos</h1>
+
+      <p class="page-description">
+        Consulta el estado y realiza el seguimiento
+        de los pedidos de tu óptica.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <app-badge variant="info">
+        {{ totalElements() }} pedidos
+      </app-badge>
+
+      <app-button
+        variant="primary"
+        (pressed)="createOrder()"
+      >
+        + Nuevo pedido
+      </app-button>
+    </div>
+  </header>
+
+  <!-- ERROR -->
+
+  @if (error()) {
+
+    <div class="error-panel" role="alert">
+
+      <p>{{ error() }}</p>
+
+      <app-button
+        variant="secondary"
+        size="sm"
+        (pressed)="retry()"
+      >
+        Reintentar
+      </app-button>
+
+    </div>
+  }
+
+  <!-- TABLA -->
+
+  <app-order-table
+    [orders]="orders()"
+    [loading]="loading()"
+    [filters]="filters()"
+    [sort]="sort()"
+    [page]="page()"
+    [pageSize]="pageSize"
+    [totalElements]="totalElements()"
+    (filtersCleared)="clearAllFilters()"
+    (filterChanged)="handleFilterChange($event)"
+    (sortChanged)="changeSort($event)"
+    (rowAction)="handleRowAction($event)"
+    (pageChanged)="changePage($event)"
+  />
+
+  <!-- FICHA DEL PEDIDO -->
+
+  <app-order-detail-drawer
+    [orderId]="selectedOrderId()"
+    (closed)="closeOrderDetail()"
+    (clientRequested)="openClientDetail($event)"
+    (updated)="onOrderUpdated()"
+  />
+
+</section>
