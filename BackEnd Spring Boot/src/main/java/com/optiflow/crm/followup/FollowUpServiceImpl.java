@@ -123,23 +123,34 @@ public class FollowUpServiceImpl implements FollowUpService {
     @Override
     @Transactional
     public FollowUp update(Long id, FollowUpDto dto) {
+        FollowUp existing = findById(id);
 
-        FollowUp existingFollowUp = findById(id);
-
-        LocalDateTime previousScheduledAt = existingFollowUp.getScheduledAt();
-
-        followUpMapper.updateEntity(dto, existingFollowUp);
-
-        // Si cambia la programación, habilitamos
-        // nuevamente la generación del aviso.
-        if (!java.util.Objects.equals(previousScheduledAt,
-                existingFollowUp.getScheduledAt())) {
-
-            existingFollowUp.setDueEventPublishedAt(null);
+        if (!Boolean.TRUE.equals(existing.getActive()) || existing.getStatus() != FollowUpStatus.PENDING) {
+            throw new IllegalArgumentException("Solo se pueden editar seguimientos pendientes y activos");
+        }
+        if (dto.getQuoteId() == null || !dto.getQuoteId().equals(existing.getQuote().getId())) {
+            throw new IllegalArgumentException("No se puede cambiar el presupuesto del seguimiento");
+        }
+        if (dto.getType() == null || dto.getScheduledAt() == null) {
+            throw new IllegalArgumentException("Tipo y fecha programada son obligatorios");
+        }
+        if (!dto.getScheduledAt().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("La fecha programada debe ser futura");
+        }
+        if (dto.getNotes() != null && dto.getNotes().length() > 1000) {
+            throw new IllegalArgumentException("Las notas no pueden superar 1000 caracteres");
         }
 
-        return followUpRepository.save(existingFollowUp);
+        boolean changedDate = !java.util.Objects.equals(existing.getScheduledAt(), dto.getScheduledAt());
+        existing.setType(dto.getType());
+        existing.setScheduledAt(dto.getScheduledAt());
+        existing.setNotes(dto.getNotes());
+
+        // No sobrescribir status, completedAt, result ni automated desde la edición.
+        if (changedDate) existing.setDueEventPublishedAt(null);
+        return followUpRepository.save(existing);
     }
+
 
 
     // Metodo para completar un seguimiento

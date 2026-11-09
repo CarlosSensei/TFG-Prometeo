@@ -1,0 +1,13 @@
+:host { display: block; }
+.followup-form { display: flex; flex-direction: column; gap: var(--space-5); }
+.form-heading h3 { margin: 0; color: var(--color-text); font-size: var(--font-size-xl); }
+.form-heading p:last-child { color: var(--color-text-secondary); margin: var(--space-2) 0 0; }
+.eyebrow { color: var(--color-primary); font-size: var(--font-size-xs); font-weight: 600; letter-spacing: .08em; margin: 0 0 var(--space-2); }
+form { display: flex; flex-direction: column; gap: var(--space-3); }
+label { color: var(--color-text); font-weight: 600; font-size: var(--font-size-sm); }
+select, input, textarea { width: 100%; box-sizing: border-box; font: inherit; color: var(--color-text); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-3); }
+select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+textarea { resize: vertical; }
+small { color: var(--color-text-secondary); text-align: right; }
+.form-error { color: var(--color-danger); border: 1px solid var(--color-danger); border-radius: var(--radius-md); padding: var(--space-3); }
+.form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-4); }

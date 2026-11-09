@@ -1,0 +1,13 @@
+:host { display: block; width: 100%; }
+.followups-page { display: flex; flex-direction: column; gap: var(--space-6); }
+.page-header, .table-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
+.eyebrow { color: var(--color-primary); font-size: var(--font-size-xs); font-weight: 600; letter-spacing: .08em; margin-bottom: var(--space-2); }
+.description, .table-heading p { color: var(--color-text-secondary); margin-top: var(--space-2); }
+.header-actions { display: flex; align-items: center; gap: var(--space-3); }
+.record-count { color: var(--color-text-secondary); font-weight: 600; }
+.table-heading, .pagination-wrapper { padding: var(--space-4); }
+.table-heading h2 { margin: 0; }
+.table-heading p { margin-bottom: 0; }
+.error-panel { display: flex; justify-content: space-between; align-items: center; padding: var(--space-4); border: 1px solid var(--color-danger); border-radius: var(--radius-md); gap: var(--space-3); }
+.error-panel p { margin: 0; color: var(--color-danger); }
+@media (max-width: 768px) { .page-header, .error-panel, .table-heading { align-items: stretch; flex-direction: column; } }

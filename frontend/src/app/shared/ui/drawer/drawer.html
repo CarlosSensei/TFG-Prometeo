@@ -1,6 +1,7 @@
 <dialog
   #dialog
   class="ui-drawer"
+  [class.ui-drawer--wide]="size() === 'wide'"
   aria-modal="true"
   aria-labelledby="drawer-title"
   (close)="onDialogClose()"

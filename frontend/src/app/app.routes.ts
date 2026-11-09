@@ -88,6 +88,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/orders/pages/order-form/order-form')
             .then(m => m.OrderForm)
+      },
+      {
+        path: 'followups',
+        title: 'Seguimientos | OptiFlow',
+        loadComponent: () =>
+          import('./features/followups/pages/followup-list/followup-list')
+            .then(m => m.FollowUpList)
       }
     ]
   },

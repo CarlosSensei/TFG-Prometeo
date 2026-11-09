@@ -1,86 +1,286 @@
+
+/* ==========================================
+   OPTIFLOW - QUOTE DETAIL DRAWER
+   ========================================== */
+
 :host {
   display: contents;
 }
 
+
+/* ==========================================
+   LAYOUT PRINCIPAL
+   ========================================== */
+
 .quote-detail {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  grid-template-areas:
+    "identity identity"
+    "commercial items"
+    "workflow totals"
+    "followups followups"
+    "notes notes";
+
+  align-items: start;
+
+  column-gap: var(--space-6);
+  row-gap: var(--space-5);
+
+  width: 100%;
   min-width: 0;
 }
 
-/* IDENTIFICACIÓN */
+.quote-detail > * {
+  min-width: 0;
+}
+
+
+/* ==========================================
+   DISTRIBUCIÓN DE BLOQUES
+   ========================================== */
+
+.quote-identity {
+  grid-area: identity;
+}
+
+.quote-commercial {
+  grid-area: commercial;
+}
+
+.quote-items {
+  grid-area: items;
+}
+
+.quote-totals {
+  grid-area: totals;
+}
+
+.quote-workflow {
+  grid-area: workflow;
+}
+
+.quote-followups {
+  grid-area: followups;
+}
+
+.quote-notes-section {
+  grid-area: notes;
+}
+
+
+/* ==========================================
+   IDENTIFICACIÓN DEL PRESUPUESTO
+   ========================================== */
 
 .quote-identity {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   flex-wrap: wrap;
   gap: var(--space-4);
 
-  padding-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+
   border-bottom: 1px solid var(--color-border);
 
   h3 {
     margin: 0;
+
     color: var(--color-text);
+
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
+
+    line-height: 1.3;
+    overflow-wrap: anywhere;
   }
 }
 
 .eyebrow {
   margin: 0 0 var(--space-2);
+
+  color: var(--color-primary);
+
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
+
   letter-spacing: 0.08em;
-  color: var(--color-primary);
+  text-transform: uppercase;
 }
 
 .quote-date {
   margin: var(--space-2) 0 0;
-  font-size: var(--font-size-sm);
+
   color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
 }
 
-/* SECCIONES */
+
+/* ==========================================
+   SECCIONES GENERALES
+   ========================================== */
 
 .detail-section {
   display: flex;
   flex-direction: column;
+
   gap: var(--space-4);
+
   min-width: 0;
 
   h4 {
     margin: 0;
+
+    padding-bottom: var(--space-3);
+
+    color: var(--color-text);
+
+    border-bottom: 1px solid var(--color-border);
+
     font-size: var(--font-size-md);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-text);
   }
 }
 
-/* NOTAS */
+
+/* ==========================================
+   INFORMACIÓN COMERCIAL
+   ========================================== */
+
+.quote-commercial {
+  display: block;
+  min-width: 0;
+}
+
+
+/* ==========================================
+   ARTÍCULOS DEL PRESUPUESTO
+   ========================================== */
+
+.quote-items {
+  display: block;
+
+  min-width: 0;
+  max-width: 100%;
+
+  overflow-x: auto;
+}
+
+
+/* ==========================================
+   RESUMEN ECONÓMICO
+   ========================================== */
+
+.quote-totals {
+  min-width: 0;
+}
+
+.quote-totals app-commercial-totals {
+  display: block;
+  width: 100%;
+}
+
+
+/* ==========================================
+   ACCIONES COMERCIALES
+   ========================================== */
+
+.quote-workflow {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-3);
+
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
+
+  h3 {
+    margin: 0;
+
+    color: var(--color-text);
+
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.workflow-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  min-width: 0;
+}
+
+
+/* ==========================================
+   SEGUIMIENTOS
+   ========================================== */
+
+.quote-followups {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-4);
+
+  min-width: 0;
+
+  padding-top: var(--space-4);
+
+  border-top: 1px solid var(--color-border);
+}
+
+
+/* ==========================================
+   OBSERVACIONES
+   ========================================== */
+
+.quote-notes-section {
+  padding-top: var(--space-3);
+}
 
 .quote-notes {
   margin: 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  line-height: 1.6;
-  color: var(--color-text-secondary);
 }
 
-/* ESTADOS */
+
+/* ==========================================
+   MENSAJES DE ESTADO
+   ========================================== */
 
 .detail-message {
   margin: 0;
+
   padding: var(--space-4);
+
   color: var(--color-text-secondary);
+
   font-size: var(--font-size-sm);
 }
 
 .detail-error {
   display: flex;
   flex-direction: column;
+
   gap: var(--space-3);
 
   padding: var(--space-4);
@@ -90,45 +290,38 @@
 
   p {
     margin: 0;
+
     color: var(--color-danger);
   }
 }
 
-/* ACCIONES */
 
-.quote-workflow {
-  margin-top: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-border);
-
-  h3 {
-    margin: 0 0 var(--space-4);
-    font-size: var(--font-size-md);
-  }
-}
-
-.workflow-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
+/* ==========================================
+   RESULTADOS DE ACCIONES
+   ========================================== */
 
 .workflow-error,
 .workflow-success,
 .workflow-info {
-  margin: var(--space-3) 0;
+  margin: 0;
+
   padding: var(--space-3);
+
   border-radius: var(--radius-md);
+
   font-size: var(--font-size-sm);
+  line-height: 1.5;
 }
 
 .workflow-error {
   color: var(--color-danger);
+
   border: 1px solid var(--color-danger);
 }
 
 .workflow-success {
   color: var(--color-text);
+
   background: var(
     --color-primary-soft,
     var(--color-surface)
@@ -137,8 +330,89 @@
 
 .workflow-info {
   color: var(--color-text-secondary);
+
   background: var(
     --color-background,
     var(--color-surface)
   );
+}
+
+
+/* ==========================================
+   RESPONSIVE - TABLET
+   ========================================== */
+
+@media (max-width: 1100px) {
+
+  .quote-detail {
+    column-gap: var(--space-4);
+    row-gap: var(--space-4);
+  }
+
+  .workflow-actions {
+    gap: var(--space-2);
+  }
+}
+
+
+/* ==========================================
+   RESPONSIVE - TABLET PEQUEÑA
+   ========================================== */
+
+@media (max-width: 900px) {
+
+  .quote-detail {
+    grid-template-columns: 1fr;
+
+    grid-template-areas:
+      "identity"
+      "commercial"
+      "items"
+      "totals"
+      "workflow"
+      "followups"
+      "notes";
+  }
+
+  .quote-items {
+    overflow-x: auto;
+  }
+}
+
+
+/* ==========================================
+   RESPONSIVE - MÓVIL
+   ========================================== */
+
+@media (max-width: 640px) {
+
+  .quote-detail {
+    gap: var(--space-4);
+  }
+
+  .quote-identity {
+    gap: var(--space-3);
+    padding-bottom: var(--space-3);
+
+    h3 {
+      font-size: var(--font-size-lg);
+    }
+  }
+
+  .detail-section {
+    gap: var(--space-3);
+  }
+
+  .workflow-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .workflow-actions app-button {
+    width: 100%;
+  }
+
+  .quote-followups {
+    padding-top: var(--space-3);
+  }
 }

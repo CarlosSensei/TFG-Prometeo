@@ -1,0 +1,15 @@
+:host { display: block; min-width: 0; }
+.quote-followups { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.section-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.section-heading h4, .edit-form h4 { margin: 0; font-size: var(--font-size-md); }
+.section-heading p { margin: var(--space-2) 0 0; color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.followup-list { display: flex; flex-direction: column; gap: var(--space-3); }
+.followup-item { padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+.item-top { display: flex; justify-content: space-between; gap: var(--space-3); align-items: flex-start; flex-wrap: wrap; }
+.item-top p { margin: var(--space-2) 0 0; color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.notes { margin: var(--space-3) 0 0; color: var(--color-text-secondary); font-size: var(--font-size-sm); white-space: pre-wrap; overflow-wrap: anywhere; }
+.item-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-3); }
+.edit-form { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.edit-form input, .edit-form select, .edit-form textarea { width: 100%; min-width: 0; }
+.message { margin: 0; color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.error { color: var(--color-danger); }

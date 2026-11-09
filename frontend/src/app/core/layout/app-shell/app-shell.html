@@ -33,8 +33,7 @@
       <a
         routerLink="/clients"
         routerLinkActive="active"
-        (click)="navigateToList('clients'); $event.preventDefault()"
-      >
+        (click)="navigateToList('clients'); $event.preventDefault()">
         <span>♙</span>
         Clientes
       </a>
@@ -42,8 +41,7 @@
       <a
         routerLink="/quotes"
         routerLinkActive="active"
-        (click)="navigateToList('quotes'); $event.preventDefault()"
-      >
+        (click)="navigateToList('quotes'); $event.preventDefault()">
         <span>▤</span>
         Presupuestos
       </a>
@@ -51,15 +49,20 @@
       <a
         routerLink="/orders"
         routerLinkActive="active"
-        (click)="navigateToList('orders'); $event.preventDefault()"
-      >
+        (click)="navigateToList('orders'); $event.preventDefault()">
         <span>▣</span>
         Pedidos
       </a>
 
       <span class="nav-section">OPERACIONES</span>
     
-      <span class="nav-placeholder">◷ &nbsp; Seguimientos</span>
+      <a 
+        routerLink="/followups" 
+        routerLinkActive="active" 
+        (click)="closeSidebar()">
+          <span>◷</span> 
+          Seguimientos
+      </a>
       <span class="nav-placeholder">◇ &nbsp; Inventario</span>
 
     </nav>

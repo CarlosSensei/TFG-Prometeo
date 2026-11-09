@@ -410,7 +410,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto startPreparationDetail(Long id) {
 
-        Order order = findById(id);
+        Order order = findByIdForUpdate(id);
 
         orderDomainService.startPreparation(order);
 
@@ -423,7 +423,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto markReadyDetail(Long id) {
 
-        Order order = findById(id);
+        Order order = findByIdForUpdate(id);
 
         orderDomainService.markReady(order);
 
@@ -436,7 +436,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto deliverDetail(Long id) {
 
-        Order order = findById(id);
+        Order order = findByIdForUpdate(id);
 
         orderDomainService.deliver(order);
 

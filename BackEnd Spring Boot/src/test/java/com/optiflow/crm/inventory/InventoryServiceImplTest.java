@@ -206,7 +206,7 @@ class InventoryServiceImplTest {
         InventoryItemDto dto = validDto();
         InventoryItem item = createItem(10);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(item));
         when(inventoryRepository.save(item)).thenReturn(item);
 
         // WHEN
@@ -228,7 +228,7 @@ class InventoryServiceImplTest {
 
         InventoryItem item = createItem(10);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(item));
         when(inventoryRepository.existsBySkuIgnoreCase("MON-002")).thenReturn(false);
         when(inventoryRepository.save(item)).thenReturn(item);
 
@@ -251,7 +251,7 @@ class InventoryServiceImplTest {
 
         InventoryItem item = createItem(10);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(item));
         when(inventoryRepository.existsBySkuIgnoreCase("MON-002")).thenReturn(true);
 
         assertThrows(InventoryItemAlreadyExistsException.class, () ->
@@ -287,9 +287,11 @@ class InventoryServiceImplTest {
     @Test
     void givenEnoughStock_whenDecrease_thenSubtractQuantity() {
 
+        // GIVEN
         InventoryItem item = createItem(10);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L))
+                .thenReturn(Optional.of(item));
 
         // WHEN
         service.decreaseStock(5L, 3);
@@ -297,29 +299,43 @@ class InventoryServiceImplTest {
         // THEN
         assertEquals(7, item.getStock());
 
-        verify(inventoryRepository).save(item);
+        verify(inventoryRepository)
+                .findByIdForUpdate(5L);
+
+        verify(inventoryRepository, never())
+                .save(any(InventoryItem.class));
     }
+
+
 
     @Test
     void givenExactStock_whenDecrease_thenStockBecomesZero() {
 
+        // GIVEN: artículo con 10 unidades disponibles
         InventoryItem item = createItem(10);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(item));
 
+        // WHEN: descontamos exactamente las 10 unidades
         service.decreaseStock(5L, 10);
 
+        // THEN: stock agotado, sin valores negativos
         assertEquals(0, item.getStock());
 
-        verify(inventoryRepository).save(item);
+        // Verificamos la consulta con bloqueo pesimista
+        verify(inventoryRepository).findByIdForUpdate(5L);
+
+        // No necesitamos save(): JPA utiliza dirty checking
+        verify(inventoryRepository, never()).save(any(InventoryItem.class));
     }
+
 
     @Test
     void givenInsufficientStock_whenDecrease_thenThrowWithoutSaving() {
 
         InventoryItem item = createItem(2);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(item));
 
         // WHEN + THEN
         assertThrows(InsufficientStockException.class, () ->
@@ -333,16 +349,10 @@ class InventoryServiceImplTest {
     @Test
     void givenInvalidQuantity_whenDecrease_thenThrow() {
 
-        InventoryItem item = createItem(10);
+        assertThrows(IllegalArgumentException.class,
+                () -> service.decreaseStock(5L, 0));
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
-
-        assertThrows(IllegalArgumentException.class, () ->
-                service.decreaseStock(5L, 0));
-
-        assertEquals(10, item.getStock());
-
-        verify(inventoryRepository, never()).save(any(InventoryItem.class));
+        verifyNoInteractions(inventoryRepository);
     }
 
     // =====================================
@@ -352,9 +362,11 @@ class InventoryServiceImplTest {
     @Test
     void givenValidQuantity_whenIncrease_thenAddStock() {
 
+        // GIVEN
         InventoryItem item = createItem(10);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L))
+                .thenReturn(Optional.of(item));
 
         // WHEN
         service.increaseStock(5L, 5);
@@ -362,22 +374,20 @@ class InventoryServiceImplTest {
         // THEN
         assertEquals(15, item.getStock());
 
-        verify(inventoryRepository).save(item);
+        verify(inventoryRepository)
+                .findByIdForUpdate(5L);
+
+        verify(inventoryRepository, never())
+                .save(any(InventoryItem.class));
     }
 
     @Test
     void givenInvalidQuantity_whenIncrease_thenThrow() {
 
-        InventoryItem item = createItem(10);
+        assertThrows(IllegalArgumentException.class,
+                () -> service.increaseStock(5L, -2));
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
-
-        assertThrows(IllegalArgumentException.class, () ->
-                service.increaseStock(5L, -2));
-
-        assertEquals(10, item.getStock());
-
-        verify(inventoryRepository, never()).save(any(InventoryItem.class));
+        verifyNoInteractions(inventoryRepository);
     }
 
     // =====================================
@@ -390,7 +400,7 @@ class InventoryServiceImplTest {
         InventoryItem item = createItem(0);
         item.setType(InventoryItemType.SERVICE);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(item));
 
         service.decreaseStock(5L, 3);
 
@@ -405,7 +415,7 @@ class InventoryServiceImplTest {
         InventoryItem item = createItem(0);
         item.setType(InventoryItemType.SERVICE);
 
-        when(inventoryRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(inventoryRepository.findByIdForUpdate(5L)).thenReturn(Optional.of(item));
 
         service.increaseStock(5L, 3);
 
@@ -421,11 +431,13 @@ class InventoryServiceImplTest {
     @Test
     void givenMissingItem_whenDecrease_thenThrow() {
 
-        when(inventoryRepository.findById(99L)).thenReturn(Optional.empty());
+        when(inventoryRepository.findByIdForUpdate(99L))
+                .thenReturn(Optional.empty());
 
-        assertThrows(InventoryItemNotFoundException.class, () ->
-                service.decreaseStock(99L, 2));
+        assertThrows(InventoryItemNotFoundException.class,
+                () -> service.decreaseStock(99L, 2));
 
         verify(inventoryRepository, never()).save(any(InventoryItem.class));
     }
+
 }

@@ -1,0 +1,52 @@
+<app-drawer [open]="followUp() !== null" title="Detalle del seguimiento" (closed)="close()">
+  @if (followUp(); as selected) {
+    <div class="followup-detail">
+      <header class="identity">
+        <div>
+          <p class="eyebrow">SEGUIMIENTO #{{ selected.id }}</p>
+          <h3>{{ typeLabel(selected.type) }}</h3>
+          <p>Presupuesto #{{ selected.quoteId }}</p>
+        </div>
+        <app-badge [variant]="statusVariant(selected.status)">
+          {{ statusLabel(selected.status) }}
+        </app-badge>
+      </header>
+      <dl class="details">
+        <div><dt>Programado para</dt><dd>{{ formatDateTime(selected.scheduledAt) }}</dd></div>
+        <div><dt>Origen</dt><dd>{{ selected.automated ? 'Automático' : 'Manual' }}</dd></div>
+        <div><dt>Creación</dt><dd>{{ formatDateTime(selected.createdAt) }}</dd></div>
+        @if (selected.completedAt) {
+          <div><dt>Completado el</dt><dd>{{ formatDateTime(selected.completedAt) }}</dd></div>
+        }
+      </dl>
+      @if (error()) { <p class="detail-error" role="alert">{{ error() }}</p> }
+      @if (selected.status === 'PENDING' && selected.active) {
+        <section class="completion-form">
+          <h4>Completar seguimiento</h4>
+          <label for="followup-result">Resultado
+            <textarea id="followup-result" rows="3" maxlength="500"
+              [value]="completionResult()"
+              (input)="completionResult.set($any($event.target).value)"
+              placeholder="Resultado de la gestión comercial"></textarea>
+          </label>
+          <label for="followup-notes">Notas
+            <textarea id="followup-notes" rows="3" maxlength="1000"
+              [value]="completionNotes()"
+              (input)="completionNotes.set($any($event.target).value)"></textarea>
+          </label>
+          <app-button variant="primary" [loading]="completing()" [disabled]="completing()"
+            (pressed)="complete()">Marcar como completado</app-button>
+        </section>
+      } @else {
+        <section class="result-section">
+          <h4>Resultado</h4>
+          <p>{{ selected.result || 'Sin resultado registrado.' }}</p>
+        </section>
+        <section class="result-section">
+          <h4>Notas</h4>
+          <p>{{ selected.notes || 'Sin notas.' }}</p>
+        </section>
+      }
+    </div>
+  }
+</app-drawer>

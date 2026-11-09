@@ -1,0 +1,63 @@
+<section class="followup-form" aria-labelledby="new-followup-title">
+  <div class="form-heading">
+    <p class="eyebrow">GESTIÓN COMERCIAL</p>
+    <h3 id="new-followup-title">Nuevo seguimiento</h3>
+    <p>Programa una acción comercial para este presupuesto.</p>
+  </div>
+
+  <form (submit)="$event.preventDefault(); submit()">
+    <label for="followup-type">Tipo de seguimiento *</label>
+    <select
+      id="followup-type"
+      required
+      [value]="type()"
+      [disabled]="saving()"
+      (change)="type.set($any($event.target).value)"
+    >
+      @for (option of types; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+
+    <label for="followup-when">Fecha y hora programada *</label>
+    <input
+      id="followup-when"
+      type="datetime-local"
+      required
+      [min]="earliest"
+      [value]="scheduledAt()"
+      [disabled]="saving()"
+      (input)="scheduledAt.set($any($event.target).value)"
+    />
+
+    <label for="followup-notes">Notas</label>
+    <textarea
+      id="followup-notes"
+      rows="4"
+      maxlength="1000"
+      [value]="notes()"
+      [disabled]="saving()"
+      (input)="notes.set($any($event.target).value)"
+      placeholder="Motivo del contacto, información pendiente, próximo paso..."
+    ></textarea>
+    <small>{{ notes().length }}/1000 caracteres</small>
+
+    @if (error()) {
+      <p class="form-error" role="alert">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <app-button
+        variant="secondary"
+        [disabled]="saving()"
+        (pressed)="cancelled.emit()"
+      >Volver al presupuesto</app-button>
+
+      <app-button
+        variant="primary"
+        type="submit"
+        [loading]="saving()"
+      >Guardar seguimiento</app-button>
+    </div>
+  </form>
+</section>

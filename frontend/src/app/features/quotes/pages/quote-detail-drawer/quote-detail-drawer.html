@@ -1,179 +1,333 @@
+
 <app-drawer
   [open]="quoteId() !== null"
   title="Detalle del presupuesto"
+  size="wide"
   (closed)="close()"
 >
+  <!-- ======================================
+       ESTADOS DE CARGA
+       ====================================== -->
+
   @if (loading()) {
-    <p class="detail-message" role="status">Cargando presupuesto...</p>
+
+    <p class="detail-message" role="status">
+      Cargando presupuesto...
+    </p>
+
   } @else if (error()) {
+
     <div class="detail-error" role="alert">
+
       <p>{{ error() }}</p>
 
-      <app-button variant="secondary" (pressed)="close()"> Cerrar </app-button>
+      <app-button
+        variant="secondary"
+        (pressed)="close()"
+      >
+        Cerrar
+      </app-button>
+
     </div>
+
   } @else if (quote(); as currentQuote) {
-    <div class="quote-detail">
-      <!-- IDENTIFICACIÓN -->
 
-      <header class="quote-identity">
-        <div>
-          <p class="eyebrow">PRESUPUESTO</p>
+    <!-- ======================================
+         FORMULARIO DE NUEVO SEGUIMIENTO
+         ====================================== -->
 
-          <h3>{{ currentQuote.quoteNumber }}</h3>
+    @if (creatingFollowUp()) {
 
-          <p class="quote-date">
-            Creado el {{ formatDate(currentQuote.quoteDate) }}
-          </p>
-        </div>
-
-        <app-badge [variant]="statusVariant(currentQuote.status)">
-          {{ formatStatus(currentQuote.status) }}
-        </app-badge>
-      </header>
-
-      <!-- INFORMACIÓN COMERCIAL -->
-
-      <app-quote-commercial-info
-        [quote]="currentQuote"
-        [client]="client()"
-        [seller]="seller()"
-        (clientRequested)="clientRequested.emit($event)"
+      <app-quote-followup-form
+        [quoteId]="currentQuote.id"
+        (cancelled)="cancelFollowUpForm()"
+        (created)="onFollowUpCreated($event)"
       />
-      <app-quote-detail-items [items]="currentQuote.items" />
 
-      <!-- RESUMEN ECONÓMICO -->
+    } @else {
 
-      <section class="detail-section">
-        <h4>Resumen económico</h4>
+      <!-- ======================================
+           DETALLE DEL PRESUPUESTO
+           ====================================== -->
 
-        <app-commercial-totals
-          [totals]="{
-            subtotal: currentQuote.subtotal,
-            discount: currentQuote.discount,
-            tax: currentQuote.taxAmount,
-            total: currentQuote.total,
-          }"
-          [taxRate]="currentQuote.taxRate"
-        />
-      </section>
+      <div class="quote-detail">
 
-      <!-- CAMBIOS DE ESTADO -->
-      <section class="quote-workflow">
+        <!-- ================================
+             IDENTIFICACIÓN
+             ================================ -->
 
-        <h3>Acciones comerciales</h3>
+        <header class="quote-identity">
 
-        @if (actionError()) {
-          <p class="workflow-error" role="alert">
-            {{ actionError() }}
-          </p>
-        }
+          <div class="quote-identity-info">
 
-        @if (actionSuccess()) {
-          <p class="workflow-success" role="status">
-            {{ actionSuccess() }}
-          </p>
-        }
+            <p class="eyebrow">
+              PRESUPUESTO
+            </p>
 
-        @if (currentQuote.active) {
+            <h3>
+              {{ currentQuote.quoteNumber }}
+            </h3>
 
-          <div class="workflow-actions">
-
-            @switch (currentQuote.status) {
-
-              @case ('DRAFT') {
-
-                <app-button
-                  variant="primary"
-                  [disabled]="processing()"
-                  (pressed)="sendQuote()"
-                >
-                  Marcar como enviado
-                </app-button>
-
-                <app-button
-                  variant="secondary"
-                  [disabled]="processing()"
-                  (pressed)="editQuote()"
-                >
-                  Editar presupuesto
-                </app-button>
-
-              }
-
-              @case ('SENT') {
-
-                <app-button
-                  variant="primary"
-                  [disabled]="processing()"
-                  (pressed)="acceptQuote()"
-                >
-                  Aceptar presupuesto
-                </app-button>
-
-                <app-button
-                  variant="danger"
-                  [disabled]="processing()"
-                  (pressed)="rejectQuote()"
-                >
-                  Rechazar
-                </app-button>
-
-              }
-
-              @case ('ACCEPTED') {
-
-                <app-button
-                  variant="primary"
-                  [disabled]="processing()"
-                  (pressed)="convertToOrder()"
-                >
-                  Convertir en pedido
-                </app-button>
-
-              }
-
-              @case ('CONVERTED') {
-
-                <p class="workflow-info">
-                  Este presupuesto ya se ha convertido en pedido.
-                </p>
-
-              }
-
-              @case ('REJECTED') {
-
-                <p class="workflow-info">
-                  El presupuesto está rechazado.
-                </p>
-
-              }
-
-              @case ('EXPIRED') {
-
-                <p class="workflow-info">
-                  El presupuesto está caducado.
-                </p>
-
-              }
-
-            }
+            <p class="quote-date">
+              Creado el
+              {{ formatDate(currentQuote.quoteDate) }}
+            </p>
 
           </div>
 
-        }
+          <app-badge
+            [variant]="statusVariant(currentQuote.status)"
+          >
+            {{ formatStatus(currentQuote.status) }}
+          </app-badge>
 
-      </section>
+        </header>
 
 
-      <!-- OBSERVACIONES -->
+        <!-- ================================
+             INFORMACIÓN COMERCIAL
+             COLUMNA IZQUIERDA
+             ================================ -->
 
-      <section class="detail-section">
-        <h4>Observaciones</h4>
+        <app-quote-commercial-info
+          class="quote-commercial"
+          [quote]="currentQuote"
+          [client]="client()"
+          [seller]="seller()"
+          (clientRequested)="clientRequested.emit($event)"
+        />
 
-        <p class="quote-notes">
-          {{ currentQuote.notes || "Sin observaciones." }}
-        </p>
-      </section>
-    </div>
+
+        <!-- ================================
+             ARTÍCULOS
+             COLUMNA DERECHA
+             ================================ -->
+
+        <app-quote-detail-items
+          class="quote-items"
+          [items]="currentQuote.items"
+        />
+
+
+        <!-- ================================
+             ACCIONES COMERCIALES
+             COLUMNA IZQUIERDA
+             ================================ -->
+
+        <section class="quote-workflow">
+
+          <h3>Acciones comerciales</h3>
+
+          <!-- Mensajes de error -->
+
+          @if (actionError()) {
+
+            <p class="workflow-error" role="alert">
+              {{ actionError() }}
+            </p>
+
+          }
+
+          <!-- Mensajes de confirmación -->
+
+          @if (actionSuccess()) {
+
+            <p class="workflow-success" role="status">
+              {{ actionSuccess() }}
+            </p>
+
+          }
+
+          @if (followUpSuccess()) {
+
+            <p class="workflow-success" role="status">
+              {{ followUpSuccess() }}
+            </p>
+
+          }
+
+
+          <!-- Acciones disponibles -->
+
+          @if (currentQuote.active) {
+
+            <div class="workflow-actions">
+
+              <!-- Nuevo seguimiento -->
+
+              <app-button
+                variant="secondary"
+                [disabled]="processing()"
+                (pressed)="openFollowUpForm()"
+              >
+                + Nuevo seguimiento
+              </app-button>
+
+
+              <!-- WORKFLOW DEL PRESUPUESTO -->
+
+              @switch (currentQuote.status) {
+
+                <!-- BORRADOR -->
+
+                @case ('DRAFT') {
+
+                  <app-button
+                    variant="primary"
+                    [disabled]="processing()"
+                    (pressed)="sendQuote()"
+                  >
+                    Marcar como enviado
+                  </app-button>
+
+                  <app-button
+                    variant="secondary"
+                    [disabled]="processing()"
+                    (pressed)="editQuote()"
+                  >
+                    Editar presupuesto
+                  </app-button>
+
+                }
+
+
+                <!-- ENVIADO -->
+
+                @case ('SENT') {
+
+                  <app-button
+                    variant="primary"
+                    [disabled]="processing()"
+                    (pressed)="acceptQuote()"
+                  >
+                    Aceptar presupuesto
+                  </app-button>
+
+                  <app-button
+                    variant="danger"
+                    [disabled]="processing()"
+                    (pressed)="rejectQuote()"
+                  >
+                    Rechazar
+                  </app-button>
+
+                }
+
+
+                <!-- ACEPTADO -->
+
+                @case ('ACCEPTED') {
+
+                  <app-button
+                    variant="primary"
+                    [disabled]="processing()"
+                    (pressed)="convertToOrder()"
+                  >
+                    Convertir en pedido
+                  </app-button>
+
+                }
+
+
+                <!-- CONVERTIDO -->
+
+                @case ('CONVERTED') {
+
+                  <p class="workflow-info">
+                    Este presupuesto ya se ha
+                    convertido en pedido.
+                  </p>
+
+                }
+
+
+                <!-- RECHAZADO -->
+
+                @case ('REJECTED') {
+
+                  <p class="workflow-info">
+                    El presupuesto está rechazado.
+                  </p>
+
+                }
+
+
+                <!-- CADUCADO -->
+
+                @case ('EXPIRED') {
+
+                  <p class="workflow-info">
+                    El presupuesto está caducado.
+                  </p>
+
+                }
+
+              }
+
+            </div>
+
+          }
+
+        </section>
+
+
+        <!-- ================================
+             RESUMEN ECONÓMICO
+             COLUMNA DERECHA
+             ================================ -->
+
+        <section class="detail-section quote-totals">
+
+          <h4>Resumen económico</h4>
+
+          <app-commercial-totals
+            [totals]="{
+              subtotal: currentQuote.subtotal,
+              discount: currentQuote.discount,
+              tax: currentQuote.taxAmount,
+              total: currentQuote.total
+            }"
+            [taxRate]="currentQuote.taxRate"
+          />
+
+        </section>
+
+
+        <!-- ================================
+             SEGUIMIENTOS COMERCIALES
+             ANCHO COMPLETO
+             ================================ -->
+
+        <section class="quote-followups">
+
+          <app-quote-followup-list
+            [quoteId]="currentQuote.id"
+            [refreshToken]="followUpRefreshToken()"
+            (changed)="onFollowUpChanged()"
+          />
+
+        </section>
+
+
+        <!-- ================================
+             OBSERVACIONES
+             ANCHO COMPLETO
+             ================================ -->
+
+        <section class="detail-section quote-notes-section">
+
+          <h4>Observaciones</h4>
+
+          <p class="quote-notes">
+            {{ currentQuote.notes || 'Sin observaciones.' }}
+          </p>
+
+        </section>
+
+      </div>
+
+    }
+
   }
+
 </app-drawer>

@@ -18,6 +18,7 @@ export class Drawer {
   readonly open = input(false);
   readonly title = input('');
   readonly closed = output<void>();
+  readonly size = input<'default' | 'wide'>('default');
 
   @ViewChild('dialog')
   dialog?: ElementRef<HTMLDialogElement>;

@@ -4,7 +4,8 @@ export type ListModule =
   | 'clients'
   | 'quotes'
   | 'orders'
-  | 'inventory';
+  | 'inventory'
+  | 'followups';
 
 @Injectable({
   providedIn: 'root'

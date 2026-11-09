@@ -1,0 +1,51 @@
+<section class="followups-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">OPERACIONES</p>
+      <h1>Seguimientos</h1>
+      <p class="description">Prioriza llamadas, mensajes y tareas comerciales pendientes.</p>
+    </div>
+    <div class="header-actions">
+      <span class="record-count">{{ totalElements() }} seguimientos</span>
+      <app-button variant="secondary" (pressed)="load()">Actualizar</app-button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="error-panel" role="alert">
+      <p>{{ error() }}</p>
+      <app-button variant="secondary" size="sm" (pressed)="load()">Reintentar</app-button>
+    </div>
+  }
+
+  <app-card [padded]="false">
+    <div class="table-heading">
+      <div>
+        <h2>Agenda comercial</h2>
+        <p>Filtra en las cabeceras y abre el detalle en el panel lateral.</p>
+      </div>
+      <app-button variant="secondary" size="sm" (pressed)="clearFilters()">Limpiar filtros</app-button>
+    </div>
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      [loading]="loading()"
+      [filters]="filters()"
+      [sort]="sort()"
+      emptyMessage="No hay seguimientos para estos filtros"
+      (filterChange)="handleFilterChange($event)"
+      (sortChange)="changeSort($event)"
+      (rowAction)="handleRowAction($event)"
+      (rowSelected)="handleRowAction({ action: 'view', row: $event })"
+    />
+    <div class="pagination-wrapper">
+      <app-pagination [page]="page()" [size]="pageSize" [totalElements]="totalElements()"
+        (pageChange)="changePage($event)" />
+    </div>
+  </app-card>
+
+  <app-followup-detail-drawer
+    [followUp]="selectedFollowUp()"
+    (closed)="closeDetail()"
+    (updated)="onFollowUpUpdated()" />
+</section>

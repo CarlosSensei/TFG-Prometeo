@@ -94,7 +94,8 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional
     public InventoryItem update(Long id, InventoryItemDto dto) {
 
-        InventoryItem item = findById(id);
+        InventoryItem item = inventoryRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new InventoryItemNotFoundException(id));
 
         if (!item.getSku().equalsIgnoreCase(dto.getSku())) {
 

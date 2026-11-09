@@ -7,6 +7,9 @@ import { CommercialTotalsComponent } from '../../../../shared/commercial/compone
 import { QuoteConversionService } from '../../services/quote-conversion.service';
 import { forkJoin, of, catchError, switchMap, map, finalize } from 'rxjs';
 import { Quote } from '../../models/quote.model';
+import { QuoteFollowUpForm } from '../../components/quote-followup-form/quote-followup-form';
+import { QuoteFollowUpList } from '../../components/quote-followup-list/quote-followup-list';
+import { FollowUp } from '../../../followups/models/followup.model';
 import { QuoteApiService } from '../../services/quote-api.service';
 import { ClientApiService } from '../../../clients/services/client-api.service';
 import { Client } from '../../../clients/models/client.model';
@@ -29,6 +32,8 @@ import {
     Badge,
     QuoteCommercialInfo,
     QuoteDetailItems,
+    QuoteFollowUpForm,
+    QuoteFollowUpList,
     CommercialTotalsComponent,
   ],
   templateUrl: './quote-detail-drawer.html',
@@ -63,6 +68,10 @@ export class QuoteDetailDrawer {
   readonly client = signal<Client | null>(null);
   readonly seller = signal<SellerSummary | null>(null);
 
+  readonly creatingFollowUp = signal(false);
+  readonly followUpSuccess = signal<string | null>(null);
+  readonly followUpRefreshToken = signal(0);
+
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
@@ -77,6 +86,8 @@ export class QuoteDetailDrawer {
       this.actionError.set(null);
       this.actionSuccess.set(null);
       this.processing.set(false);
+      this.creatingFollowUp.set(false);
+      this.followUpSuccess.set(null);
 
       if (id === null) {
         this.loading.set(false);
@@ -87,8 +98,7 @@ export class QuoteDetailDrawer {
 
       const subscription = this.quoteApi
         .getById(id)
-        .pipe(
-          switchMap((quote) => {
+        .pipe(switchMap((quote) => {
             // Consultas auxiliares:
             // los fallos al recuperar nombres no deben
             // impedir ver el presupuesto.
@@ -116,8 +126,7 @@ export class QuoteDetailDrawer {
             );
           }),
         )
-        .subscribe({
-          next: (data) => {
+        .subscribe({next: (data) => {
             this.quote.set(data.quote);
             this.client.set(data.client);
             this.seller.set(data.seller);
@@ -127,7 +136,6 @@ export class QuoteDetailDrawer {
 
           error: (err) => {
             console.error('Error cargando detalle del presupuesto:', err);
-
             this.error.set('No se ha podido cargar el presupuesto.');
 
             this.loading.set(false);
@@ -139,7 +147,10 @@ export class QuoteDetailDrawer {
   }
 
   close(): void {
+
+    this.creatingFollowUp.set(false);
     this.closed.emit();
+    
   }
 
   readonly formatDate = formatQuoteDate;
@@ -307,6 +318,28 @@ export class QuoteDetailDrawer {
           this.processing.set(false);
         }
       });
+  }
+
+  openFollowUpForm(): void {
+    if (this.quote()?.active && !this.processing()) {
+      this.followUpSuccess.set(null);
+      this.creatingFollowUp.set(true);
+    }
+  }
+
+  cancelFollowUpForm(): void {
+    this.creatingFollowUp.set(false);
+  }
+
+  onFollowUpCreated(followUp: FollowUp): void {
+    if (this.quoteId() !== followUp.quoteId) return;
+    this.creatingFollowUp.set(false);
+    this.followUpSuccess.set(`Seguimiento #${followUp.id} programado correctamente.`);
+    this.followUpRefreshToken.update(value => value + 1);
+  }
+
+  onFollowUpChanged(): void {
+    this.updated.emit();
   }
 
 }

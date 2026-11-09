@@ -1,6 +1,7 @@
 <app-drawer
   [open]="clientId() !== null"
   title="Ficha de cliente"
+  size="wide"
   (closed)="close()"
 >
   @if (loading()) {

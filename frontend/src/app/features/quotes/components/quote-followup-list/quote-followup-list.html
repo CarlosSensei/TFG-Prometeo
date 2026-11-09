@@ -1,0 +1,75 @@
+<section class="quote-followups" aria-label="Seguimientos del presupuesto">
+  <header class="section-heading">
+    <div>
+      <h4>Seguimientos comerciales</h4>
+      <p>{{ totalElements() }} seguimiento(s)</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p role="alert" class="message error">{{ error() }}</p>
+  }
+  @if (loading()) {
+    <p role="status" class="message">Cargando seguimientos…</p>
+  } @else {
+    <div class="followup-list">
+      @for (item of items(); track item.id) {
+        <article class="followup-item">
+          <div class="item-top">
+            <div>
+              <strong>{{ formatType(item.type) }}</strong>
+              <p>{{ formatDate(item.scheduledAt) }}</p>
+            </div>
+            <app-badge [variant]="statusVariant(item.status)">{{ formatStatus(item.status) }}</app-badge>
+          </div>
+          @if (item.notes) { <p class="notes">{{ item.notes }}</p> }
+          @if (item.result) { <p class="notes"><strong>Resultado:</strong> {{ item.result }}</p> }
+          @if (item.status === 'PENDING' && item.active) {
+            <div class="item-actions">
+              <app-button variant="secondary" size="sm" (pressed)="openEdit(item)">Editar / reprogramar</app-button>
+            </div>
+          }
+        </article>
+      } @empty {
+        <p class="message">Este presupuesto todavía no tiene seguimientos.</p>
+      }
+    </div>
+    @if (totalElements() > pageSize) {
+      <app-pagination
+        [page]="page()"
+        [size]="pageSize"
+        [totalElements]="totalElements()"
+        (pageChange)="setPage($event)"
+      />
+    }
+  }
+
+  @if (selected(); as current) {
+    <form class="edit-form" (submit)="$event.preventDefault(); saveEdit()">
+      <h4>Editar seguimiento #{{ current.id }}</h4>
+      <label for="quote-followup-type">Tipo *</label>
+      <select id="quote-followup-type" [value]="type()" [disabled]="saving()"
+        (change)="type.set($any($event.target).value)">
+        @for (option of types; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+
+      <label for="quote-followup-when">Nueva fecha y hora *</label>
+      <input id="quote-followup-when" type="datetime-local" required [value]="scheduledAt()"
+        [disabled]="saving()" (input)="scheduledAt.set($any($event.target).value)" />
+
+      <label for="quote-followup-notes">Notas</label>
+      <textarea id="quote-followup-notes" rows="3" maxlength="1000" [disabled]="saving()"
+        [value]="notes()" (input)="notes.set($any($event.target).value)"></textarea>
+
+      @if (actionError()) {
+        <p class="message error" role="alert">{{ actionError() }}</p>
+      }
+      <div class="item-actions">
+        <app-button variant="secondary" [disabled]="saving()" (pressed)="closeEdit()">Cancelar</app-button>
+        <app-button type="submit" variant="primary" [loading]="saving()">Guardar cambios</app-button>
+      </div>
+    </form>
+  }
+</section>

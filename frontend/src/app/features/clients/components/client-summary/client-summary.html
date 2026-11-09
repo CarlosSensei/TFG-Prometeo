@@ -1,131 +1,51 @@
 @let currentClient = client();
 
-<section class="commercial-summary">
-  <h4>Resumen comercial</h4>
+<!-- ==========================================
+     DATOS PERSONALES
+     ========================================== -->
 
-  @if (statsLoading()) {
+<section class="detail-section personal-data">
 
-  <p role="status">Cargando estadísticas...</p>
-
-  } @else if (statsError()) {
-
-  <p class="detail-error" role="alert">{{ statsError() }}</p>
-
-  } @else if (stats(); as data) {
-
-  <div class="stats-grid">
-    <!-- FACTURACIÓN TOTAL -->
-    <article class="stat-item">
-      <span>Facturación total</span>
-      <strong>
-        {{ data.totalSpent | currency:'EUR':'symbol':'1.2-2':'es' }}
-      </strong>
-    </article>
-
-    <!-- PEDIDOS REALIZADOS -->
-    <article class="stat-item">
-      <span>Pedidos</span>
-      <strong>{{ data.ordersCount }}</strong>
-    </article>
-
-    <!-- PRESUPUESTOS EMITIDOS -->
-    <article class="stat-item">
-      <span>Presupuestos</span>
-      <strong>{{ data.quotesCount }}</strong>
-    </article>
-
-    <!-- TICKET MEDIO -->
-    <article class="stat-item">
-      <span>Ticket medio</span>
-      <strong>
-        {{ data.averageTicket | currency:'EUR':'symbol':'1.2-2':'es' }}
-      </strong>
-    </article>
-
-    <!-- TASA DE CONVERSIÓN -->
-    <article class="stat-item">
-      <span>Tasa de conversión</span>
-      <strong> {{ data.conversionRate | number:'1.1-1' }} % </strong>
-    </article>
-
-    <!-- PRESUPUESTOS CONVERTIDOS -->
-    <article class="stat-item">
-      <span>Presupuestos convertidos</span>
-      <strong>{{ data.convertedQuotesCount }}</strong>
-    </article>
-
-    <!-- SEGUIMIENTOS PENDIENTES -->
-    <article class="stat-item">
-      <span>Seguimientos pendientes</span>
-      <strong>{{ data.pendingFollowUps }}</strong>
-    </article>
-
-    <!-- PEDIDOS PENDIENTES -->
-    <article class="stat-item">
-      <span>Pedidos pendientes</span>
-      <strong>{{ data.pendingOrdersCount }}</strong>
-    </article>
-
-    <!-- PRESUPUESTOS ABIERTOS -->
-    <article class="stat-item">
-      <span>Presupuestos abiertos</span>
-      <strong>{{ data.openQuotesCount }}</strong>
-    </article>
-
-    <!-- ÚLTIMO PEDIDO -->
-    <article class="stat-item">
-      <span>Última actividad</span>
-      <strong>
-        @if (data.lastActivity) { {{ data.lastActivity | date:'dd/MM/yyyy HH:mm'
-        }} } @else { Sin actividad }
-      </strong>
-    </article>
-
-    <!-- ÚLTIMA ACTIVIDAD -->
-    <article class="stat-item">
-      <span>Última actividad</span>
-      <strong> {{ data.lastActivity || 'Sin actividad' }} </strong>
-    </article>
-
-    <!-- ACCIONES COMERCIALES PENDIENTES -->
-    <article class="stat-item">
-      <span>Operaciones pendientes</span>
-      <strong>{{ pendingCommercialActions() }}</strong>
-    </article>
-  </div>
-
-  } @else if (commercialDataLoaded()) {
-
-  <p class="empty-section">No hay estadísticas comerciales disponibles.</p>
-
-  }
-</section>
-
-<section class="detail-section">
   <h4>Datos personales</h4>
 
   <dl class="detail-grid">
+
     <div>
-      <dt>Nombre</dt>
+      <dt>Nombre completo</dt>
       <dd>{{ fullName(currentClient) }}</dd>
     </div>
 
     <div>
       <dt>DNI / NIE</dt>
-      <dd>{{ currentClient.dni }}</dd>
+      <dd>{{ display(currentClient.dni) }}</dd>
     </div>
 
     <div>
       <dt>Fecha de nacimiento</dt>
-      <dd>{{ currentClient.birthDate }}</dd>
+      <dd>
+        @if (currentClient.birthDate) {
+          {{ currentClient.birthDate | date:'dd/MM/yyyy' }}
+        } @else {
+          —
+        }
+      </dd>
     </div>
+
   </dl>
+
 </section>
 
-<section class="detail-section">
+
+<!-- ==========================================
+     DATOS DE CONTACTO
+     ========================================== -->
+
+<section class="detail-section contact-data">
+
   <h4>Contacto</h4>
 
   <dl class="detail-grid">
+
     <div>
       <dt>Teléfono</dt>
       <dd>{{ display(currentClient.phoneNumber) }}</dd>
@@ -150,10 +70,191 @@
       <dt>Código postal</dt>
       <dd>{{ display(currentClient.postalCode) }}</dd>
     </div>
+
   </dl>
+
 </section>
 
-<section class="detail-section">
+
+<!-- ==========================================
+     RESUMEN COMERCIAL
+     ========================================== -->
+
+<section class="commercial-summary">
+
+  <h4>Resumen comercial</h4>
+
+  @if (statsLoading()) {
+
+    <p class="status-message" role="status">
+      Cargando estadísticas...
+    </p>
+
+  } @else if (statsError()) {
+
+    <p class="detail-error" role="alert">
+      {{ statsError() }}
+    </p>
+
+  } @else if (stats(); as data) {
+
+    <div class="stats-grid">
+
+      <!-- FACTURACIÓN TOTAL -->
+
+      <article class="stat-item">
+
+        <span>Facturación total</span>
+
+        <strong>
+          {{ data.totalSpent | currency:'EUR':'symbol':'1.2-2':'es' }}
+        </strong>
+
+      </article>
+
+
+      <!-- PEDIDOS REALIZADOS -->
+
+      <article class="stat-item">
+
+        <span>Pedidos</span>
+
+        <strong>{{ data.ordersCount }}</strong>
+
+      </article>
+
+
+      <!-- PRESUPUESTOS EMITIDOS -->
+
+      <article class="stat-item">
+
+        <span>Presupuestos</span>
+
+        <strong>{{ data.quotesCount }}</strong>
+
+      </article>
+
+
+      <!-- TICKET MEDIO -->
+
+      <article class="stat-item">
+
+        <span>Ticket medio</span>
+
+        <strong>
+          {{ data.averageTicket | currency:'EUR':'symbol':'1.2-2':'es' }}
+        </strong>
+
+      </article>
+
+
+      <!-- TASA DE CONVERSIÓN -->
+
+      <article class="stat-item">
+
+        <span>Tasa de conversión</span>
+
+        <strong>
+          {{ data.conversionRate | number:'1.1-1' }} %
+        </strong>
+
+      </article>
+
+
+      <!-- PRESUPUESTOS CONVERTIDOS -->
+
+      <article class="stat-item">
+
+        <span>Presupuestos convertidos</span>
+
+        <strong>{{ data.convertedQuotesCount }}</strong>
+
+      </article>
+
+
+      <!-- SEGUIMIENTOS PENDIENTES -->
+
+      <article class="stat-item">
+
+        <span>Seguimientos pendientes</span>
+
+        <strong>{{ data.pendingFollowUps }}</strong>
+
+      </article>
+
+
+      <!-- PEDIDOS PENDIENTES -->
+
+      <article class="stat-item">
+
+        <span>Pedidos pendientes</span>
+
+        <strong>{{ data.pendingOrdersCount }}</strong>
+
+      </article>
+
+
+      <!-- PRESUPUESTOS ABIERTOS -->
+
+      <article class="stat-item">
+
+        <span>Presupuestos abiertos</span>
+
+        <strong>{{ data.openQuotesCount }}</strong>
+
+      </article>
+
+
+      <!-- ÚLTIMA ACTIVIDAD -->
+
+      <article class="stat-item">
+
+        <span>Última actividad</span>
+
+        <strong>
+          @if (data.lastActivity) {
+            {{ data.lastActivity | date:'dd/MM/yyyy HH:mm' }}
+          } @else {
+            Sin actividad
+          }
+        </strong>
+
+      </article>
+
+
+      <!-- OPERACIONES PENDIENTES -->
+
+      <article class="stat-item">
+
+        <span>Operaciones pendientes</span>
+
+        <strong>{{ pendingCommercialActions() }}</strong>
+
+      </article>
+
+    </div>
+
+  } @else if (commercialDataLoaded()) {
+
+    <p class="empty-section">
+      No hay estadísticas comerciales disponibles.
+    </p>
+
+  }
+
+</section>
+
+
+<!-- ==========================================
+     OBSERVACIONES
+     ========================================== -->
+
+<section class="detail-section notes-section">
+
   <h4>Observaciones</h4>
-  <p class="notes">{{ display(currentClient.notes) }}</p>
+
+  <p class="notes">
+    {{ display(currentClient.notes) }}
+  </p>
+
 </section>
