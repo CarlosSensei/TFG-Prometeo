@@ -6,6 +6,10 @@ import com.optiflow.crm.client.model.Client;
 import com.optiflow.crm.inventory.InventoryRepository;
 import com.optiflow.crm.inventory.model.InventoryItem;
 import com.optiflow.crm.inventory.model.InventoryService;
+import com.optiflow.crm.inventory.movement.StockMovementService;
+import com.optiflow.crm.inventory.movement.model.StockMovementType;
+import com.optiflow.crm.order.OrderRepository;
+import com.optiflow.crm.order.OrderServiceImpl;
 import com.optiflow.crm.order.domain.OrderDomainService;
 import com.optiflow.crm.order.dto.OrderDto;
 import com.optiflow.crm.order.dto.OrderItemDto;
@@ -45,7 +49,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests unitarios de OrderServiceImpl.
- *
  * El servicio de dominio y los repositorios son mocks: estos tests verifican
  * coordinación, llamadas y efectos sobre la entidad. Los bloqueos reales,
  * commits/rollbacks y la concurrencia requieren tests de integración.
@@ -65,6 +68,7 @@ class OrderServiceImplTest {
     @Mock private CurrentUserService currentUserService;
     @Mock private OrderDomainService orderDomainService;
     @Mock private InventoryService inventoryService;
+    @Mock private StockMovementService stockMovementService;
 
     @InjectMocks private OrderServiceImpl service;
 
@@ -385,7 +389,7 @@ class OrderServiceImplTest {
     // ---------------------------------------------------------------------
 
     @Test
-    void givenPendingOrder_whenConfirm_thenLockAndDecreaseStock() {
+    void givenPendingOrder_whenConfirm_thenLockAndRegisterStockExit() {
         Order order = orderWithItem(OrderStatus.PENDING, INVENTORY_ID, 2);
         stubLockedOrder(order);
         when(orderRepository.save(order)).thenReturn(order);
@@ -394,7 +398,9 @@ class OrderServiceImplTest {
         assertEquals(OrderStatus.CONFIRMED, order.getStatus());
         verify(orderRepository).findByIdForUpdate(ORDER_ID);
         verify(orderDomainService).validateCanConfirm(order);
-        verify(inventoryService).decreaseStock(INVENTORY_ID, 2);
+        verify(stockMovementService).applyOrderMovement(
+                INVENTORY_ID, ORDER_ID, 2, StockMovementType.EXIT);
+        verifyNoInteractions(inventoryService);
         verify(orderRepository).save(order);
     }
 
@@ -412,7 +418,9 @@ class OrderServiceImplTest {
         when(orderRepository.save(order)).thenReturn(order);
 
         service.confirm(ORDER_ID);
-        verify(inventoryService, times(1)).decreaseStock(INVENTORY_ID, 5);
+        verify(stockMovementService, times(1)).applyOrderMovement(
+                INVENTORY_ID, ORDER_ID, 5, StockMovementType.EXIT);
+        verifyNoInteractions(inventoryService);
     }
 
     @Test
@@ -420,12 +428,14 @@ class OrderServiceImplTest {
         Order order = orderWithItem(OrderStatus.PENDING, INVENTORY_ID, 10);
         stubLockedOrder(order);
         doThrow(new InsufficientStockException(INVENTORY_ID, 2, 10))
-                .when(inventoryService).decreaseStock(INVENTORY_ID, 10);
+                .when(stockMovementService).applyOrderMovement(
+                        INVENTORY_ID, ORDER_ID, 10, StockMovementType.EXIT);
 
         assertThrows(InsufficientStockException.class,
                 () -> service.confirm(ORDER_ID));
         assertEquals(OrderStatus.PENDING, order.getStatus());
         verify(orderRepository, never()).save(any());
+        verifyNoInteractions(inventoryService);
     }
 
     @Test
@@ -437,7 +447,7 @@ class OrderServiceImplTest {
 
         assertThrows(InvalidOrderStatusException.class,
                 () -> service.confirm(ORDER_ID));
-        verifyNoInteractions(inventoryService);
+        verifyNoInteractions(stockMovementService, inventoryService);
         verify(orderRepository, never()).save(any());
     }
 
@@ -446,7 +456,7 @@ class OrderServiceImplTest {
     // ---------------------------------------------------------------------
 
     @Test
-    void givenConfirmedOrder_whenCancel_thenRestoreStock() {
+    void givenConfirmedOrder_whenCancel_thenRegisterStockEntry() {
         Order order = orderWithItem(OrderStatus.CONFIRMED, INVENTORY_ID, 2);
         stubLockedOrder(order);
         when(orderRepository.save(order)).thenReturn(order);
@@ -454,19 +464,35 @@ class OrderServiceImplTest {
         assertSame(order, service.cancel(ORDER_ID));
         assertEquals(OrderStatus.CANCELLED, order.getStatus());
         verify(orderDomainService).validateCanCancel(order);
-        verify(inventoryService).increaseStock(INVENTORY_ID, 2);
+        verify(stockMovementService).applyOrderMovement(
+                INVENTORY_ID, ORDER_ID, 2, StockMovementType.ENTRY);
+        verifyNoInteractions(inventoryService);
         verify(orderRepository).save(order);
     }
 
+
     @Test
-    void givenPendingOrder_whenCancel_thenDoNotRestoreStock() {
+    void givenInProgressOrder_whenCancel_thenRestoreStockWithAuditedEntry() {
+        Order order = orderWithItem(OrderStatus.IN_PROGRESS, INVENTORY_ID, 4);
+        stubLockedOrder(order);
+        when(orderRepository.save(order)).thenReturn(order);
+
+        assertSame(order, service.cancel(ORDER_ID));
+        assertEquals(OrderStatus.CANCELLED, order.getStatus());
+        verify(stockMovementService).applyOrderMovement(
+                INVENTORY_ID, ORDER_ID, 4, StockMovementType.ENTRY);
+        verifyNoInteractions(inventoryService);
+    }
+
+    @Test
+    void givenPendingOrder_whenCancel_thenDoNotRegisterStockMovement() {
         Order order = orderWithItem(OrderStatus.PENDING, INVENTORY_ID, 2);
         stubLockedOrder(order);
         when(orderRepository.save(order)).thenReturn(order);
 
         service.cancel(ORDER_ID);
         assertEquals(OrderStatus.CANCELLED, order.getStatus());
-        verifyNoInteractions(inventoryService);
+        verifyNoInteractions(stockMovementService, inventoryService);
         verify(orderRepository).save(order);
     }
 
@@ -493,7 +519,7 @@ class OrderServiceImplTest {
         );
 
         // No debe restaurar el stock nuevamente
-        verifyNoInteractions(inventoryService);
+        verifyNoInteractions(stockMovementService, inventoryService);
 
         // No debe guardar ningún cambio
         verify(orderRepository, never()).save(any());

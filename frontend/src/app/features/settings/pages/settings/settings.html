@@ -1,0 +1,181 @@
+<section class="settings-page">
+
+  <header class="page-heading">
+
+    <div>
+
+      <p class="eyebrow">PREFERENCIAS</p>
+
+      <h1>Configuración</h1>
+
+      <p>Personaliza la experiencia de trabajo en OptiFlow. 
+        Los cambios se aplican al instante y se guardan en este navegador.</p>
+
+    </div>
+
+    <button 
+      type="button" 
+      class="reset" 
+      (click)="reset()">
+        Restablecer apariencia
+    </button>
+
+  </header>
+
+  <div class="settings-layout">
+    
+    <div class="settings-sections">
+      
+      <section class="setting-card" aria-labelledby="settings-theme">
+        
+        <div class="card-heading">
+
+          <h2 id="settings-theme">Tema visual</h2>
+          
+          <p>Elige el aspecto de la aplicación.</p>
+        
+        </div>
+        
+        <div class="option-grid theme-grid" role="group" aria-label="Tema visual">
+
+          @for (option of [
+            {value:'light',label:'Claro',icon:'☀'}, 
+            {value:'dark',label:'Oscuro',icon:'☾'}, 
+            {value:'system',label:'Sistema',icon:'◐'}
+            ]; track option.value) {
+
+            <button 
+              type="button" 
+              class="option tile" 
+              [class.selected]="appearance.settings().theme === option.value" 
+              [attr.aria-pressed]="appearance.settings().theme === option.value" 
+              (click)="setTheme($any(option.value))">
+                <span class="tile-icon" aria-hidden="true">{{ option.icon }}</span>
+                <strong>{{ option.label }}</strong>
+            </button>
+
+          }
+
+        </div>
+
+      </section>
+
+      <section class="setting-card" aria-labelledby="settings-accent">
+        
+        <div class="card-heading">
+          
+          <h2 id="settings-accent">Color principal</h2>
+          
+          <p>Se aplica a botones, enlaces y selecciones, sin alterar los colores de los estados.</p>
+        
+        </div>
+
+        <div class="option-grid" role="group" aria-label="Color principal">
+
+          @for (option of [
+            {value:'blue',label:'Azul',color:'#2563eb'}, 
+            {value:'teal',label:'Turquesa',color:'#0d9488'}, 
+            {value:'violet',label:'Violeta',color:'#7c3aed'},
+            { value: 'orange', label: 'Naranja', color: '#FF8C00' },
+            { value: 'green', label: 'Verde', color: '#008000' }
+            ]; track option.value) {
+
+            <button 
+              type="button" 
+              class="option color-option" 
+              [class.selected]="appearance.settings().accent === option.value" 
+              [attr.aria-pressed]="appearance.settings().accent === option.value" 
+              (click)="setAccent($any(option.value))">
+                <span class="swatch" [style.background]="option.color"></span>
+                <span>{{ option.label }}</span>
+            </button>
+
+          }
+
+        </div>
+
+      </section>
+
+      <section class="setting-card" aria-labelledby="settings-density">
+        
+        <div class="card-heading">
+          
+          <h2 id="settings-density">Densidad de información</h2>
+          
+          <p>Optimiza la cantidad de contenido visible sin cambiar el tamaño del texto.</p>
+        
+        </div>
+        
+        <div class="option-grid" role="group" aria-label="Densidad de información">
+          
+          <button 
+            type="button" 
+            class="option" 
+            [class.selected]="appearance.settings().density === 'comfortable'" 
+            [attr.aria-pressed]="appearance.settings().density === 'comfortable'" 
+            (click)="setDensity('comfortable')">
+              Cómoda
+          </button>
+          
+          <button 
+            type="button" 
+            class="option" 
+            [class.selected]="appearance.settings().density === 'compact'" 
+            [attr.aria-pressed]="appearance.settings().density === 'compact'" 
+            (click)="setDensity('compact')">
+              Compacta
+          </button>
+        
+        </div>
+
+      </section>
+
+      <section class="setting-card" aria-labelledby="settings-motion">
+        
+        <div class="card-heading">
+          
+          <h2 id="settings-motion">Animaciones</h2>
+          
+          <p>Controla los movimientos de la interfaz. 
+            «Sistema» respeta la preferencia de accesibilidad del dispositivo.</p>
+        
+        </div>
+        
+        <div class="option-grid" role="group" aria-label="Preferencia de movimiento">
+          
+          <button 
+            type="button" 
+            class="option" 
+            [class.selected]="appearance.settings().motion === 'system'" 
+            [attr.aria-pressed]="appearance.settings().motion === 'system'" 
+            (click)="setMotion('system')">
+              Sistema
+          </button>
+          
+          <button 
+            type="button" 
+            class="option" 
+            [class.selected]="appearance.settings().motion === 'full'" 
+            [attr.aria-pressed]="appearance.settings().motion === 'full'" 
+            (click)="setMotion('full')">
+              Completo
+          </button>
+          
+          <button 
+            type="button" 
+            class="option" 
+            [class.selected]="appearance.settings().motion === 'reduced'" 
+            [attr.aria-pressed]="appearance.settings().motion === 'reduced'" 
+            (click)="setMotion('reduced')">
+              Reducido
+          </button>
+        
+        </div>
+      
+      </section>
+    
+    </div>
+  
+  </div>
+
+</section>

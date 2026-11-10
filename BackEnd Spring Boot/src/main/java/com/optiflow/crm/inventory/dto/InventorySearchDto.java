@@ -1,7 +1,7 @@
 package com.optiflow.crm.inventory.dto;
 
 import com.optiflow.crm.inventory.model.InventoryItemType;
-
+import java.util.List;
 import java.math.BigDecimal;
 
 public class InventorySearchDto {
@@ -10,6 +10,7 @@ public class InventorySearchDto {
     private String name;
     private String brand;
     private InventoryItemType type;
+    private List<InventoryItemType> types;
 
     private BigDecimal minPrice;
     private BigDecimal maxPrice;
@@ -56,6 +57,10 @@ public class InventorySearchDto {
     public void setType(InventoryItemType type) {
         this.type = type;
     }
+
+    public List<InventoryItemType> getTypes() { return types; }
+
+    public void setTypes(List<InventoryItemType> types) { this.types = types; }
 
     public BigDecimal getMinPrice() {
         return minPrice;

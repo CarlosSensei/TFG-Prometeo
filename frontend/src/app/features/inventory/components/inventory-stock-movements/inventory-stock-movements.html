@@ -1,0 +1,92 @@
+<section class="stock-movements" aria-labelledby="stock-movements-title">
+  <div class="section-header">
+    <div>
+      <h4 id="stock-movements-title">Movimientos de stock</h4>
+      <p>Histórico de entradas, salidas y ajustes manuales.</p>
+    </div>
+    @if (!formOpen() && allowMutations()) {
+      <app-button variant="secondary" size="sm" (pressed)="openForm()">+ Registrar movimiento</app-button>
+    }
+  </div>
+
+  @if (success()) { <p class="feedback success" role="status">{{ success() }}</p> }
+
+  @if (formOpen()) {
+    <form class="movement-form" (submit)="$event.preventDefault(); submit()">
+      <div class="field">
+        <label for="movement-type">Tipo de movimiento</label>
+        <select id="movement-type" [value]="type()" (change)="type.set($any($event.target).value)">
+          <option value="ENTRY">Entrada de mercancía</option>
+          <option value="EXIT">Salida / merma</option>
+          <option value="ADJUSTMENT">Ajuste por recuento</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="movement-quantity">{{ type() === 'ADJUSTMENT' ? 'Stock final contado' : 'Unidades' }}</label>
+        <input id="movement-quantity" type="number" min="0" step="1" required
+          [value]="quantity() ?? ''"
+          (input)="quantity.set($any($event.target).value === '' ? null : +$any($event.target).value)" />
+        @if (type() === 'ADJUSTMENT') {
+          <small>Introduce el total físico que hay actualmente, no la diferencia.</small>
+        }
+      </div>
+      <div class="field full">
+        <label for="movement-reason">Motivo *</label>
+        <textarea id="movement-reason" required maxlength="250" rows="2"
+          [value]="reason()" (input)="reason.set($any($event.target).value)"
+          placeholder="Ej.: Recepción de pedido de proveedor"></textarea>
+      </div>
+      @if (formError()) { <p class="feedback error full" role="alert">{{ formError() }}</p> }
+      <div class="form-actions full">
+        <app-button variant="secondary" [disabled]="saving()" (pressed)="cancelForm()">Cancelar</app-button>
+        <app-button variant="primary" [loading]="saving()" (pressed)="submit()">Guardar movimiento</app-button>
+      </div>
+    </form>
+  }
+
+  @if (error()) {
+    <div class="feedback error" role="alert">{{ error() }}
+      <app-button variant="secondary" size="sm" (pressed)="load()">Reintentar</app-button>
+    </div>
+  } @else if (loading()) {
+    <p class="empty" role="status">Cargando movimientos...</p>
+  } @else if (movements().length === 0) {
+    <p class="empty">Todavía no hay movimientos manuales registrados.</p>
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Variación</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Usuario</th>
+          <th scope="col">Motivo</th>
+        </tr></thead>
+        <tbody>
+          @for (movement of movements(); track movement.id) {
+            <tr>
+              <td>{{ movement.createdAt ? movement.createdAt.slice(0, 16).replace('T', ' ') : '—' }}</td>
+              <td>{{ typeLabel(movement.type) }}</td>
+              <td [class.positive]="movement.delta > 0" [class.negative]="movement.delta < 0">
+                {{ movement.delta > 0 ? '+' : '' }}{{ movement.delta }}
+              </td>
+              <td>{{ movement.previousStock }} → {{ movement.newStock }}</td>
+              <td>{{ movement.userName }}</td>
+              <td class="reason">{{ movement.reason }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="pager">
+      <span>{{ totalElements() }} movimientos · Página {{ page() + 1 }} de {{ totalPages() }}</span>
+      <div class="pager-actions">
+        <app-button variant="secondary" size="sm" [disabled]="loading() || page() === 0"
+          (pressed)="changePage(page() - 1)">Anterior</app-button>
+        <app-button variant="secondary" size="sm" [disabled]="loading() || page() + 1 >= totalPages()"
+          (pressed)="changePage(page() + 1)">Siguiente</app-button>
+      </div>
+    </div>
+  }
+</section>

@@ -1,16 +1,14 @@
 package com.optiflow.crm.notification.model;
 
+import com.optiflow.crm.user.model.User;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
-// Entidad de Notificacion
 @Entity
-@Table(name = "notifications", uniqueConstraints = {@UniqueConstraint(
-                        name = "uk_notification_followup_type",
-                        columnNames = {"follow_up_id", "type"})})
+@Table(name = "notifications", uniqueConstraints = @UniqueConstraint(
+        name = "uk_notification_followup_type",
+        columnNames = {"follow_up_id", "type"}))
 public class Notification {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +29,10 @@ public class Notification {
     @Column(name = "quote_id")
     private Long quoteId;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "recipient_user_id", nullable = false)
+    private User recipient;
+
     @Column(nullable = false)
     private Boolean read = false;
 
@@ -42,94 +44,31 @@ public class Notification {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // Preparacion de algunos campos antes de crear una notificacion
     @PrePersist
     protected void onCreate() {
-
-        if (read == null) {
-            read = false;
-        }
-
-        if (active == null) {
-            active = true;
-        }
-
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
+        if (read == null) read = false;
+        if (active == null) active = true;
+        if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
-    // Getters y Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public NotificationType getType() {
-        return type;
-    }
-
-    public void setType(NotificationType type) {
-        this.type = type;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Long getFollowUpId() {
-        return followUpId;
-    }
-
-    public void setFollowUpId(Long followUpId) {
-        this.followUpId = followUpId;
-    }
-
-    public Long getQuoteId() {
-        return quoteId;
-    }
-
-    public void setQuoteId(Long quoteId) {
-        this.quoteId = quoteId;
-    }
-
-    public Boolean getRead() {
-        return read;
-    }
-
-    public void setRead(Boolean read) {
-        this.read = read;
-    }
-
-    public LocalDateTime getReadAt() {
-        return readAt;
-    }
-
-    public void setReadAt(LocalDateTime readAt) {
-        this.readAt = readAt;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public Long getId() { return id; }
+    public NotificationType getType() { return type; }
+    public void setType(NotificationType type) { this.type = type; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+    public Long getFollowUpId() { return followUpId; }
+    public void setFollowUpId(Long followUpId) { this.followUpId = followUpId; }
+    public Long getQuoteId() { return quoteId; }
+    public void setQuoteId(Long quoteId) { this.quoteId = quoteId; }
+    public User getRecipient() { return recipient; }
+    public void setRecipient(User recipient) { this.recipient = recipient; }
+    public Boolean getRead() { return read; }
+    public void setRead(Boolean read) { this.read = read; }
+    public LocalDateTime getReadAt() { return readAt; }
+    public void setReadAt(LocalDateTime readAt) { this.readAt = readAt; }
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }

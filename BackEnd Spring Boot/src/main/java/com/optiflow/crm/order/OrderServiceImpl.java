@@ -7,6 +7,8 @@ import com.optiflow.crm.client.model.Client;
 import com.optiflow.crm.inventory.InventoryRepository;
 import com.optiflow.crm.inventory.model.InventoryItem;
 import com.optiflow.crm.inventory.model.InventoryService;
+import com.optiflow.crm.inventory.movement.StockMovementService;
+import com.optiflow.crm.inventory.movement.model.StockMovementType;
 import com.optiflow.crm.order.domain.OrderDomainService;
 import com.optiflow.crm.order.dto.OrderDto;
 import com.optiflow.crm.order.dto.OrderItemDto;
@@ -54,6 +56,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDomainService orderDomainService;
     private final InventoryService inventoryService;
     private final CurrentUserService currentUserService;
+    private final StockMovementService stockMovementService;
 
     public OrderServiceImpl(
             OrderRepository orderRepository,
@@ -63,7 +66,8 @@ public class OrderServiceImpl implements OrderService {
             OrderMapper orderMapper,
             OrderDomainService orderDomainService,
             InventoryService inventoryService,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            StockMovementService stockMovementService
     ) {
         this.orderRepository = orderRepository;
         this.clientRepository = clientRepository;
@@ -73,6 +77,7 @@ public class OrderServiceImpl implements OrderService {
         this.orderDomainService = orderDomainService;
         this.inventoryService = inventoryService;
         this.currentUserService = currentUserService;
+        this.stockMovementService = stockMovementService;
     }
 
     // Busqueda paginada de pedidos
@@ -350,10 +355,8 @@ public class OrderServiceImpl implements OrderService {
                 ));
 
         for (var entry : quantities.entrySet()) {
-            inventoryService.decreaseStock(
-                    entry.getKey(),
-                    entry.getValue()
-            );
+            stockMovementService.applyOrderMovement(
+                    entry.getKey(), order.getId(), entry.getValue(), StockMovementType.EXIT);
         }
 
         order.setStatus(OrderStatus.CONFIRMED);
@@ -386,7 +389,8 @@ public class OrderServiceImpl implements OrderService {
                     ));
 
             for (var entry : quantities.entrySet()) {
-                inventoryService.increaseStock(entry.getKey(), entry.getValue());
+                stockMovementService.applyOrderMovement(
+                        entry.getKey(), order.getId(), entry.getValue(), StockMovementType.ENTRY);
             }
         }
 
@@ -414,9 +418,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDomainService.startPreparation(order);
 
-        return orderMapper.toDto(
-                orderRepository.save(order)
-        );
+        return orderMapper.toDto(orderRepository.save(order));
     }
 
     @Override
@@ -427,9 +429,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDomainService.markReady(order);
 
-        return orderMapper.toDto(
-                orderRepository.save(order)
-        );
+        return orderMapper.toDto(orderRepository.save(order));
     }
 
     @Override
@@ -440,9 +440,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDomainService.deliver(order);
 
-        return orderMapper.toDto(
-                orderRepository.save(order)
-        );
+        return orderMapper.toDto(orderRepository.save(order));
     }
 
     @Override

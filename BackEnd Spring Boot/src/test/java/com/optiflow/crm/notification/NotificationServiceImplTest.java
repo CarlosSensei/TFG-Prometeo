@@ -1,413 +1,148 @@
 package com.optiflow.crm.notification;
 
+import com.optiflow.crm.auth.CurrentUserService;
 import com.optiflow.crm.notification.model.Notification;
 import com.optiflow.crm.notification.model.NotificationType;
-
+import com.optiflow.crm.quote.QuoteRepository;
+import com.optiflow.crm.quote.model.Quote;
+import com.optiflow.crm.user.model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest {
+    @Mock NotificationRepository notificationRepository;
+    @Mock QuoteRepository quoteRepository;
+    @Mock CurrentUserService currentUserService;
+    @InjectMocks NotificationServiceImpl service;
 
-    @Mock
-    private NotificationRepository notificationRepository;
+    private User user;
 
-    @InjectMocks
-    private NotificationServiceImpl service;
-
-    // =====================================
-    // MÉTODOS AUXILIARES
-    // =====================================
-
-    private Notification createNotification() {
-
-        Notification notification = new Notification();
-
-        notification.setFollowUpId(10L);
-        notification.setQuoteId(5L);
-        notification.setType(NotificationType.FOLLOW_UP_DUE);
-
-        notification.setTitle("Seguimiento pendiente");
-        notification.setMessage("Contactar con el cliente");
-
-        notification.setRead(false);
-        notification.setActive(true);
-
-        return notification;
+    @BeforeEach
+    void setUp() {
+        user = new User();
+        user.setId(20L);
     }
 
-    // =====================================
-    // 1. FIND ALL
-    // =====================================
+    private void authenticated() {
+        when(currentUserService.getCurrentUser()).thenReturn(user);
+    }
 
-    @Test
-    void givenActiveNotifications_whenFindAll_thenReturnPage() {
+    private Notification notification() {
+        Notification n = new Notification();
+        n.setRecipient(user);
+        n.setType(NotificationType.FOLLOW_UP_DUE);
+        n.setFollowUpId(10L);
+        n.setQuoteId(5L);
+        n.setTitle("Seguimiento pendiente");
+        n.setMessage("Llamar");
+        n.setRead(false);
+        n.setActive(true);
+        return n;
+    }
 
-        // GIVEN
+    @Test void findAllOnlyReturnsCurrentUser() {
+        authenticated();
         Pageable pageable = PageRequest.of(0, 10);
-
-        Notification notification = createNotification();
-
-        Page<Notification> expected = new PageImpl<>(
-                List.of(notification), pageable, 1);
-
-        when(notificationRepository.findByActiveTrue(pageable)).thenReturn(expected);
-
-        // WHEN
-        Page<Notification> result = service.findAll(pageable);
-
-        // THEN
-        assertSame(expected, result);
-        assertEquals(1, result.getTotalElements());
-
-        verify(notificationRepository).findByActiveTrue(pageable);
-        verify(notificationRepository, never()).findAll(pageable);
+        Page<Notification> page = new PageImpl<>(List.of(notification()), pageable, 1);
+        when(notificationRepository.findByRecipientIdAndActiveTrue(20L, pageable)).thenReturn(page);
+        assertSame(page, service.findAll(pageable));
+        verify(notificationRepository).findByRecipientIdAndActiveTrue(20L, pageable);
     }
 
-    // =====================================
-    // 2. FIND UNREAD
-    // =====================================
-
-    @Test
-    void givenUnreadNotifications_whenFindUnread_thenReturnPage() {
-
-        // GIVEN
+    @Test void unreadOnlyReturnsCurrentUser() {
+        authenticated();
         Pageable pageable = PageRequest.of(0, 10);
-
-        Notification notification = createNotification();
-
-        Page<Notification> expected = new PageImpl<>(
-                List.of(notification), pageable, 1);
-
-        when(notificationRepository
-                .findByReadFalseAndActiveTrue(pageable))
-                .thenReturn(expected);
-
-        // WHEN
-        Page<Notification> result = service.findUnread(pageable);
-
-        // THEN
-        assertSame(expected, result);
-        assertEquals(1, result.getTotalElements());
-
-        verify(notificationRepository).findByReadFalseAndActiveTrue(pageable);
+        Page<Notification> page = new PageImpl<>(List.of(notification()), pageable, 1);
+        when(notificationRepository.findByRecipientIdAndReadFalseAndActiveTrue(20L, pageable)).thenReturn(page);
+        assertSame(page, service.findUnread(pageable));
     }
 
-    // =====================================
-    // 3. COUNT UNREAD
-    // =====================================
-
-    @Test
-    void givenUnreadNotifications_whenCountUnread_thenReturnCount() {
-
-        // GIVEN
-        when(notificationRepository.countByReadFalseAndActiveTrue())
-                .thenReturn(3L);
-
-        // WHEN
-        long result = service.countUnread();
-
-        // THEN
-        assertEquals(3L, result);
-
-        verify(notificationRepository).countByReadFalseAndActiveTrue();
+    @Test void countOnlyCurrentUser() {
+        authenticated();
+        when(notificationRepository.countByRecipientIdAndReadFalseAndActiveTrue(20L)).thenReturn(3L);
+        assertEquals(3L, service.countUnread());
     }
 
-    // =====================================
-    // 4. FIND BY ID
-    // =====================================
-
-    @Test
-    void givenExistingNotification_whenFindById_thenReturnNotification() {
-
-        // GIVEN
-        Notification notification = createNotification();
-
-        when(notificationRepository.findById(10L))
-                .thenReturn(Optional.of(notification));
-
-        // WHEN
-        Notification result = service.findById(10L);
-
-        // THEN
-        assertSame(notification, result);
-
-        verify(notificationRepository).findById(10L);
+    @Test void findByIdChecksOwnership() {
+        authenticated();
+        Notification n = notification();
+        when(notificationRepository.findByIdAndRecipientIdAndActiveTrue(10L, 20L)).thenReturn(Optional.of(n));
+        assertSame(n, service.findById(10L));
     }
 
-    // =====================================
-    // 5. FIND BY ID NOT FOUND
-    // =====================================
-
-    @Test
-    void givenUnknownId_whenFindById_thenThrowException() {
-
-        // GIVEN
-        when(notificationRepository.findById(99L)).thenReturn(Optional.empty());
-
-        // WHEN + THEN
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> service.findById(99L));
-
-        assertEquals("Notificación no encontrada con id: 99",
-                exception.getMessage());
-
-        verify(notificationRepository).findById(99L);
+    @Test void cannotReadNotificationOwnedByAnotherUser() {
+        authenticated();
+        when(notificationRepository.findByIdAndRecipientIdAndActiveTrue(10L, 20L)).thenReturn(Optional.empty());
+        assertThrows(ResponseStatusException.class, () -> service.markAsRead(10L));
+        verify(notificationRepository, never()).save(any());
     }
 
-    // =====================================
-    // 6. CREATE FOLLOWUP NOTIFICATION
-    // =====================================
-
-    @Test
-    void givenNewFollowUp_whenCreateNotification_thenSaveAllFields() {
-
-        // GIVEN
-        Long followUpId = 10L;
-        Long quoteId = 5L;
-
-        NotificationType type = NotificationType.FOLLOW_UP_DUE;
-
-        String title = "Seguimiento pendiente";
-        String message = "Contactar con el cliente";
-
-        when(notificationRepository.existsByFollowUpIdAndType(followUpId, type))
-                .thenReturn(false);
-
-        when(notificationRepository.save(any(Notification.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        // WHEN
-        Notification result = service.createFollowUpNotification(
-                followUpId,
-                quoteId,
-                type,
-                title,
-                message
-        );
-
-        // THEN
-        assertNotNull(result);
-
-        assertAll(
-                () -> assertEquals(followUpId, result.getFollowUpId()),
-                () -> assertEquals(quoteId, result.getQuoteId()),
-                () -> assertEquals(type, result.getType()),
-                () -> assertEquals(title, result.getTitle()),
-                () -> assertEquals(message, result.getMessage()),
-                () -> assertFalse(result.getRead()),
-                () -> assertTrue(result.getActive()),
-                () -> assertNull(result.getReadAt())
-        );
-
-        verify(notificationRepository).existsByFollowUpIdAndType(followUpId, type);
-        verify(notificationRepository).save(result);
+    @Test void createNotificationAssignsQuoteSellerWithoutSecurityContext() {
+        Quote q = new Quote();
+        q.setSeller(user);
+        when(quoteRepository.findById(5L)).thenReturn(Optional.of(q));
+        when(notificationRepository.save(any(Notification.class))).thenAnswer(i -> i.getArgument(0));
+        Notification n = service.createFollowUpNotification(10L, 5L,
+                NotificationType.FOLLOW_UP_DUE, "Pendiente", "Llamar");
+        assertSame(user, n.getRecipient());
+        assertEquals(10L, n.getFollowUpId());
+        verifyNoInteractions(currentUserService);
     }
 
-    // =====================================
-    // 7. DUPLICATE NOTIFICATION
-    // =====================================
-
-    @Test
-    void givenExistingFollowUpNotification_whenCreate_thenDoNotSave() {
-
-        // GIVEN
-        when(notificationRepository.existsByFollowUpIdAndType(10L,
-                NotificationType.FOLLOW_UP_DUE)).thenReturn(true);
-
-        // WHEN
-        Notification result = service.createFollowUpNotification(
-                10L,
-                5L,
-                NotificationType.FOLLOW_UP_DUE,
-                "Seguimiento pendiente",
-                "Contactar con el cliente"
-        );
-
-        // THEN
-        assertNull(result);
-
-        verify(notificationRepository).existsByFollowUpIdAndType(10L,
-                NotificationType.FOLLOW_UP_DUE);
-        verify(notificationRepository, never()).save(any(Notification.class));
+    @Test void duplicateNotificationDoesNotSave() {
+        when(notificationRepository.existsByFollowUpIdAndType(10L, NotificationType.FOLLOW_UP_DUE))
+                .thenReturn(true);
+        assertNull(service.createFollowUpNotification(10L, 5L,
+                NotificationType.FOLLOW_UP_DUE, "Pendiente", "Llamar"));
+        verify(notificationRepository, never()).save(any());
     }
 
-    // =====================================
-    // 8. DIFFERENT NOTIFICATION TYPE
-    // =====================================
-
-    @Test
-    void givenDifferentNotificationType_whenCreate_thenAllowCreation() {
-
-        // GIVEN
-        NotificationType type = NotificationType.FOLLOW_UP_OVERDUE;
-
-        when(notificationRepository.existsByFollowUpIdAndType(10L, type))
-                .thenReturn(false);
-
-        when(notificationRepository.save(any(Notification.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        // WHEN
-        Notification result = service.createFollowUpNotification(
-                10L,
-                5L,
-                type,
-                "Seguimiento vencido",
-                "El seguimiento ha superado la fecha prevista"
-        );
-
-        // THEN
-        assertNotNull(result);
-        assertEquals(NotificationType.FOLLOW_UP_OVERDUE, result.getType());
-        assertEquals(10L, result.getFollowUpId());
-
-        verify(notificationRepository).save(result);
+    @Test void markAsReadUpdatesTimestamp() {
+        authenticated();
+        Notification n = notification();
+        when(notificationRepository.findByIdAndRecipientIdAndActiveTrue(10L, 20L))
+                .thenReturn(Optional.of(n));
+        when(notificationRepository.save(n)).thenReturn(n);
+        service.markAsRead(10L);
+        assertTrue(n.getRead());
+        assertNotNull(n.getReadAt());
     }
 
-    // =====================================
-    // 9. MARK AS READ
-    // =====================================
-
-    @Test
-    void givenUnreadNotification_whenMarkAsRead_thenSetReadAndDate() {
-
-        // GIVEN
-        Notification notification = createNotification();
-
-        when(notificationRepository.findById(10L)).thenReturn(Optional.of(notification));
-        when(notificationRepository.save(notification)).thenReturn(notification);
-
-        LocalDateTime before = LocalDateTime.now();
-
-        // WHEN
-        Notification result = service.markAsRead(10L);
-
-        LocalDateTime after = LocalDateTime.now();
-
-        // THEN
-        assertSame(notification, result);
-        assertTrue(result.getRead());
-        assertNotNull(result.getReadAt());
-        assertFalse(result.getReadAt().isBefore(before));
-        assertFalse(result.getReadAt().isAfter(after));
-
-        verify(notificationRepository).save(notification);
+    @Test void alreadyReadDoesNotUpdateTimestamp() {
+        authenticated();
+        Notification n = notification();
+        LocalDateTime timestamp = LocalDateTime.of(2026, 10, 1, 10, 0);
+        n.setRead(true);
+        n.setReadAt(timestamp);
+        when(notificationRepository.findByIdAndRecipientIdAndActiveTrue(10L, 20L))
+                .thenReturn(Optional.of(n));
+        assertSame(n, service.markAsRead(10L));
+        assertEquals(timestamp, n.getReadAt());
+        verify(notificationRepository, never()).save(any());
     }
 
-    // =====================================
-    // 10. MARK AS READ - NOT FOUND
-    // =====================================
-
-    @Test
-    void givenUnknownNotification_whenMarkAsRead_thenThrow() {
-
-        // GIVEN
-        when(notificationRepository.findById(99L)).thenReturn(Optional.empty());
-
-        // WHEN + THEN
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> service.markAsRead(99L));
-
-        assertEquals("Notificación no encontrada con id: 99",
-                exception.getMessage());
-
-        verify(notificationRepository, never()).save(any(Notification.class));
-    }
-
-    // =====================================
-    // 11. MARK ALREADY READ
-    // =====================================
-
-
-    @Test
-    void givenAlreadyReadNotification_whenMarkAsRead_thenPreserveOriginalReadAt() {
-
-        // GIVEN
-        Notification notification = createNotification();
-
-        LocalDateTime originalReadAt =
-                LocalDateTime.of(2026, 10, 1, 10, 0);
-
-        notification.setRead(true);
-        notification.setReadAt(originalReadAt);
-
-        when(notificationRepository.findById(10L)).thenReturn(Optional.of(notification));
-
-        // WHEN
-        Notification result = service.markAsRead(10L);
-
-        // THEN
-        assertAll(
-                () -> assertSame(notification, result),
-                () -> assertTrue(result.getRead()),
-                () -> assertEquals(originalReadAt, result.getReadAt()));
-
-        verify(notificationRepository).findById(10L);
-
-        // No debe volver a guardar la notificación.
-        verify(notificationRepository, never()).save(any(Notification.class));
-        verifyNoMoreInteractions(notificationRepository);
-    }
-
-
-    // =====================================
-    // 12. SOFT DELETE
-    // =====================================
-
-    @Test
-    void givenExistingNotification_whenDelete_thenDeactivate() {
-
-        // GIVEN
-        Notification notification = createNotification();
-
-        when(notificationRepository.findById(10L)).thenReturn(Optional.of(notification));
-
-        // WHEN
+    @Test void deleteOnlyOwnNotification() {
+        authenticated();
+        Notification n = notification();
+        when(notificationRepository.findByIdAndRecipientIdAndActiveTrue(10L, 20L))
+                .thenReturn(Optional.of(n));
         service.delete(10L);
-
-        // THEN
-        assertFalse(notification.getActive());
-
-        verify(notificationRepository).save(notification);
-        verify(notificationRepository, never()).delete(any(Notification.class));
-        verify(notificationRepository, never()).deleteById(anyLong());
-    }
-
-    // =====================================
-    // 13. DELETE NOT FOUND
-    // =====================================
-
-    @Test
-    void givenUnknownNotification_whenDelete_thenThrow() {
-
-        // GIVEN
-        when(notificationRepository.findById(99L)).thenReturn(Optional.empty());
-
-        // WHEN + THEN
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> service.delete(99L));
-
-        assertEquals("Notificación no encontrada con id: 99",
-                exception.getMessage());
-
-        verify(notificationRepository, never()).save(any(Notification.class));
+        assertFalse(n.getActive());
+        verify(notificationRepository).save(n);
     }
 }

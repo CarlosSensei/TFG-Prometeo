@@ -1,0 +1,90 @@
+<div class="notification-root">
+  <button
+    type="button"
+    class="bell-button"
+    aria-label="Notificaciones"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="open()"
+    (click)="toggle()">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+         stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+      <path d="M10 21h4" />
+    </svg>
+    @if (unreadCount() > 0) {
+      <span class="notification-count" aria-label="Notificaciones sin leer">
+        {{ unreadCount() > 99 ? '99+' : visibleCount() }}
+      </span>
+    }
+  </button>
+
+  @if (open()) {
+    <button type="button" class="dismiss-overlay" tabindex="-1"
+            aria-label="Cerrar notificaciones" (click)="close()"></button>
+    <section class="notification-panel" role="dialog"
+             aria-label="Centro de notificaciones">
+      <header class="panel-header">
+        <div>
+          <h2>Notificaciones</h2>
+          <p>{{ unreadCount() }} sin leer</p>
+        </div>
+        <button type="button" class="close-button" aria-label="Cerrar"
+                (click)="close()">×</button>
+      </header>
+
+      @if (error()) {
+        <div class="panel-error" role="alert">
+          <span>{{ error() }}</span>
+          <button type="button" (click)="loadPage(page())">Reintentar</button>
+        </div>
+      }
+
+      <div class="notification-list">
+        @if (loading()) {
+          <p class="empty-state">Cargando notificaciones…</p>
+        } @else if (items().length === 0 && !error()) {
+          <div class="empty-state">No tienes notificaciones por ahora.</div>
+        } @else {
+          @for (item of items(); track item.id) {
+            <article class="notification-item" [class.is-unread]="!item.read">
+              <button type="button" class="item-main"
+                      [disabled]="busyId() !== null"
+                      (click)="navigate(item)">
+                <span class="item-icon" aria-hidden="true">{{ iconFor(item.type) }}</span>
+                <span class="item-content">
+                  <span class="item-title">{{ item.title }}</span>
+                  <span class="item-message">{{ item.message }}</span>
+                  <span class="item-date">{{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                </span>
+                @if (!item.read) { <span class="unread-dot" aria-label="Sin leer"></span> }
+              </button>
+              <div class="item-actions">
+                @if (!item.read) {
+                  <button type="button" title="Marcar como leída"
+                          aria-label="Marcar como leída"
+                          [disabled]="busyId() !== null"
+                          (click)="markRead($event, item)">✓</button>
+                }
+                <button type="button" title="Descartar notificación"
+                        aria-label="Descartar notificación"
+                        [disabled]="busyId() !== null"
+                        (click)="dismiss($event, item)">×</button>
+              </div>
+            </article>
+          }
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <footer class="panel-footer">
+          <button type="button" [disabled]="page() === 0 || loading()"
+                  (click)="loadPage(page() - 1)">Anterior</button>
+          <span>{{ page() + 1 }} / {{ totalPages() }}</span>
+          <button type="button" [disabled]="page() >= totalPages() - 1 || loading()"
+                  (click)="loadPage(page() + 1)">Siguiente</button>
+        </footer>
+      }
+    </section>
+  }
+</div>

@@ -62,3 +62,87 @@
   color: var(--color-danger);
   font-size: var(--font-size-xs);
 }
+
+
+/* ===========================================
+   OPTIFLOW GLOBAL SEARCH
+   =========================================== */
+
+app-global-search .search-input app-input {
+  display: block;
+  width: 100%;
+}
+
+app-global-search .search-input .form-field {
+  width: 100%;
+  gap: 0;
+}
+
+app-global-search .search-input input {
+  display: block;
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 60px;
+  min-height: 60px;
+
+  // Espacio reservado para el icono
+  padding: 0 24px 0 62px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: normal;
+
+  outline: none;
+  box-shadow: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  transition:
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+app-global-search .search-input input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.85;
+}
+
+app-global-search .search-input input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: none;
+}
+
+// Evitar bordes heredados al enfocar
+app-global-search .search-input input:focus-visible {
+  outline: none;
+}
+
+// Evitar que el botón nativo de Safari
+// invada el espacio del texto
+app-global-search input::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+@media (max-width: 768px) {
+  app-global-search .search-input input {
+    height: 52px;
+    min-height: 52px;
+    padding-left: 56px;
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  app-global-search .search-input input {
+    transition: none;
+  }
+}

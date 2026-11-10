@@ -1,3 +1,15 @@
 .required {
   color: var(--color-danger);
 }
+
+:host {
+  display: block;
+}
+
+.ui-input,
+input {
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-xl, 1rem);
+}

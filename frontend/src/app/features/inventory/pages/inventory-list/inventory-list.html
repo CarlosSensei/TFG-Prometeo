@@ -1,0 +1,59 @@
+<section class="inventory-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">OPERACIONES</p>
+      <h1>Inventario</h1>
+      <p class="description">Gestiona el catálogo de artículos y consulta las existencias de la óptica.</p>
+    </div>
+    <div class="header-actions">
+      <app-badge variant="info">{{ totalElements() }} artículos</app-badge>
+      <app-button variant="primary" (pressed)="newItem()">+ Nuevo artículo</app-button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="error-panel" role="alert">
+      <span>{{ error() }}</span>
+      <app-button variant="secondary" size="sm" (pressed)="reload()">Reintentar</app-button>
+    </div>
+  }
+
+  <app-card [padded]="false">
+    <div class="table-heading">
+      <div>
+        <h2>Artículos</h2>
+        <p>Utiliza las cabeceras para buscar y filtrar registros.</p>
+      </div>
+      <app-button variant="secondary" size="sm" (pressed)="clearFilters()">Limpiar filtros</app-button>
+    </div>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      [loading]="loading()"
+      [filters]="filters()"
+      [sort]="sort()"
+      emptyMessage="No hay artículos con estos criterios"
+      (rowSelected)="openRow($event)"
+      (rowAction)="onAction($event)"
+      (filterChange)="onFilter($event)"
+      (sortChange)="onSort($event)"
+    />
+    <div class="pagination-wrapper">
+      <app-pagination
+        [page]="page()"
+        [size]="size"
+        [totalElements]="totalElements()"
+        (pageChange)="onPage($event)"
+      />
+    </div>
+  </app-card>
+
+  <app-inventory-detail-drawer
+    [itemId]="selectedId()"
+    [creating]="creating()"
+    (closed)="closeDrawer()"
+    (saved)="onSaved()"
+    (stockUpdated)="onStockUpdated()"
+  />
+</section>

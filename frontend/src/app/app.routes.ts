@@ -95,7 +95,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/followups/pages/followup-list/followup-list')
             .then(m => m.FollowUpList)
-      }
+      },
+      {
+        path: 'inventory',
+        title: 'Inventario | OptiFlow',
+        loadComponent: () =>
+          import('./features/inventory/pages/inventory-list/inventory-list')
+            .then(m => m.InventoryList)
+      },
+      { 
+        path: 'settings', 
+        title: 'Configuración | OptiFlow', 
+        loadComponent: () => 
+          import('./features/settings/pages/settings/settings')
+            .then(m => m.Settings) 
+      },
     ]
   },
   {

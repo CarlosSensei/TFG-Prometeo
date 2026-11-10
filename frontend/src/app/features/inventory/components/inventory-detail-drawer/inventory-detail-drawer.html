@@ -1,0 +1,80 @@
+<app-drawer
+  [open]="creating() || itemId() !== null"
+  [title]="getTitle()"
+  size="wide"
+  (closed)="closed.emit()"
+>
+  @if (loading()) {
+    <p role="status">Cargando artículo...</p>
+  } @else if (error() && !editing() && !item()) {
+    <p class="feedback error" role="alert">{{ error() }}</p>
+  } @else {
+    <div class="inventory-detail">
+      @if (error()) { <p class="feedback error" role="alert">{{ error() }}</p> }
+      @if (message()) { <p class="feedback" role="status">{{ message() }}</p> }
+
+      @if (editing()) {
+        <form class="inventory-form" (submit)="$event.preventDefault(); submit()">
+          <div class="field"><label for="inv-sku">SKU *</label>
+            <input id="inv-sku" required maxlength="50" [value]="sku()" (input)="sku.set($any($event.target).value)" /></div>
+          <div class="field"><label for="inv-name">Nombre *</label>
+            <input id="inv-name" required maxlength="150" [value]="name()" (input)="name.set($any($event.target).value)" /></div>
+          <div class="field"><label for="inv-type">Familia *</label>
+            <select id="inv-type" required [value]="type()" (change)="type.set($any($event.target).value)">
+              @for (option of options; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select></div>
+          <div class="field"><label for="inv-brand">Marca</label>
+            <input id="inv-brand" maxlength="100" [value]="brand()" (input)="brand.set($any($event.target).value)" /></div>
+          <div class="field"><label for="inv-price">Precio de venta (€) *</label>
+            <input id="inv-price" type="number" min="0" step="0.01" required [value]="salePrice()" (input)="salePrice.set(+$any($event.target).value)" /></div>
+          <div class="field"><label for="inv-tax">IVA (%) *</label>
+            <input id="inv-tax" type="number" min="0" max="999.99" step="0.01" required [value]="taxRate()" (input)="taxRate.set(+$any($event.target).value)" /></div>
+          @if (creating()) {
+            <div class="field"><label for="inv-stock">Stock inicial *</label>
+              <input id="inv-stock" type="number" min="0" step="1" required [value]="stock()" (input)="stock.set(+$any($event.target).value)" /></div>
+          } @else {
+            <div class="field"><label>Stock actual</label><strong>{{ item()?.stock }}</strong>
+              <small>Las existencias no se modifican desde la edición de ficha.</small></div>
+          }
+          <div class="field full"><label for="inv-description">Descripción</label>
+            <textarea id="inv-description" rows="4" maxlength="500" [value]="description()" (input)="description.set($any($event.target).value)"></textarea></div>
+          <div class="actions full">
+            <app-button type="button" variant="secondary" [disabled]="saving()" (pressed)="cancelEdit()">Cancelar</app-button>
+            <app-button type="submit" variant="primary" [loading]="saving()">Guardar artículo</app-button>
+          </div>
+        </form>
+      } @else if (item(); as current) {
+        <header class="identity">
+          <div><p class="eyebrow">{{ current.sku }}</p><h3>{{ current.name }}</h3></div>
+          <app-badge [variant]="current.active ? 'success' : 'neutral'">{{ current.active ? 'Activo' : 'Inactivo' }}</app-badge>
+        </header>
+        <dl class="details">
+          <div><dt>Familia</dt><dd>{{ typeLabel(current.type) }}</dd></div>
+          <div><dt>Marca</dt><dd>{{ current.brand || '—' }}</dd></div>
+          <div><dt>Precio de venta</dt><dd>{{ current.salePrice }} €</dd></div>
+          <div><dt>IVA</dt><dd>{{ current.taxRate }} %</dd></div>
+          <div><dt>Stock</dt><dd>{{ current.type === 'SERVICE' ? 'No aplica' : current.stock }}</dd></div>
+          <div><dt>SKU</dt><dd>{{ current.sku }}</dd></div>
+          <div class="full"><dt>Descripción</dt><dd>{{ current.description || 'Sin descripción' }}</dd></div>
+        </dl>
+        @if (current.type !== 'SERVICE') {
+          <app-inventory-stock-movements
+            [itemId]="current.id"
+            [currentStock]="current.stock"
+            [allowMutations]="current.active"
+            (stockChanged)="refreshAfterMovement()"
+          />
+        }
+        <div class="actions">
+          @if (current.active) {
+            <app-button variant="primary" (pressed)="edit()">Editar artículo</app-button>
+            <app-button variant="danger" [loading]="saving()" (pressed)="deactivate()">Desactivar</app-button>
+          }
+          <app-button variant="secondary" (pressed)="closed.emit()">Cerrar</app-button>
+        </div>
+      }
+    </div>
+  }
+</app-drawer>

@@ -14,7 +14,7 @@
     <a class="brand" routerLink="/dashboard"
        (click)="closeSidebar()">
       <span class="brand-logo">O</span>
-      <span>OptiFlow</span>
+      <span>OPTIFLOW</span>
     </a>
 
     <nav class="navigation" aria-label="Navegación principal">
@@ -63,7 +63,24 @@
           <span>◷</span> 
           Seguimientos
       </a>
-      <span class="nav-placeholder">◇ &nbsp; Inventario</span>
+
+      <a 
+        routerLink="/inventory" 
+        routerLinkActive="active"
+        (click)="navigateToList('inventory'); $event.preventDefault()">
+          <span>◇</span> 
+          Inventario
+      </a>
+
+      <span class="nav-section">PREFERENCIAS</span>
+
+      <a 
+        routerLink="/settings" 
+        routerLinkActive="active" 
+        (click)="closeSidebar()">
+          <span>⚙</span> 
+          Configuración
+      </a>
 
     </nav>
 
@@ -113,6 +130,7 @@
 
       <div class="topbar-right">
         <span class="environment-label">Desarrollo</span>
+        <app-notification-bell />
         <span class="topbar-avatar">
           {{ auth.initials() }}
         </span>

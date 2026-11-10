@@ -5,12 +5,16 @@
 @use './styles/typography';
 @use './styles/utilities';
 @use './styles/forms';
+@use './styles/appearance';
+@use './styles/motion';
 
-html {
-  background: var(--color-background);
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  background: var(--color-background);
+  background: var(--app-bg);
+  color: var(--color-text);
 }
 

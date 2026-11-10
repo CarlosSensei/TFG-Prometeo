@@ -52,6 +52,5 @@ public class InventoryItemMapper {
         item.setDescription(dto.getDescription());
         item.setSalePrice(dto.getSalePrice());
         item.setTaxRate(dto.getTaxRate());
-        item.setStock(dto.getStock());
     }
 }

@@ -1,65 +1,120 @@
-
 <section class="dashboard">
-
   <div class="page-heading">
     <div>
       <p class="eyebrow">VISIÓN GENERAL</p>
       <h1>Dashboard</h1>
-      <p class="subtitle">
-        Gestiona la actividad comercial de tu óptica.
-      </p>
+      <p class="subtitle">Indicadores reales de la actividad comercial de OptiFlow.</p>
     </div>
-    <app-badge variant="info">
-      Datos de demostración
-    </app-badge>
+    <button class="refresh-button" type="button" (click)="refresh()" [disabled]="loading()">Actualizar</button>
   </div>
 
-  <div class="metrics-grid">
-    @for (metric of metrics; track metric.label) {
+  <div class="dashboard-layout">
+    <div class="dashboard-main">
+      @if (loading() && !data()) {
+        <div class="state" role="status">Cargando indicadores…</div>
+      } @else if (error() && !data()) {
+        <div class="state error" role="alert">{{ error() }} <button type="button" (click)="refresh()">Reintentar</button></div>
+      } @else {
+        @if (error()) { <p class="error" role="alert">{{ error() }} Se muestran los últimos datos recibidos.</p> }
+        <div class="metrics-grid">
+          @for (metric of metrics(); track metric.label) {
+            <app-card>
+              <a class="metric-link" [routerLink]="metric.link">
+                <span class="metric-label">{{ metric.label }}</span>
+                <strong class="metric-value">{{ metric.value }}</strong>
+                <span class="metric-description">{{ metric.detail }}</span>
+              </a>
+            </app-card>
+          }
+        </div>
+        @if (data(); as dashboard) {
+          <app-card>
+            <div class="panel-header"><h2>Actividad reciente</h2><span>Últimos registros</span></div>
+            @if (dashboard.recentActivity.length === 0) {
+              <p class="empty-state">Todavía no hay actividad.</p>
+            } @else {
+              <ul class="activity-list">
+                @for (item of dashboard.recentActivity; track item.type + item.id) {
+                  <li>
+                    <a [routerLink]="activityLink(item.type, item.id)">
+                      <span class="activity-name">{{ item.type === 'QUOTE' ? 'Presupuesto' : 'Pedido' }} · {{ item.reference }}</span>
+                      <span class="activity-meta">{{ statusLabel(item.status) }} · {{ formatDate(item.occurredAt) }}</span>
+                    </a>
+                  </li>
+                }
+              </ul>
+            }
+          </app-card>
+          <div class="dashboard-actions">
+            <a class="action primary" routerLink="/quotes/new">Nuevo presupuesto</a>
+            <a class="action secondary" routerLink="/clients/new">Nuevo cliente</a>
+          </div>
+          <p class="demo-note">Conversión: presupuestos convertidos / presupuestos resueltos. Ventas: pedidos entregados, con IVA.</p>
+        }
+      }
+    </div>
+
+    <aside class="dashboard-aside" aria-label="Agenda comercial">
       <app-card>
-        <p class="metric-label">{{ metric.label }}</p>
-        <strong class="metric-value">{{ metric.value }}</strong>
-        <p class="metric-description">
-          {{ metric.description }}
-        </p>
+        <div class="calendar-heading">
+          <h2>Calendario</h2>
+          <div class="calendar-nav">
+            <button type="button" aria-label="Mes anterior" (click)="changeMonth(-1)">‹</button>
+            <span aria-live="polite">{{ monthTitle() }}</span>
+            <button type="button" aria-label="Mes siguiente" (click)="changeMonth(1)">›</button>
+          </div>
+        </div>
+        <div class="calendar-weekdays" aria-hidden="true">
+          @for (day of weekdays; track $index) { <span>{{ day }}</span> }
+        </div>
+        <div class="calendar-days">
+          @for (day of calendarDays(); track day.key) {
+            <button type="button" class="calendar-day"
+              [class.other-month]="!day.currentMonth"
+              [class.is-today]="day.today"
+              [class.is-selected]="selectedDay() === day.key"
+              [disabled]="!day.currentMonth"
+              [attr.aria-pressed]="selectedDay() === day.key"
+              [attr.aria-label]="day.key + (day.count ? ', ' + day.count + ' acciones' : '')"
+              (click)="selectDay(day.key)">
+              <span>{{ day.number }}</span>
+              @if (day.count > 0) { <i class="day-dot" aria-hidden="true"></i> }
+            </button>
+          }
+        </div>
+        <p class="calendar-legend"><span class="legend-dot"></span> Días con seguimientos pendientes</p>
+        @if (calendarLoading()) { <p class="calendar-notice" role="status">Cargando agenda…</p> }
+        @if (calendarError()) { <p class="calendar-notice error" role="alert">{{ calendarError() }} <button type="button" (click)="loadCalendar()">Reintentar</button></p> }
       </app-card>
-    }
+
+      <app-card>
+        <div class="actions-heading">
+          <div>
+            <h2>{{ actionsTitle() }}</h2>
+            <span>{{ shownActions().length }} {{ shownActions().length === 1 ? 'acción' : 'acciones' }}</span>
+          </div>
+          @if (selectedDay()) { <button type="button" class="clear-date" (click)="clearDay()">Ver próximas</button> }
+        </div>
+        @if (!calendarLoading() && !calendarError() && shownActions().length === 0) {
+          <p class="empty-state">No hay seguimientos pendientes {{ selectedDay() ? 'para este día' : 'registrados' }}.</p>
+        } @else {
+          <ul class="next-actions">
+            @for (item of shownActions(); track item.id) {
+              <li>
+                <a routerLink="/followups" [queryParams]="{'quoteId.text': item.quoteId}">
+                  <span class="action-dot" [class.late]="item.overdue"></span>
+                  <span class="action-copy">
+                    <strong>{{ actionLabel(item.type) }} · {{ item.quoteNumber }}</strong>
+                    <small [class.overdue]="item.overdue">{{ item.overdue ? 'Vencida · ' : '' }}{{ formatDate(item.scheduledAt) }}</small>
+                  </span>
+                  <span class="action-chevron" aria-hidden="true">›</span>
+                </a>
+              </li>
+            }
+          </ul>
+        }
+        <a class="all-link" routerLink="/followups">Ver todos los seguimientos</a>
+      </app-card>
+    </aside>
   </div>
-
-  <div class="dashboard-grid">
-
-    <app-card>
-      <div class="panel-header">
-        <h2>Actividad reciente</h2>
-        <app-badge>Sin actividad</app-badge>
-      </div>
-      <div class="empty-state">
-        <p>Los últimos movimientos aparecerán aquí.</p>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="panel-header">
-        <h2>Seguimientos pendientes</h2>
-        <app-badge variant="warning">
-          Pendientes
-        </app-badge>
-      </div>
-      <div class="empty-state">
-        <p>Los seguimientos programados aparecerán aquí.</p>
-      </div>
-    </app-card>
-
-  </div>
-
-  <div class="dashboard-actions">
-    <app-button variant="primary" [disabled]="true">
-      Nuevo presupuesto
-    </app-button>
-
-    <app-button variant="secondary" [disabled]="true">
-      Nuevo cliente
-    </app-button>
-  </div>
-
 </section>
