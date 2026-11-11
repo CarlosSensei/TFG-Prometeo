@@ -1,36 +1,42 @@
 
+/* ==========================================================
+   OPTIFLOW DESIGN SYSTEM
+   DESIGN TOKENS
+
+   Responsabilidad:
+   - Escalas de espaciado
+   - Tipografía
+   - Bordes redondeados
+   - Dimensiones estructurales
+   - Tokens de compatibilidad
+
+   Colores y sombras: _themes.scss
+   Densidad: _appearance.scss
+   Animaciones: _motion.scss
+   ========================================================== */
+
 :root {
-  /* BRAND */
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-soft: #eff6ff;
-  --color-accent: #0d9488;
 
-  /* SURFACES */
-  --color-background: #f8fafc;
-  --color-surface: #ffffff;
-  --color-surface-hover: #f1f5f9;
-  --color-border: #e2e8f0;
-  --color-border-subtle: #edf1f5;
-  --color-avatar: #e0e7ff;
+  /* ========================================================
+     1. SEMANTIC COLORS — BASE
+     ======================================================== */
 
-  /* TEXT */
-  --color-text: #172033;
-  --color-text-secondary: #64748b;
-  --color-text-muted: #94a3b8;
-  --color-text-inverse: #ffffff;
-
-  /* SEMANTIC */
   --color-success: #16a34a;
-  --color-success-soft: #f0fdf4;
   --color-warning: #d97706;
-  --color-warning-soft: #fffbeb;
   --color-danger: #dc2626;
-  --color-danger-soft: #fef2f2;
   --color-info: #0284c7;
-  --color-info-soft: #f0f9ff;
 
-  /* SPACING SCALE - Base 4px */
+  /*
+    Los fondos semánticos --color-*-soft
+    se definen en _themes.scss para
+    adaptarse al tema claro u oscuro.
+  */
+
+
+  /* ========================================================
+     2. SPACING SCALE — BASE 4PX
+     ======================================================== */
+
   --space-0: 0;
   --space-1: 4px;
   --space-2: 8px;
@@ -43,45 +49,79 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* PADDING - Componentes */
+
+  /* ========================================================
+     3. PADDING TOKENS
+     ======================================================== */
+
   --padding-xs: var(--space-1);
   --padding-sm: var(--space-2);
   --padding-md: var(--space-4);
   --padding-lg: var(--space-6);
   --padding-xl: var(--space-8);
 
-  /* Padding semántico */
+  /* Botones */
+
   --padding-button-x: var(--space-4);
   --padding-button-y: var(--space-2);
+
+  /* Inputs */
 
   --padding-input-x: var(--space-3);
   --padding-input-y: var(--space-2);
 
-  --padding-card: var(--space-6);
-  --padding-panel: var(--space-6);
+  /* Página */
+
   --padding-page: var(--space-8);
 
-  /* MARGIN - Separaciones exteriores */
+  /*
+    --padding-card y --padding-panel
+    están definidos en _appearance.scss
+    para permitir distintas densidades.
+  */
+
+
+  /* ========================================================
+     4. MARGIN TOKENS
+     ======================================================== */
+
   --margin-xs: var(--space-1);
   --margin-sm: var(--space-2);
   --margin-md: var(--space-4);
   --margin-lg: var(--space-6);
   --margin-xl: var(--space-8);
 
-  /* Margin semántico */
-  --margin-section: var(--space-8);
   --margin-heading: var(--space-4);
   --margin-paragraph: var(--space-3);
 
-  /* GAP - Flexbox y Grid */
+  /*
+    --margin-section se define
+    en _appearance.scss.
+  */
+
+
+  /* ========================================================
+     5. GAP TOKENS
+     ======================================================== */
+
   --gap-xs: var(--space-1);
   --gap-sm: var(--space-2);
   --gap-md: var(--space-4);
-  --gap-lg: var(--space-6);
   --gap-xl: var(--space-8);
 
-  /* TYPOGRAPHY */
+  /*
+    --gap-lg se define en _appearance.scss
+    para controlar la densidad.
+  */
+
+
+  /* ========================================================
+     6. TYPOGRAPHY
+     ======================================================== */
+
   --font-family: Inter, system-ui, sans-serif;
+
+  /* Tamaños */
 
   --font-size-xs: 12px;
   --font-size-sm: 13px;
@@ -91,38 +131,64 @@
   --font-size-2xl: 24px;
   --font-size-3xl: 30px;
 
+  /* Pesos */
+
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* RADIUS */
+
+  /* ========================================================
+     7. BORDER RADIUS
+     ======================================================== */
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
   --radius-full: 9999px;
 
-  /* SHADOWS */
-  --shadow-sm: 0 1px 3px rgb(15 23 42 / 5%);
-  --shadow-md: 0 4px 14px rgb(15 23 42 / 7%);
-  --shadow-lg: 0 12px 30px rgb(15 23 42 / 10%);
 
-  /* LAYOUT */
+  /* ========================================================
+     8. LAYOUT
+     ======================================================== */
+
   --sidebar-width: 252px;
   --topbar-height: 72px;
   --content-max-width: 1600px;
 
-  /* TRANSITIONS */
-  --transition-fast: 150ms ease;
-  --transition-normal: 220ms ease;
+
+  /* ========================================================
+     9. LEGACY TRANSITION ALIASES
+     ======================================================== */
+
+  /*
+    Compatibilidad con componentes existentes.
+
+    No utilizar estas variables para
+    desarrollar componentes nuevos.
+
+    Utilizar --motion-* en su lugar.
+  */
+
+  --transition-fast:
+    var(--motion-fast, 130ms) ease;
+
+  --transition-normal:
+    var(--motion-normal, 220ms) ease;
+
 }
 
+
+/* ==========================================================
+   10. RESPONSIVE
+   ========================================================== */
+
 @media (max-width: 768px) {
+
   :root {
     --padding-page: var(--space-4);
-    --padding-card: var(--space-4);
-    --padding-panel: var(--space-4);
-    --margin-section: var(--space-6);
   }
+
 }

@@ -1,24 +1,51 @@
 
+/* ==========================================================
+   OPTIFLOW DESIGN SYSTEM
+   FORMS & INPUT CONTROLS
+
+   Responsabilidad:
+   - Campos de formulario
+   - Labels, hints y errores
+   - Estados focus / disabled / invalid
+   - Personalización del buscador global
+   ========================================================== */
+
+
+/* ==========================================================
+   1. FORM FIELD
+   ========================================================== */
+
 .form-field {
   display: flex;
   flex-direction: column;
   gap: var(--gap-sm);
+
   width: 100%;
   min-width: 0;
 }
 
 .form-label {
   color: var(--color-text);
+
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
 
+
+/* ==========================================================
+   2. FORM CONTROL
+   ========================================================== */
+
 .form-control {
   display: block;
+  box-sizing: border-box;
+
   width: 100%;
-  min-height: 42px;
-  padding: var(--padding-input-y)
-           var(--padding-input-x);
+  min-height: var(--control-min-height, 42px);
+
+  padding:
+    var(--padding-input-y)
+    var(--padding-input-x);
 
   background: var(--color-surface);
   color: var(--color-text);
@@ -30,16 +57,20 @@
   outline: none;
 
   transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-normal) ease,
+    background-color var(--motion-normal) ease;
 
   &::placeholder {
     color: var(--color-text-muted);
+    opacity: 1;
   }
 
-  &:focus {
+  &:focus,
+  &:focus-visible {
+    outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-soft);
+    box-shadow: var(--focus-glow);
   }
 
   &:disabled {
@@ -48,10 +79,27 @@
     cursor: not-allowed;
   }
 
-  &.is-invalid {
+  &.is-invalid,
+  &[aria-invalid='true'] {
     border-color: var(--color-danger);
   }
+
+  &.is-invalid:focus,
+  &[aria-invalid='true']:focus {
+    box-shadow:
+      0 0 0 3px
+      color-mix(
+        in srgb,
+        var(--color-danger) 20%,
+        transparent
+      );
+  }
 }
+
+
+/* ==========================================================
+   3. HELP & ERROR TEXT
+   ========================================================== */
 
 .form-hint {
   color: var(--color-text-muted);
@@ -64,13 +112,22 @@
 }
 
 
-/* ===========================================
-   OPTIFLOW GLOBAL SEARCH
-   =========================================== */
+/* ==========================================================
+   4. GLOBAL SEARCH INPUT
+   ========================================================== */
+
+/*
+   El input real pertenece a app-input.
+
+   Estas reglas globales permiten personalizarlo
+   desde el buscador del topbar sin afectar
+   a los formularios de clientes, pedidos, etc.
+*/
 
 app-global-search .search-input app-input {
   display: block;
   width: 100%;
+  min-width: 0;
 }
 
 app-global-search .search-input .form-field {
@@ -83,14 +140,15 @@ app-global-search .search-input input {
   box-sizing: border-box;
 
   width: 100%;
+
   height: 60px;
   min-height: 60px;
 
-  // Espacio reservado para el icono
+  /* Espacio para el icono */
   padding: 0 24px 0 62px;
 
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
 
   background: var(--color-surface);
   color: var(--color-text);
@@ -106,8 +164,8 @@ app-global-search .search-input input {
   -webkit-appearance: none;
 
   transition:
-    border-color 220ms ease,
-    background 220ms ease;
+    border-color var(--motion-fast) ease,
+    background-color var(--motion-normal) ease;
 }
 
 app-global-search .search-input input::placeholder {
@@ -115,34 +173,45 @@ app-global-search .search-input input::placeholder {
   opacity: 0.85;
 }
 
-app-global-search .search-input input:focus {
-  border-color: var(--color-primary);
+app-global-search .search-input input:focus,
+app-global-search .search-input input:focus-visible {
   outline: none;
+
+  border-color: var(--color-primary);
+  border-radius: var(--radius-full);
+
+  /*
+     El glow exterior se aplica al contenedor
+     .search-input mediante :focus-within
+     en global-search.scss.
+  */
   box-shadow: none;
 }
 
-// Evitar bordes heredados al enfocar
-app-global-search .search-input input:focus-visible {
-  outline: none;
-}
 
-// Evitar que el botón nativo de Safari
-// invada el espacio del texto
+/* ==========================================================
+   5. SAFARI SEARCH
+   ========================================================== */
+
 app-global-search input::-webkit-search-decoration {
   -webkit-appearance: none;
 }
 
+
+/* ==========================================================
+   6. RESPONSIVE
+   ========================================================== */
+
 @media (max-width: 768px) {
+
   app-global-search .search-input input {
     height: 52px;
     min-height: 52px;
+
     padding-left: 56px;
+    padding-right: 16px;
+
     font-size: 14px;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  app-global-search .search-input input {
-    transition: none;
-  }
 }

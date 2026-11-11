@@ -88,25 +88,6 @@
 
   </app-card>
 
-  @if (selectedClientId() !== null) {
-
-    <div class="selection-actions">
-
-      <p class="selection-note" role="status">
-        Cliente seleccionado: #{{ selectedClientId() }}
-      </p>
-
-      <app-button
-        variant="secondary"
-        (pressed)="editSelectedClient()"
-      >
-        Editar cliente
-      </app-button>
-
-    </div>
-
-  }
-
   <app-client-detail-drawer
     [clientId]="detailClientId()"
     (closed)="closeClientDetail()"

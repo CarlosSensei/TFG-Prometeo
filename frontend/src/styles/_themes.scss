@@ -1,93 +1,308 @@
-:root {
-  --color-primary: #2563eb;
-  --color-primary-rgb: 37, 99, 235;
 
-  --color-surface: rgba(255, 255, 255, 0.72);
-  --color-surface-strong: rgba(255, 255, 255, 0.86);
-  --color-surface-soft: rgba(255, 255, 255, 0.58);
+/* ==========================================================
+   OPTIFLOW DESIGN SYSTEM
+   THEMES, COLORS & GLASSMORPHISM
 
-  --color-border: rgba(255, 255, 255, 0.22);
-  --color-border-strong: rgba(15, 23, 42, 0.08);
+   Responsabilidad:
+   - Tema claro y oscuro
+   - Paletas de acento
+   - Superficies
+   - Gradientes y glows
+   - Bordes y sombras
 
-  --color-text: #0f172a;
-  --color-text-secondary: #64748b;
+   ========================================================== */
 
-  --glass-background: rgba(255, 255, 255, 0.50);
-  --glass-border: rgb(255 255 255 / 55%);
-  --glass-gradient: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.34),
-    rgba(255, 255, 255, 0.16)
-  );
 
-  --surface-shadow:
-    0 10px 30px rgba(15, 23, 42, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24);
-
-  --app-bg:
-    radial-gradient(circle at top left, rgba(var(--color-primary-rgb), 0.38), transparent 28%),
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 24%),
-    linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
-}
-
-[data-theme='dark'] {
-  --color-surface: rgba(15, 23, 42, 0.56);
-  --color-surface-strong: rgba(15, 23, 42, 0.72);
-  --color-surface-soft: rgba(30, 41, 59, 0.46);
-
-  --color-border: rgba(255, 255, 255, 0.10);
-  --color-border-strong: rgba(255, 255, 255, 0.14);
-
-  --color-text: #e2e8f0;
-  --color-text-secondary: #94a3b8;
-  --color-text-contrast : #0f172a;
-
-  --glass-gradient: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.10),
-    rgba(255, 255, 255, 0.04)
-  );
-
-  --surface-shadow:
-    0 14px 36px rgba(0, 0, 0, 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
-  --app-bg:
-    radial-gradient(circle at 10% 10%, rgba(var(--color-primary-rgb), 0.22), transparent 24%),
-    radial-gradient(circle at 85% 12%, rgba(255, 140, 0, 0.10), transparent 18%),
-    radial-gradient(circle at 50% 100%, rgba(0, 128, 0, 0.08), transparent 24%),
-    linear-gradient(180deg, #0b1220 0%, #0f172a 45%, #111827 100%);
-}
+/* ==========================================================
+   1. BASE — LIGHT
+   ========================================================== */
 
 :root,
-[data-theme="light"] {
-  color-scheme: light;
-}
-
 [data-theme='light'] {
-  --color-surface: rgba(255, 255, 255, 0.72);
-  --color-surface-strong: rgba(255, 255, 255, 0.86);
-  --color-surface-soft: rgba(255, 255, 255, 0.56);
 
-  --color-border: rgba(255, 255, 255, 0.24);
-  --color-border-strong: rgba(15, 23, 42, 0.08);
+  color-scheme: light;
 
-  --color-text: #0f172a;
+  /* BACKGROUND */
+
+  --color-background: #f5f8fd;
+
+  --color-surface: #ffffff;
+  --color-surface-hover: #f0f5fb;
+
+  --color-surface-strong: rgba(255, 255, 255, 0.88);
+  --color-surface-soft: rgba(255, 255, 255, 0.60);
+
+  /* TEXT */
+
+  --color-text: #172033;
   --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  --color-text-inverse: #ffffff;
+  --color-text-contrast: #0f172a;
 
-  --glass-gradient: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.42),
-    rgba(255, 255, 255, 0.18)
-  );
+  /* BORDERS */
+
+  --color-border: #dce5f0;
+  --color-border-subtle: #e9eef5;
+  --color-border-strong: rgba(15, 23, 42, 0.12);
+
+  /* AVATAR */
+
+  --color-avatar: #dbeafe;
+
+  /* SEMANTIC BACKGROUNDS */
+
+  --color-success-soft: #f0fdf4;
+  --color-warning-soft: #fffbeb;
+  --color-danger-soft: #fef2f2;
+  --color-info-soft: #f0f9ff;
+
+  /* GLASS */
+
+  --glass-background: rgba(255, 255, 255, 0.70);
+  --glass-border: rgba(255, 255, 255, 0.72);
+
+  --glass-gradient:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.88) 0%,
+      rgba(255, 255, 255, 0.60) 55%,
+      rgba(242, 247, 255, 0.42) 100%
+    );
+
+  --glass-blur: 18px;
+
+  /* SHADOWS */
+
+  --shadow-sm:
+    0 2px 6px rgba(15, 23, 42, 0.05);
+
+  --shadow-md:
+    0 6px 18px rgba(15, 23, 42, 0.08);
+
+  --shadow-lg:
+    0 14px 34px rgba(15, 23, 42, 0.12);
 
   --surface-shadow:
-    0 12px 32px rgba(15, 23, 42, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.26);
+    0 12px 32px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+  /* PAGE BACKGROUND */
 
   --app-bg:
-    radial-gradient(circle at 12% 10%, rgba(var(--color-primary-rgb), 0.18), transparent 24%),
-    radial-gradient(circle at 88% 14%, rgba(255, 140, 0, 0.12), transparent 20%),
-    radial-gradient(circle at 50% 100%, rgba(0, 128, 0, 0.08), transparent 28%),
-    linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
+    radial-gradient(
+      ellipse at 8% 4%,
+      rgb(var(--color-primary-rgb) / 17%),
+      transparent 32%
+    ),
+    radial-gradient(
+      ellipse at 92% 18%,
+      rgba(56, 189, 248, 0.10),
+      transparent 30%
+    ),
+    radial-gradient(
+      ellipse at 65% 95%,
+      rgba(167, 139, 250, 0.09),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #f9fbff 0%,
+      #eef4fb 55%,
+      #f7f9ff 100%
+    );
+}
+
+
+/* ==========================================================
+   2. DARK
+   ========================================================== */
+
+[data-theme='dark'] {
+
+  color-scheme: dark;
+
+  /* BACKGROUND */
+
+  --color-background: #0b1220;
+
+  --color-surface: #182235;
+  --color-surface-hover: #26344d;
+
+  --color-surface-strong: rgba(24, 34, 53, 0.88);
+  --color-surface-soft: rgba(30, 41, 59, 0.58);
+
+  /* TEXT */
+
+  --color-text: #ecf3ff;
+  --color-text-secondary: #b3c0d5;
+  --color-text-muted: #94a3b8;
+  --color-text-inverse: #ffffff;
+  --color-text-contrast: #0f172a;
+
+  /* BORDERS */
+
+  --color-border: #34445d;
+  --color-border-subtle: #29374d;
+  --color-border-strong: rgba(255, 255, 255, 0.17);
+
+  /* AVATAR */
+
+  --color-avatar: #3a4d75;
+
+  /* SEMANTIC BACKGROUNDS */
+
+  --color-success-soft: #163a2b;
+  --color-warning-soft: #47331b;
+  --color-danger-soft: #48262b;
+  --color-info-soft: #16384e;
+
+  /* GLASS */
+
+  --glass-background: rgba(20, 30, 48, 0.74);
+  --glass-border: rgba(170, 190, 225, 0.14);
+
+  --glass-gradient:
+    linear-gradient(
+      135deg,
+      rgba(46, 61, 89, 0.78) 0%,
+      rgba(24, 34, 53, 0.72) 55%,
+      rgba(15, 23, 42, 0.62) 100%
+    );
+
+  --glass-blur: 20px;
+
+  /* SHADOWS */
+
+  --shadow-sm:
+    0 2px 7px rgba(0, 0, 0, 0.22);
+
+  --shadow-md:
+    0 6px 20px rgba(0, 0, 0, 0.28);
+
+  --shadow-lg:
+    0 18px 44px rgba(0, 0, 0, 0.38);
+
+  --surface-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+  /* PAGE BACKGROUND */
+
+  --app-bg:
+    radial-gradient(
+      ellipse at 8% 6%,
+      rgb(var(--color-primary-rgb) / 22%),
+      transparent 32%
+    ),
+    radial-gradient(
+      ellipse at 88% 18%,
+      rgba(56, 189, 248, 0.07),
+      transparent 28%
+    ),
+    radial-gradient(
+      ellipse at 65% 95%,
+      rgba(124, 58, 237, 0.09),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #080e1a 0%,
+      #111b2e 55%,
+      #0b1220 100%
+    );
+}
+
+
+/* ==========================================================
+   3. ACCENT COLORS — LIGHT
+   ========================================================== */
+
+:root,
+[data-accent='blue'] {
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-soft: rgba(37, 99, 235, 0.12);
+  --color-primary-rgb: 37 99 235;
+}
+
+[data-accent='teal'] {
+  --color-primary: #0d9488;
+  --color-primary-hover: #0f766e;
+  --color-primary-soft: rgba(13, 148, 136, 0.12);
+  --color-primary-rgb: 13 148 136;
+}
+
+[data-accent='violet'] {
+  --color-primary: #7c3aed;
+  --color-primary-hover: #6d28d9;
+  --color-primary-soft: rgba(124, 58, 237, 0.12);
+  --color-primary-rgb: 124 58 237;
+}
+
+[data-accent='orange'] {
+  --color-primary: #ff8c00;
+  --color-primary-hover: #d97706;
+  --color-primary-soft: rgba(255, 140, 0, 0.13);
+  --color-primary-rgb: 255 140 0;
+}
+
+[data-accent='green'] {
+  --color-primary: #008000;
+  --color-primary-hover: #006400;
+  --color-primary-soft: rgba(0, 128, 0, 0.13);
+  --color-primary-rgb: 0 128 0;
+}
+
+
+/* ==========================================================
+   4. ACCENT COLORS — DARK
+   ========================================================== */
+
+[data-theme='dark'][data-accent='blue'] {
+  --color-primary: #76a7ff;
+  --color-primary-hover: #a0c3ff;
+  --color-primary-soft: rgba(118, 167, 255, 0.16);
+  --color-primary-rgb: 118 167 255;
+}
+
+[data-theme='dark'][data-accent='teal'] {
+  --color-primary: #51dfcf;
+  --color-primary-hover: #81f0e3;
+  --color-primary-soft: rgba(81, 223, 207, 0.15);
+  --color-primary-rgb: 81 223 207;
+}
+
+[data-theme='dark'][data-accent='violet'] {
+  --color-primary: #b89cff;
+  --color-primary-hover: #ceb9ff;
+  --color-primary-soft: rgba(184, 156, 255, 0.16);
+  --color-primary-rgb: 184 156 255;
+}
+
+[data-theme='dark'][data-accent='orange'] {
+  --color-primary: #ffad42;
+  --color-primary-hover: #ffc078;
+  --color-primary-soft: rgba(255, 173, 66, 0.16);
+  --color-primary-rgb: 255 173 66;
+}
+
+[data-theme='dark'][data-accent='green'] {
+  --color-primary: #4ade80;
+  --color-primary-hover: #86efac;
+  --color-primary-soft: rgba(74, 222, 128, 0.15);
+  --color-primary-rgb: 74 222 128;
+}
+
+
+/* ==========================================================
+   5. FOCUS GLOW
+   ========================================================== */
+
+:root {
+  --focus-glow:
+    0 0 0 3px
+      rgb(var(--color-primary-rgb) / 20%),
+    0 0 22px
+      rgb(var(--color-primary-rgb) / 16%);
 }

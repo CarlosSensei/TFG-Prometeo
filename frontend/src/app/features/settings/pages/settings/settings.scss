@@ -150,6 +150,62 @@ h2 {
     border: 2px solid rgb(255 255 255 / 55%); 
 }
 
+.avatar-settings {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+}
+
+.avatar-preview {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--glass-border);
+}
+
+.avatar-fallback {
+  background: var(--color-avatar);
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+}
+
+.avatar-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.avatar-upload,
+.avatar-remove {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.avatar-upload:hover,
+.avatar-remove:hover {
+  border-color: var(--color-primary);
+}
+
+.avatar-upload:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.avatar-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width:600px) { 
     .page-heading { 
         flex-direction: column; 

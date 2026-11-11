@@ -1,18 +1,39 @@
 
+/* ==========================================================
+   OPTIFLOW DESIGN SYSTEM
+   TYPOGRAPHY
+
+   Responsabilidad:
+   - Tipografía base
+   - Jerarquía de encabezados
+   - Párrafos
+   ========================================================== */
+
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-regular);
+
   line-height: 1.5;
   color: var(--color-text);
+
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4 {
+/* HEADINGS */
+
+h1,
+h2,
+h3,
+h4 {
   margin: 0;
+
   font-weight: var(--font-weight-semibold);
   line-height: 1.25;
   letter-spacing: -0.025em;
+
+  color: var(--color-text);
 }
 
 h1 {
@@ -26,6 +47,12 @@ h2 {
 h3 {
   font-size: var(--font-size-lg);
 }
+
+h4 {
+  font-size: var(--font-size-md);
+}
+
+/* PARAGRAPHS */
 
 p {
   margin-top: 0;

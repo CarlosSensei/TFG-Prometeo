@@ -1,20 +1,22 @@
-
 @use './styles/tokens';
 @use './styles/themes';
+@use './styles/appearance';
 @use './styles/reset';
 @use './styles/typography';
 @use './styles/utilities';
 @use './styles/forms';
-@use './styles/appearance';
 @use './styles/motion';
+@use './styles/ux-upgrade';
 
-html,
-body {
+html {
   min-height: 100%;
+  background: var(--color-background);
 }
 
 body {
+  min-height: 100vh;
+  margin: 0;
   background: var(--app-bg);
+  background-attachment: fixed;
   color: var(--color-text);
 }
-

@@ -1,6 +1,21 @@
+
+/* ==========================================================
+   OPTIFLOW — DRAWER COMPONENT
+
+   Responsabilidad:
+   - Estructura del panel lateral
+   - Superficie y dimensiones
+   - Header, contenido y cierre
+   - Adaptación responsive
+
+   Animaciones: _ux-upgrade.scss
+   ========================================================== */
+
 :host {
   display: contents;
 }
+
+/* DRAWER */
 
 .ui-drawer {
   position: fixed;
@@ -8,6 +23,7 @@
 
   width: min(720px, 100%);
   max-width: 100%;
+
   height: 100%;
   max-height: 100%;
 
@@ -15,78 +31,153 @@
   padding: 0;
 
   color: var(--color-text);
-  background: var(--color-surface);
+  background: var(--color-surface-strong);
 
   border: none;
-  border-left: 1px solid var(--color-border);
+  border-left: 1px solid var(--glass-border);
 
-  box-shadow: var(--shadow-lg, 0 8px 24px rgb(0 0 0 / 12%));
+  box-shadow: var(--shadow-lg);
+
+  backdrop-filter:
+    blur(var(--glass-blur)) saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(var(--glass-blur)) saturate(125%);
 
   &::backdrop {
     background: rgb(0 0 0 / 40%);
   }
 }
 
+/* DRAWER LAYOUT */
+
 .drawer-layout {
   display: flex;
   flex-direction: column;
+
   height: 100%;
   min-height: 0;
 }
+
+/* HEADER */
 
 .drawer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: var(--space-4);
 
+  flex: 0 0 auto;
+
   padding: var(--space-5);
+
   border-bottom: 1px solid var(--color-border);
 
   h2 {
     margin: 0;
+    color: var(--color-text);
   }
 }
+
+/* CLOSE BUTTON */
+
 
 .drawer-close {
   display: grid;
   place-items: center;
 
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
 
-  border: none;
-  border-radius: var(--radius-md, 8px);
+  padding: 0;
 
   color: var(--color-text-secondary);
-  background: transparent;
+  background: var(--color-surface-soft);
 
-  font: inherit;
-  font-size: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+
+  outline: none;
+  box-shadow: none;
 
   cursor: pointer;
 
-  &:hover {
-    background: var(--color-surface-secondary, var(--color-surface));
+  transition:
+    color var(--motion-fast) ease,
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-normal) ease,
+    transform var(--motion-normal) var(--motion-ease);
+
+  svg {
+    width: 20px;
+    height: 20px;
+
+    transition:
+      transform var(--motion-normal) var(--motion-ease);
   }
 
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+
+    box-shadow:
+      0 0 0 2px var(--color-primary-soft),
+      0 0 18px color-mix(
+        in srgb,
+        var(--color-primary) 35%,
+        transparent
+      );
+
+    transform: scale(1.06);
+
+    svg {
+      transform: rotate(90deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  // Un único indicador visual para el teclado
   &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    outline: none;
+    border-color: var(--color-primary);
+
+    box-shadow:
+      0 0 0 3px var(--color-primary-soft),
+      0 0 16px color-mix(
+        in srgb,
+        var(--color-primary) 25%,
+        transparent
+      );
   }
 }
+
+
+/* CONTENT */
 
 .drawer-content {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
+
   overflow-y: auto;
+  overscroll-behavior: contain;
+
   padding: var(--space-5);
 }
+
+/* WIDE VARIANT */
 
 .ui-drawer--wide {
   width: min(1080px, calc(100vw - 32px));
 }
+
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .ui-drawer--wide {

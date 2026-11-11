@@ -130,6 +130,64 @@
 
       </section>
 
+      <section class="setting-card">
+
+        <div class="card-heading">
+          
+          <h2>Imagen de perfil</h2>
+          
+          <p>Personaliza tu avatar de OptiFlow.</p>
+        
+        </div>
+
+        <div class="avatar-settings">
+          
+          @if (avatar.image(); as image) {
+            <img
+              class="avatar-preview"
+              [src]="image"
+              alt="Imagen de perfil actual"
+            />
+          } @else {
+            <div class="avatar-preview avatar-fallback">
+              {{ auth.initials() }}
+            </div>
+          }
+
+          <div class="avatar-controls">
+            
+            <label class="avatar-upload" for="avatar-upload">
+              Cambiar imagen
+            </label>
+
+            <input
+              id="avatar-upload"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              class="sr-only"
+              (change)="onAvatarSelected($event)"
+            />
+
+            <button
+              type="button"
+              class="avatar-remove"
+              [disabled]="!avatar.image()"
+              (click)="avatar.remove()">
+              Eliminar imagen
+            </button>
+
+            @if (avatar.error()) {
+              <p class="form-error" role="alert">
+                {{ avatar.error() }}
+              </p>
+            }
+          
+          </div>
+        
+        </div>
+      
+      </section>
+
       <section class="setting-card" aria-labelledby="settings-motion">
         
         <div class="card-heading">

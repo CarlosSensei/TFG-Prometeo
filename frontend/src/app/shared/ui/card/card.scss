@@ -1,3 +1,15 @@
+
+/* ==========================================================
+   OPTIFLOW — CARD COMPONENT
+
+   Responsabilidad:
+   - Estructura y apariencia de tarjetas
+   - Variantes padded / elevated
+   - Superficie glass
+
+   Microinteracciones: _ux-upgrade.scss
+   ========================================================== */
+
 :host {
   display: block;
   min-width: 0;
@@ -5,10 +17,17 @@
 
 .ui-card {
   background: var(--glass-gradient);
-  border: 1px solid var(--color-border);
+
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+
   box-shadow: var(--surface-shadow);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+
+  backdrop-filter:
+    blur(var(--glass-blur)) saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(var(--glass-blur)) saturate(125%);
 
   &--padded {
     padding: var(--padding-card);

@@ -365,34 +365,43 @@ public class ClientServiceImpl implements ClientService {
         stats.setLastOrderDate(lastOrderDate);
 
         // 12. Última actividad comercial.
+
         LocalDateTime lastQuoteActivity = quotes.stream()
-                .map(Quote::getCreatedAt)
+                .map(q -> q.getUpdatedAt() != null
+                        ? q.getUpdatedAt()
+                        : q.getCreatedAt())
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
 
         LocalDateTime lastOrderActivity = orders.stream()
-                .map(Order::getCreatedAt)
+                .map(o -> o.getUpdatedAt() != null
+                        ? o.getUpdatedAt()
+                        : o.getCreatedAt())
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
 
         LocalDateTime lastFollowUpActivity = followUps.stream()
-                .map(FollowUp::getCreatedAt)
+                .map(f -> f.getUpdatedAt() != null
+                        ? f.getUpdatedAt()
+                        : f.getCreatedAt())
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
 
-        LocalDateTime lastActivity = java.util.stream.Stream.of(
-                        lastQuoteActivity,
-                        lastOrderActivity,
-                        lastFollowUpActivity
-                )
-                .filter(Objects::nonNull)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+        LocalDateTime lastActivity =
+                java.util.stream.Stream.of(
+                                lastQuoteActivity,
+                                lastOrderActivity,
+                                lastFollowUpActivity
+                        )
+                        .filter(Objects::nonNull)
+                        .max(LocalDateTime::compareTo)
+                        .orElse(null);
 
         stats.setLastActivity(lastActivity);
+
 
         return stats;
     }

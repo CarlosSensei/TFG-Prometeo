@@ -1,4 +1,15 @@
 
+/* ==========================================================
+   OPTIFLOW DESIGN SYSTEM
+   CSS RESET
+
+   Responsabilidad:
+   - Normalización de estilos del navegador
+   - Box sizing
+   - Comportamiento básico de elementos HTML
+   - Foco accesible por teclado
+   ========================================================== */
+
 *,
 *::before,
 *::after {
@@ -15,11 +26,14 @@ body {
   margin: 0;
 }
 
+/* FORM CONTROLS */
+
 button,
 input,
 select,
 textarea {
   font: inherit;
+  min-width: 0;
 }
 
 button {
@@ -30,26 +44,26 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* LINKS */
+
 a {
   color: inherit;
 }
+
+/* MEDIA */
 
 img,
 svg {
   max-width: 100%;
 }
 
+img {
+  height: auto;
+}
+
+/* ACCESSIBILITY */
+
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
 }

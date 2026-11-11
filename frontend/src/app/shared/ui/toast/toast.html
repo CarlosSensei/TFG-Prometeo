@@ -1,0 +1,13 @@
+<div class="toast-stack" aria-label="Notificaciones de la aplicación">
+  @for (toast of toasts.items(); track toast.id) {
+    <div class="toast-item" [class]="'toast-item toast-item--' + toast.kind"
+         [attr.role]="toast.kind === 'error' ? 'alert' : 'status'">
+      <span class="toast-icon" aria-hidden="true">
+        {{ toast.kind === 'success' ? '✓' : toast.kind === 'error' ? '!' : toast.kind === 'warning' ? '!' : 'i' }}
+      </span>
+      <span class="toast-text">{{ toast.text }}</span>
+      <button type="button" class="toast-close" aria-label="Cerrar mensaje"
+              (click)="toasts.dismiss(toast.id)">×</button>
+    </div>
+  }
+</div>

@@ -169,20 +169,29 @@ export class DataTable {
 
     const panelWidth = 290;
     const margin = 12;
+    const gap = 8;
 
-    this.panelPosition.set({
-      top: Math.min(
-        rect.bottom + 8,
-        window.innerHeight - 80
-      ),
-      left: Math.max(
-        margin,
-        Math.min(
-          rect.left,
-          window.innerWidth - panelWidth - margin
-        )
+    // Obtenemos la cabecera completa de la columna.
+    const header = button.closest('th');
+
+    if (!header) {
+      return;
+    }
+
+    // El panel comienza debajo de la cabecera.
+    const top = rect.bottom + gap;
+
+    // Alineamos el panel con el borde izquierdo
+    // de la columna, salvo que se salga de pantalla.
+    const left = Math.max(
+      margin,
+      Math.min(
+        rect.left,
+        window.innerWidth - panelWidth - margin
       )
-    });
+    );
+
+    this.panelPosition.set({ top, left });
 
     const current = this.filters()[column.key] ?? {};
 

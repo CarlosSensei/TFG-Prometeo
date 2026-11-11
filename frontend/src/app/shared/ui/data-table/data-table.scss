@@ -1,3 +1,25 @@
+
+/* ==========================================================
+   OPTIFLOW — DATA TABLE
+
+   Responsabilidad:
+   - Estructura y distribución de tablas
+   - Celdas y cabeceras
+   - Filtros y ordenación
+   - Acciones y estados
+   - Densidad responsive
+
+   Glass y hover: _ux-upgrade.scss
+   Temas: _themes.scss
+   Densidad: _appearance.scss
+   Animaciones: _motion.scss
+   ========================================================== */
+
+
+/* ==========================================================
+   1. HOST & CONTAINER
+   ========================================================== */
+
 :host {
   display: block;
   min-width: 0;
@@ -5,302 +27,165 @@
 
 .table-container {
   width: 100%;
+  min-width: 0;
+
   overflow: hidden;
-  background: var(--glass-gradient);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--surface-shadow);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: var(--radius-xl, 1rem);
+  border-radius: var(--radius-lg);
 }
 
 .table-scroll {
+  width: 100%;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
+
+
+/* ==========================================================
+   2. TABLE STRUCTURE
+   ========================================================== */
 
 .ui-table {
   width: 100%;
+
   border-collapse: collapse;
+  border-spacing: 0;
+
   text-align: left;
-  
 }
 
+
+/* ==========================================================
+   3. TABLE HEADERS
+   ========================================================== */
+
 th {
-  padding: var(--space-4);
-  background: var(--color-background);
+  padding:
+    var(--table-cell-padding-y, 12px)
+    var(--table-cell-padding-x, 16px);
+
+  background: var(--glass-background);
+
   color: var(--color-text-secondary);
+
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
+
   white-space: nowrap;
+  vertical-align: middle;
+
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+
+  &:not(:last-child) {
+    border-right: 1px solid var(--color-border-subtle);
+  }
 }
+
+
+/* ==========================================================
+   4. TABLE CELLS
+   ========================================================== */
 
 td {
   padding: 0;
+
+  border: 0;
   border-top: 1px solid var(--color-border-subtle);
+
   font-size: var(--font-size-md);
+  color: var(--color-text);
+
+  vertical-align: middle;
 }
 
-tbody tr:hover {
-  background: var(--color-surface-hover);
-}
+
+/* ==========================================================
+   5. CLICKABLE CELLS
+   ========================================================== */
 
 .cell-button {
   display: block;
+
   width: 100%;
-  min-height: 48px;
-  padding: var(--space-3) var(--space-4);
+  min-height: var(--table-row-min-height, 48px);
+
+  padding:
+    var(--table-cell-padding-y, 12px)
+    var(--table-cell-padding-x, 16px);
 
   background: transparent;
-  border: none;
   color: var(--color-text);
+
+  border: none;
+
+  font: inherit;
   text-align: left;
+
   cursor: pointer;
+
+  transition:
+    color var(--motion-fast) ease;
 }
+
+.cell-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -3px;
+  border-radius: var(--radius-sm);
+}
+
+
+/* ==========================================================
+   6. EMPTY STATE
+   ========================================================== */
 
 .empty-cell {
   padding: var(--space-12);
+
   text-align: center;
   color: var(--color-text-muted);
+
+  font-size: var(--font-size-md);
 }
+
+
+/* ==========================================================
+   7. TABLE ACTIONS
+   ========================================================== */
 
 .table-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
+  gap: var(--space-2);
+
+  min-height: var(--control-min-height, 42px);
+
   padding: var(--space-2) var(--space-3);
 
   color: var(--color-primary);
   background: transparent;
 
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md);
 
   font: inherit;
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
   white-space: nowrap;
-
   cursor: pointer;
+
+  transition:
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
 
   &:hover {
-    background: var(--color-surface);
-    border-color: var(--color-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: var(--space-1);
-  }
-}
-
-
-/* FILTROS POR CABECERA */
-
-.column-filter-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-
-  width: 100%;
-  padding: var(--space-1) 0;
-
-  border: none;
-  background: transparent;
-
-  color: inherit;
-  font: inherit;
-  font-weight: inherit;
-
-  cursor: pointer;
-  text-align: left;
-
-  &:hover,
-  &:focus-visible,
-  &.is-filtered {
-    color: var(--color-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 3px;
-    border-radius: var(--radius-sm, 4px);
-  }
-}
-
-.filter-indicator {
-  font-size: 0.9rem;
-  color: var(--color-primary);
-}
-
-.column-filter-panel {
-  position: fixed;
-  z-index: 1100;
-
-  width: min(290px, calc(100vw - 24px));
-  max-height: min(440px, calc(100vh - 100px));
-  overflow-y: auto;
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-
-  padding: var(--space-4);
-
-  background: var(--color-surface);
-  color: var(--color-text);
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-
-  box-shadow: var(--shadow-lg, 0 8px 24px rgb(0 0 0 / 15%));
-}
-
-.filter-panel-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.filter-close {
-  border: none;
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-size: 1.4rem;
-  cursor: pointer;
-}
-
-.filter-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  font-size: var(--font-size-sm);
-
-  input {
-    width: 100%;
-    min-height: 38px;
-    box-sizing: border-box;
-
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-
-    background: var(--color-surface);
-    color: var(--color-text);
-    font: inherit;
-
-    &:focus-visible {
-      outline: 2px solid var(--color-primary);
-      outline-offset: 1px;
-    }
-  }
-}
-
-.filter-options {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.filter-option {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
-
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-
-  &:hover {
-    background: var(
-      --color-surface-secondary,
-      var(--color-surface)
-    );
-  }
-
-  input {
-    accent-color: var(--color-primary);
-  }
-}
-
-.filter-panel-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-3);
-
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
-}
-
-.filter-apply,
-.filter-clear {
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-}
-
-.filter-apply {
-  color: white;
-  background: var(--color-primary);
-  border: 1px solid var(--color-primary);
-}
-
-.filter-clear {
-  color: var(--color-text);
-  background: transparent;
-  border: 1px solid var(--color-border);
-}
-
-.filter-error {
-  color: var(--color-danger);
-  font-size: var(--font-size-xs);
-}
-
-// Estilo de los chips
-
-.active-filters {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-
-  max-width: 100%;
-  padding: var(--space-2) var(--space-3);
-
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-
-  background: var(
-    --color-primary-soft,
-    var(--color-surface)
-  );
-
-  color: var(--color-primary);
-  font: inherit;
-  font-size: var(--font-size-xs);
-  cursor: pointer;
-
-  &:hover {
+    background: var(--color-primary-soft);
     border-color: var(--color-primary);
   }
 
@@ -308,24 +193,18 @@ tbody tr:hover {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
-
-  span:nth-child(2) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 }
 
-.filter-chip-label {
-  font-weight: 600;
-}
 
-/* CABECERAS ORDENABLES */
+/* ==========================================================
+   8. COLUMN HEADER LAYOUT
+   ========================================================== */
 
 .column-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: var(--space-2);
   min-width: 0;
 }
@@ -334,23 +213,33 @@ tbody tr:hover {
   font-weight: var(--font-weight-semibold);
 }
 
+
+/* ==========================================================
+   9. SORTING
+   ========================================================== */
+
 .column-sort-trigger {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
 
+  gap: var(--space-2);
   min-width: 0;
+
   padding: var(--space-1) 0;
 
   background: transparent;
   border: none;
 
   color: var(--color-text-secondary);
+
   font: inherit;
   font-weight: var(--font-weight-semibold);
 
   cursor: pointer;
   white-space: nowrap;
+
+  transition:
+    color var(--motion-fast) ease;
 
   &:hover,
   &.is-sorted {
@@ -375,12 +264,63 @@ tbody tr:hover {
   color: var(--color-primary);
 }
 
-/* BOTÓN DE FILTRO SEPARADO */
+
+/* ==========================================================
+   10. COLUMN FILTER TRIGGER
+   ========================================================== */
+
+.column-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-2);
+
+  width: 100%;
+  padding: var(--space-1) 0;
+
+  border: none;
+  background: transparent;
+
+  color: inherit;
+
+  font: inherit;
+  font-weight: inherit;
+
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    color var(--motion-fast) ease;
+
+  &:hover,
+  &.is-filtered {
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    color: var(--color-primary);
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.filter-indicator {
+  font-size: 0.9rem;
+  color: var(--color-primary);
+}
+
+
+/* ==========================================================
+   11. SEPARATE FILTER BUTTON
+   ========================================================== */
 
 .column-filter-icon {
   display: grid;
   place-items: center;
-  flex-shrink: 0;
+
+  flex: 0 0 auto;
 
   width: 28px;
   height: 28px;
@@ -395,19 +335,345 @@ tbody tr:hover {
 
   font: inherit;
   font-size: 1.1rem;
+
   cursor: pointer;
+
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
 
   &:hover,
   &.is-filtered {
     color: var(--color-primary);
-    background: var(
-      --color-primary-soft,
-      var(--color-surface)
-    );
+    background: var(--color-primary-soft);
   }
 
   &:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+}
+
+
+/* ==========================================================
+   12. FILTER PANEL
+   ========================================================== */
+
+.column-filter-panel {
+  position: fixed;
+  z-index: 1100;
+
+  box-sizing: border-box;
+
+  width: min(290px, calc(100vw - 24px));
+
+  max-height: min(
+    440px,
+    calc(100dvh - 100px)
+  );
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-3);
+
+  padding: var(--space-4);
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  color: var(--color-text);
+
+  border-radius: var(--radius-lg);
+
+  /*
+    La superficie glass, el borde y la sombra
+    se aplican desde _ux-upgrade.scss.
+  */
+}
+
+
+/* ==========================================================
+   13. FILTER PANEL HEADER
+   ========================================================== */
+
+.filter-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3);
+
+  padding-bottom: var(--space-2);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filter-close {
+  display: grid;
+  place-items: center;
+
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: transparent;
+  color: var(--color-text-secondary);
+
+  font: inherit;
+  font-size: 1.4rem;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+
+  &:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+
+/* ==========================================================
+   14. FILTER FIELDS
+   ========================================================== */
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+
+  font-size: var(--font-size-sm);
+
+  input {
+    box-sizing: border-box;
+
+    width: 100%;
+    min-height: var(--control-min-height, 42px);
+
+    padding:
+      var(--padding-input-y)
+      var(--padding-input-x);
+
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    font: inherit;
+
+    transition:
+      border-color var(--motion-fast) ease,
+      box-shadow var(--motion-normal) ease;
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: var(--focus-glow);
+    }
+  }
+}
+
+
+/* ==========================================================
+   15. FILTER OPTIONS
+   ========================================================== */
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  padding: var(--space-2);
+
+  border-radius: var(--radius-md);
+
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+
+  transition:
+    background-color var(--motion-fast) ease;
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+
+  input {
+    accent-color: var(--color-primary);
+  }
+}
+
+
+/* ==========================================================
+   16. FILTER PANEL ACTIONS
+   ========================================================== */
+
+.filter-panel-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3);
+
+  padding-top: var(--space-3);
+
+  border-top: 1px solid var(--color-border);
+}
+
+.filter-apply,
+.filter-clear {
+  min-height: 36px;
+
+  padding: var(--space-2) var(--space-3);
+
+  border-radius: var(--radius-md);
+
+  font: inherit;
+  font-size: var(--font-size-sm);
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
+}
+
+.filter-apply {
+  color: #ffffff;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+
+  &:hover {
+    background: var(--color-primary-hover);
+  }
+}
+
+.filter-clear {
+  color: var(--color-text);
+  background: transparent;
+
+  border: 1px solid var(--color-border);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+.filter-apply:focus-visible,
+.filter-clear:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.filter-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+}
+
+
+/* ==========================================================
+   17. ACTIVE FILTERS
+   ========================================================== */
+
+.active-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: var(--space-2);
+
+  padding:
+    var(--space-3)
+    var(--space-4);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+
+/* ==========================================================
+   18. FILTER CHIPS
+   ========================================================== */
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  max-width: 100%;
+
+  padding:
+    var(--space-2)
+    var(--space-3);
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+
+  font: inherit;
+  font-size: var(--font-size-xs);
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--motion-fast) ease,
+    background-color var(--motion-fast) ease;
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  span:nth-child(2) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.filter-chip-label {
+  font-weight: var(--font-weight-semibold);
+}
+
+
+/* ==========================================================
+   19. RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 768px) {
+  .column-filter-panel {
+    max-height: calc(100dvh - 48px);
+  }
+
+  .empty-cell {
+    padding: var(--space-8);
   }
 }

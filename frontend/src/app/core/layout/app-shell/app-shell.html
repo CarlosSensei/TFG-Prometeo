@@ -1,3 +1,4 @@
+<app-toast />
 <div class="app-layout">
 
   @if (sidebarOpen()) {
@@ -87,7 +88,14 @@
     <div class="sidebar-footer">
 
       <div class="avatar">
-        {{ auth.initials() }}
+        @if (avatar.image(); as image) {
+          <img
+            [src]="image"
+            [alt]="'Avatar de ' + auth.fullName()"
+          />
+        } @else {
+          {{ auth.initials() }}
+        }
       </div>
 
       <div class="user-info">
@@ -122,17 +130,23 @@
         </button>
 
         <span class="workspace-name">
-          Workspace / OptiFlow
+          Workspace
         </span>
       </div>
 
       <app-global-search />
 
       <div class="topbar-right">
-        <span class="environment-label">Desarrollo</span>
         <app-notification-bell />
         <span class="topbar-avatar">
-          {{ auth.initials() }}
+          @if (avatar.image(); as image) {
+            <img
+              [src]="image"
+              [alt]="'Avatar de ' + auth.fullName()"
+            />
+          } @else {
+            {{ auth.initials() }}
+          }
         </span>
       </div>
 

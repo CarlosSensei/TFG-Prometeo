@@ -1,15 +1,71 @@
+
+/* ==========================================================
+   OPTIFLOW — INPUT COMPONENT
+
+   Responsabilidad:
+   - Input reutilizable
+   - Estados del componente
+   - Compatibilidad con Forms
+   ========================================================== */
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* REQUIRED INDICATOR */
+
 .required {
   color: var(--color-danger);
 }
 
-:host {
-  display: block;
-}
+/* INPUT */
 
 .ui-input,
 input {
+  display: block;
+  box-sizing: border-box;
+
   width: 100%;
-  min-height: 2rem;
-  padding: 0.7rem 1rem;
-  border-radius: var(--radius-xl, 1rem);
+  min-height: var(--control-min-height, 42px);
+
+  padding:
+    var(--padding-input-y)
+    var(--padding-input-x);
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  font: inherit;
+  outline: none;
+
+  transition:
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-normal) ease;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus,
+  &:focus-visible {
+    border-color: var(--color-primary);
+
+    box-shadow:
+      0 0 0 3px var(--color-primary-soft);
+  }
+
+  &:disabled {
+    background: var(--color-background);
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &.is-invalid,
+  &[aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
 }
