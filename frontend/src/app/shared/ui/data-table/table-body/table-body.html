@@ -1,0 +1,41 @@
+@if (loading()) {
+  <tr>
+    <td class="empty-cell" [attr.colspan]="columns().length" role="status">
+      Cargando registros...
+    </td>
+  </tr>
+} @else {
+  @for (row of rows(); track row.id) {
+    <tr>
+      @for (column of columns(); track column.key) {
+        <td>
+          @if (column.key === "actions") {
+            <button
+              type="button"
+              class="table-action"
+              [attr.aria-label]="'Ver ficha del registro ' + row.id"
+              (click)="rowAction.emit({ action: 'view', row })"
+            >
+              Ver ficha
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="cell-button"
+              [attr.aria-label]="'Seleccionar registro ' + row.id"
+              (click)="rowSelected.emit(row)"
+            >
+              {{ row[column.key] ?? "—" }}
+            </button>
+          }
+        </td>
+      }
+    </tr>
+  } @empty {
+    <tr>
+      <td class="empty-cell" [attr.colspan]="columns().length">
+        {{ emptyMessage() }}
+      </td>
+    </tr>
+  }
+}

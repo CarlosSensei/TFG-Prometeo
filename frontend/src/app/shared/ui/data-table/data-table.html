@@ -1,361 +1,46 @@
-
-@if (activeFilters().length > 0) {
-
-  <div
-    class="active-filters"
-    aria-label="Filtros activos"
-  >
-
-    @for (
-      filter of activeFilters();
-      track filter.key
-    ) {
-
-      <button
-        type="button"
-        class="filter-chip"
-        [attr.aria-label]="'Eliminar filtro ' + filter.label"
-        (click)="removeFilter(filter.key)"
-      >
-        <span class="filter-chip-label">
-          {{ filter.label }}:
-        </span>
-
-        <span>{{ filter.description }}</span>
-
-        <span aria-hidden="true">×</span>
-      </button>
-
-    }
-
-  </div>
-
-}
+<app-table-active-filters
+  [columns]="columns()"
+  [filters]="filters()"
+  (filterRemoved)="filterChange.emit({ key: $event, value: {} })"
+/>
 
 <div class="table-container">
-
   <div class="table-scroll" (scroll)="closeFilter()">
-
     <table class="ui-table">
-
-      <thead>
-        <tr>
-          @for (column of columns(); track column.key) {
-
-            <th
-              scope="col"
-              [attr.aria-sort]="column.sortable ? ariaSort(column) : null"
-            >
-
-              <div class="column-header">
-
-                <!-- ORDENACIÓN -->
-
-                @if (column.sortable) {
-
-                  <button
-                    type="button"
-                    class="column-sort-trigger"
-                    [class.is-sorted]="sort()?.key === column.key"
-                    [attr.aria-label]="'Ordenar por ' + column.label"
-                    (click)="toggleSort(column)"
-                  >
-                    <span>{{ column.label }}</span>
-
-                    <span
-                      class="sort-indicator"
-                      aria-hidden="true"
-                    >
-                      {{ sortIcon(column) }}
-                    </span>
-
-                  </button>
-
-                } @else {
-
-                  <span class="column-label">
-                    {{ column.label }}
-                  </span>
-
-                }
-
-                <!-- FILTRO INDEPENDIENTE -->
-
-                @if (column.filter) {
-
-                  <button
-                    type="button"
-                    class="column-filter-icon"
-                    [class.is-filtered]="hasFilter(column.key)"
-                    [attr.aria-label]="'Filtrar por ' + column.label"
-                    [attr.aria-expanded]="openFilter() === column.key"
-                    (click)="toggleFilter(column, $event)"
-                  >
-                    <span aria-hidden="true">
-                      {{ hasFilter(column.key) ? '●' : '⌕' }}
-                    </span>
-                  </button>
-
-                }
-
-              </div>
-
-            </th>
-          }
-        </tr>
-      </thead>
-
-      <tbody>
-
-        @if (loading()) {
-
-          <tr>
-            <td
-              class="empty-cell"
-              [attr.colspan]="columns().length"
-              role="status"
-            >
-              Cargando registros...
-            </td>
-          </tr>
-
-        } @else {
-
-          @for (row of rows(); track row.id) {
-
-            <tr>
-
-              @for (column of columns(); track column.key) {
-
-                <td>
-
-                  @if (column.key === 'actions') {
-
-                    <button
-                      type="button"
-                      class="table-action"
-                      [attr.aria-label]="'Ver ficha del registro ' + row.id"
-                      (click)="executeAction('view', row)"
-                    >
-                      Ver ficha
-                    </button>
-
-                  } @else {
-
-                    <button
-                      type="button"
-                      class="cell-button"
-                      [attr.aria-label]="'Seleccionar registro ' + row.id"
-                      (click)="selectRow(row)"
-                    >
-                      {{ row[column.key] ?? '—' }}
-                    </button>
-
-                  }
-
-                </td>
-              }
-
-            </tr>
-
-          } @empty {
-
-            <tr>
-              <td
-                class="empty-cell"
-                [attr.colspan]="columns().length"
-              >
-                {{ emptyMessage() }}
-              </td>
-            </tr>
-
-          }
-        }
-
-      </tbody>
-
+      <thead
+        appTableHeader
+        [columns]="columns()"
+        [filters]="filters()"
+        [sort]="sort()"
+        [openFilter]="openFilter()"
+        (sortChange)="sortChange.emit($event)"
+        (filterRequested)="toggleFilter($event.column, $event.event)"
+      ></thead>
+      <tbody
+        appTableBody
+        [columns]="columns()"
+        [rows]="rows()"
+        [loading]="loading()"
+        [emptyMessage]="emptyMessage()"
+        (rowSelected)="rowSelected.emit($event)"
+        (rowAction)="rowAction.emit($event)"
+      ></tbody>
     </table>
-
   </div>
-
 </div>
 
-<!-- PANEL FLOTANTE DE FILTROS -->
-
 @if (currentColumn(); as column) {
-
-  @if (column.filter; as filter) {
-
+  @if (column.filter) {
     <div
+      appTableFilterPanel
       class="column-filter-panel"
-      role="group"
-      [attr.aria-label]="'Filtro de ' + column.label"
+      [column]="column"
+      [value]="filters()[column.key] ?? {}"
       [style.top.px]="panelPosition().top"
       [style.left.px]="panelPosition().left"
-      (click)="$event.stopPropagation()"
-    >
-
-      <div class="filter-panel-heading">
-        <strong>{{ column.label }}</strong>
-
-        <button
-          type="button"
-          aria-label="Cerrar filtro"
-          class="filter-close"
-          (click)="closeFilter()"
-        >
-          ×
-        </button>
-      </div>
-
-      @switch (filter.type) {
-
-        @case ('text') {
-
-          <label class="filter-field">
-
-            <span>Contiene</span>
-
-            <input
-              type="search"
-              [placeholder]="filter.placeholder || 'Buscar...'"
-              [value]="draft().text ?? ''"
-              (input)="setText($any($event.target).value)"
-              (keydown.enter)="applyFilter()"
-            />
-
-          </label>
-        }
-
-        @case ('multi') {
-
-          <div class="filter-options">
-
-            @for (
-              option of filter.options ?? [];
-              track option.value
-            ) {
-
-              <label class="filter-option">
-
-                <input
-                  type="checkbox"
-                  [checked]="draft().values?.includes(option.value) ?? false"
-                  (change)="toggleOption(option.value, $any($event.target).checked)"
-                />
-
-                <span>{{ option.label }}</span>
-
-              </label>
-
-            }
-
-          </div>
-        }
-
-        @case ('date') {
-
-          <label class="filter-field">
-
-            <span>Desde</span>
-
-            <input
-              type="date"
-              [value]="draft().from ?? ''"
-              (change)="setFrom($any($event.target).value)"
-            />
-
-          </label>
-
-          <label class="filter-field">
-
-            <span>Hasta</span>
-
-            <input
-              type="date"
-              [value]="draft().to ?? ''"
-              (change)="setTo($any($event.target).value)"
-            />
-
-          </label>
-
-          @if (
-            draft().from &&
-            draft().to &&
-            draft().from! > draft().to!
-          ) {
-            <small class="filter-error">
-              La fecha inicial debe ser anterior a la final.
-            </small>
-          }
-        }
-
-        @case ('number') {
-
-          <label class="filter-field">
-
-            <span>Mínimo</span>
-
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="Desde"
-              [value]="draft().min ?? ''"
-              (input)="setMin($any($event.target).value)"
-            />
-
-          </label>
-
-          <label class="filter-field">
-
-            <span>Máximo</span>
-
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="Hasta"
-              [value]="draft().max ?? ''"
-              (input)="setMax($any($event.target).value)"
-            />
-
-          </label>
-
-          @if (
-            draft().min != null &&
-            draft().max != null &&
-            draft().min! > draft().max!
-          ) {
-            <small class="filter-error">
-              El mínimo no puede superar al máximo.
-            </small>
-          }
-
-        }
-
-      }
-
-      <div class="filter-panel-actions">
-
-        <button
-          type="button"
-          class="filter-clear"
-          (click)="clearFilter()"
-        >
-          Limpiar
-        </button>
-
-        <button
-          type="button"
-          class="filter-apply"
-          (click)="applyFilter()"
-        >
-          Aplicar
-        </button>
-
-      </div>
-
-    </div>
+      (applied)="applyFilter($event)"
+      (cleared)="applyFilter({})"
+      (closed)="closeFilter()"
+    ></div>
   }
 }

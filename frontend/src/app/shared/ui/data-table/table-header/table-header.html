@@ -1,0 +1,47 @@
+<tr>
+  @for (column of columns(); track column.key) {
+    <th
+      scope="col"
+      [attr.aria-sort]="column.sortable ? ariaSort(column) : null"
+    >
+      <div class="column-header">
+        <!-- ORDENACIÓN -->
+
+        @if (column.sortable) {
+          <button
+            type="button"
+            class="column-sort-trigger"
+            [class.is-sorted]="sort()?.key === column.key"
+            [attr.aria-label]="'Ordenar por ' + column.label"
+            (click)="toggleSort(column)"
+          >
+            <span>{{ column.label }}</span>
+
+            <span class="sort-indicator" aria-hidden="true">
+              {{ sortIcon(column) }}
+            </span>
+          </button>
+        } @else {
+          <span class="column-label"> {{ column.label }} </span>
+        }
+
+        <!-- FILTRO INDEPENDIENTE -->
+
+        @if (column.filter) {
+          <button
+            type="button"
+            class="column-filter-icon"
+            [class.is-filtered]="hasFilter(column.key)"
+            [attr.aria-label]="'Filtrar por ' + column.label"
+            [attr.aria-expanded]="openFilter() === column.key"
+            (click)="requestFilter(column, $event)"
+          >
+            <span aria-hidden="true">
+              {{ hasFilter(column.key) ? "●" : "⌕" }}
+            </span>
+          </button>
+        }
+      </div>
+    </th>
+  }
+</tr>

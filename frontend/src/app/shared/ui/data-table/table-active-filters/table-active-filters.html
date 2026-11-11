@@ -1,0 +1,18 @@
+@if (activeFilters().length > 0) {
+  <div class="active-filters" aria-label="Filtros activos">
+    @for (filter of activeFilters(); track filter.key) {
+      <button
+        type="button"
+        class="filter-chip"
+        [attr.aria-label]="'Eliminar filtro ' + filter.label"
+        (click)="filterRemoved.emit(filter.key)"
+      >
+        <span class="filter-chip-label"> {{ filter.label }}: </span>
+
+        <span>{{ filter.description }}</span>
+
+        <span aria-hidden="true">×</span>
+      </button>
+    }
+  </div>
+}
