@@ -7,7 +7,7 @@ export type UserRole =
   | 'ADMIN'
   | 'OPTICIAN'
   | 'SELLER'
-  | 'RECEPTIONIST';
+  | 'DIRECTOR';
 
 export interface LoginResponse {
   token: string;

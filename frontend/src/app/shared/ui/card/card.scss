@@ -37,3 +37,13 @@
     box-shadow: var(--shadow-md);
   }
 }
+
+.ui-card:hover {
+  box-shadow:
+      0 0 0 2px var(--color-primary-soft),
+      0 0 18px color-mix(
+      in srgb,
+      var(--color-primary) 35%,
+      transparent
+  );
+}

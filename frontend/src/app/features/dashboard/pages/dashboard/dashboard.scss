@@ -46,6 +46,7 @@ h1 {
 .metric-link:hover 
 .metric-value { 
     color: var(--color-primary); 
+    
 }
 
 .metric-label { 
@@ -280,6 +281,10 @@ h1 {
     border-radius: var(--radius-md); 
     cursor: pointer; 
     font-size: 22px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
 }
 
 .calendar-nav button:hover { 
