@@ -1,0 +1,36 @@
+# ==============================
+# OPTIFLOW - GITIGNORE GLOBAL
+# ==============================
+
+# Java / Maven
+**/target/
+*.class
+
+# IntelliJ IDEA
+**/.idea/
+*.iml
+
+# Angular / Node
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+
+# Bases de datos locales H2
+*.mv.db
+*.trace.db
+*.lock.db
+
+# Copias de seguridad
+**/backup/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Sistema operativo
+.DS_Store
+
+# Logs
+*.log
