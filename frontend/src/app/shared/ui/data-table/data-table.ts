@@ -1,6 +1,8 @@
 import {
   Component,
+  ElementRef,
   HostListener,
+  inject,
   input,
   output,
   signal
@@ -66,6 +68,8 @@ export interface TableSort {
   styleUrl: './data-table.scss'
 })
 export class DataTable {
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly columns = input.required<TableColumn[]>();
   readonly rows = input.required<TableRow[]>();
@@ -165,24 +169,21 @@ export class DataTable {
     }
 
     const button = event.currentTarget as HTMLElement;
-    const rect = button.getBoundingClientRect();
-
-    const panelWidth = 290;
-    const margin = 12;
-    const gap = 8;
-
-    // Obtenemos la cabecera completa de la columna.
     const header = button.closest('th');
 
-    if (!header) {
-      return;
-    }
+    if (!header) return;
 
-    // El panel comienza debajo de la cabecera.
-    const top = rect.bottom + gap;
+    const rect = header.getBoundingClientRect();
+    const hostRect = this.host.nativeElement.getBoundingClientRect();
 
-    // Alineamos el panel con el borde izquierdo
-    // de la columna, salvo que se salga de pantalla.
+    const margin = 12;
+    const gap = 4;
+
+    const panelWidth = Math.min(
+      290,
+      window.innerWidth - margin * 2
+    );
+
     const left = Math.max(
       margin,
       Math.min(
@@ -191,7 +192,13 @@ export class DataTable {
       )
     );
 
-    this.panelPosition.set({ top, left });
+    const top = rect.bottom + gap;
+
+    // El panel absoluto usa la tabla como referencia, no la ventana.
+    this.panelPosition.set({
+      top: top - hostRect.top,
+      left: left - hostRect.left
+    });
 
     const current = this.filters()[column.key] ?? {};
 

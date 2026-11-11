@@ -120,6 +120,17 @@
     blur(var(--glass-blur)) saturate(125%);
 }
 
+/*
+ * Las tarjetas que contienen tablas no deben crear
+ * un bloque contenedor para paneles fixed.
+ *
+ * Conservamos el gradiente y las sombras glass.
+ * Solo quitamos backdrop-filter del contenedor padre.
+ */
+.ui-card:has(app-data-table) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 
 
 /* ==========================================================

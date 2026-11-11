@@ -21,6 +21,7 @@
    ========================================================== */
 
 :host {
+  position: relative;
   display: block;
   min-width: 0;
 }
@@ -360,7 +361,7 @@ td {
    ========================================================== */
 
 .column-filter-panel {
-  position: fixed;
+  position: absolute;
   z-index: 1100;
 
   box-sizing: border-box;
