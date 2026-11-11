@@ -224,7 +224,7 @@ class InventoryItemMapperTest {
                 () -> assertEquals(dto.getDescription(), existing.getDescription()),
                 () -> assertEquals(dto.getSalePrice(), existing.getSalePrice()),
                 () -> assertEquals(dto.getTaxRate(), existing.getTaxRate()),
-                () -> assertEquals(dto.getStock(), existing.getStock()));
+                () -> assertEquals(10, existing.getStock()));
     }
 
     // =====================================
@@ -234,23 +234,22 @@ class InventoryItemMapperTest {
     @Test
     void givenDto_whenUpdateEntity_thenPreserveControlledFields() {
 
-        // GIVEN
         InventoryItem existing = completeItem();
         InventoryItemDto dto = completeDto();
 
         Long originalId = existing.getId();
         Boolean originalActive = existing.getActive();
+        Integer originalStock = existing.getStock();
 
         LocalDateTime originalCreated = existing.getCreatedAt();
         LocalDateTime originalUpdated = existing.getUpdatedAt();
 
-        // WHEN
         mapper.updateEntity(dto, existing);
 
-        // THEN
         assertAll("Campos protegidos",
                 () -> assertEquals(originalId, existing.getId()),
                 () -> assertEquals(originalActive, existing.getActive()),
+                () -> assertEquals(originalStock, existing.getStock()),
                 () -> assertEquals(originalCreated, existing.getCreatedAt()),
                 () -> assertEquals(originalUpdated, existing.getUpdatedAt()));
     }

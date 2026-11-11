@@ -46,4 +46,22 @@ public interface FollowUpRepository extends JpaRepository<FollowUp, Long>, JpaSp
                       @Param("status") FollowUpStatus status,
                       @Param("scheduledAt") LocalDateTime scheduledAt,
                       @Param("publishedAt") LocalDateTime publishedAt);
+
+
+    @Modifying(flushAutomatically = true)
+    @Query("""
+    UPDATE FollowUp f
+    SET f.dueEventPublishedAt = null
+    WHERE f.id = :id
+      AND f.status = :status
+      AND f.active = true
+      AND f.scheduledAt = :scheduledAt
+      AND f.dueEventPublishedAt IS NOT NULL
+    """)
+    int releaseDueEvent(
+            @Param("id") Long id,
+            @Param("scheduledAt") LocalDateTime scheduledAt,
+            @Param("status") FollowUpStatus status
+    );
+
 }

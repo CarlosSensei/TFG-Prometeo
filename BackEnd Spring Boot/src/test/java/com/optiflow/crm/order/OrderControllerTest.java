@@ -120,7 +120,7 @@ class OrderControllerTest {
         Page<Order> page = new PageImpl<>(List.of(order), pageable, 1);
 
         when(orderService.findAll(any(Pageable.class))).thenReturn(page);
-        when(orderMapper.toDto(order)).thenReturn(dto);
+        when(orderMapper.toSummaryDto(order)).thenReturn(dto);
 
         // WHEN + THEN
         mockMvc.perform(get("/orders")
@@ -138,7 +138,7 @@ class OrderControllerTest {
         verify(orderService).findAll(argThat(p ->
                         p.getPageNumber() == 0 && p.getPageSize() == 10));
 
-        verify(orderMapper).toDto(order);
+        verify(orderMapper).toSummaryDto(order);
     }
 
     // =====================================
@@ -156,7 +156,7 @@ class OrderControllerTest {
                 PageRequest.of(0, 10), 1);
 
         when(orderService.search(any(OrderSearchDto.class))).thenReturn(page);
-        when(orderMapper.toDto(order)).thenReturn(dto);
+        when(orderMapper.toSummaryDto(order)).thenReturn(dto);
 
         String json = """
                 {
@@ -180,7 +180,7 @@ class OrderControllerTest {
                         Long.valueOf(7L).equals(search.getClientId())
                                 && Integer.valueOf(0).equals(search.getPage())
                                 && Integer.valueOf(10).equals(search.getSize())));
-        verify(orderMapper).toDto(order);
+        verify(orderMapper).toSummaryDto(order);
     }
 
     // =====================================
@@ -191,11 +191,9 @@ class OrderControllerTest {
     void givenExistingId_whenFindById_thenReturn200() throws Exception {
 
         // GIVEN
-        Order order = createOrder(5L);
         OrderDto dto = createOrderDto(5L);
 
-        when(orderService.findById(5L)).thenReturn(order);
-        when(orderMapper.toDto(order)).thenReturn(dto);
+        when(orderService.findDetailById(5L)).thenReturn(dto);
 
         // WHEN + THEN
         mockMvc.perform(get("/orders/5"))
@@ -205,8 +203,9 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.orderNumber")
                         .value("O-2026-000001"));
 
-        verify(orderService).findById(5L);
-        verify(orderMapper).toDto(order);
+        // VERIFY
+        verify(orderService).findDetailById(5L);
+        verifyNoInteractions(orderMapper);
     }
 
     // =====================================
@@ -224,7 +223,7 @@ class OrderControllerTest {
                 PageRequest.of(0, 5), 1);
 
         when(orderService.findByClientId(eq(7L), any(Pageable.class))).thenReturn(page);
-        when(orderMapper.toDto(order)).thenReturn(dto);
+        when(orderMapper.toSummaryDto(order)).thenReturn(dto);
 
         // WHEN + THEN
         mockMvc.perform(get("/orders/client/7")
@@ -236,6 +235,7 @@ class OrderControllerTest {
 
         verify(orderService).findByClientId(eq(7L), argThat(p ->
                         p.getPageNumber() == 0 && p.getPageSize() == 5));
+        verify(orderMapper).toSummaryDto(order);
     }
 
     // =====================================
@@ -328,12 +328,11 @@ class OrderControllerTest {
     void givenOrderId_whenConfirm_thenReturn200() throws Exception {
 
         // GIVEN
-        Order confirmed = createOrder(9L);
         OrderDto responseDto = createOrderDto(9L);
         responseDto.setStatus(OrderStatus.CONFIRMED);
 
-        when(orderService.confirm(9L)).thenReturn(confirmed);
-        when(orderMapper.toDto(confirmed)).thenReturn(responseDto);
+        when(orderService.confirmDetail(9L))
+                .thenReturn(responseDto);
 
         // WHEN + THEN
         mockMvc.perform(patch("/orders/9/confirm"))
@@ -342,8 +341,9 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.status")
                         .value("CONFIRMED"));
 
-        verify(orderService).confirm(9L);
-        verify(orderMapper).toDto(confirmed);
+        // VERIFY
+        verify(orderService).confirmDetail(9L);
+        verifyNoInteractions(orderMapper);
     }
 
     // =====================================
@@ -354,12 +354,10 @@ class OrderControllerTest {
     void givenOrderId_whenCancel_thenReturn200() throws Exception {
 
         // GIVEN
-        Order cancelled = createOrder(9L);
         OrderDto responseDto = createOrderDto(9L);
         responseDto.setStatus(OrderStatus.CANCELLED);
 
-        when(orderService.cancel(9L)).thenReturn(cancelled);
-        when(orderMapper.toDto(cancelled)).thenReturn(responseDto);
+        when(orderService.cancelDetail(9L)).thenReturn(responseDto);
 
         // WHEN + THEN
         mockMvc.perform(patch("/orders/9/cancel"))
@@ -368,8 +366,9 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.status")
                         .value("CANCELLED"));
 
-        verify(orderService).cancel(9L);
-        verify(orderMapper).toDto(cancelled);
+        // VERIFY
+        verify(orderService).cancelDetail(9L);
+        verifyNoInteractions(orderMapper);
     }
 
     // =====================================

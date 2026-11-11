@@ -98,10 +98,21 @@ class FollowUpNotificationRollbackIntegrationTest {
                 );
 
         // WHEN: primer intento
-        assertThrows(
-                IllegalStateException.class,
+        // El listener falla después del commit.
+        // Spring registra la excepción, pero no la propaga al scheduler.
+        assertDoesNotThrow(
                 () -> followUpScheduler.checkPendingFollowUps()
         );
+
+        // Verificamos que realmente se intentó crear la notificación.
+        verify(notificationService, times(1))
+                .createFollowUpNotification(
+                        eq(followUpId),
+                        anyLong(),
+                        eq(NotificationType.FOLLOW_UP_DUE),
+                        anyString(),
+                        anyString()
+                );
 
         // THEN: la reclamación se ha revertido
         LocalDateTime publishedAt = jdbcTemplate.queryForObject(
@@ -120,6 +131,15 @@ class FollowUpNotificationRollbackIntegrationTest {
 
         // WHEN: segundo intento
         followUpScheduler.checkPendingFollowUps();
+
+        verify(notificationService, times(2))
+                .createFollowUpNotification(
+                        eq(followUpId),
+                        anyLong(),
+                        eq(NotificationType.FOLLOW_UP_DUE),
+                        anyString(),
+                        anyString()
+                );
 
         // THEN: se crea una notificación
         assertEquals(1L, countNotifications(followUpId));

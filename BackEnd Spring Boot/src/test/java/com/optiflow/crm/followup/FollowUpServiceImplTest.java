@@ -359,7 +359,18 @@ class FollowUpServiceImplTest {
 
         // GIVEN
         FollowUp existing = createFollowUp(7L);
-        FollowUpDto dto = createDto();
+
+        Quote quote = new Quote();
+        quote.setId(5L);
+        existing.setQuote(quote);
+
+        LocalDateTime newDate = LocalDateTime.now().plusDays(2);
+
+        FollowUpDto dto = new FollowUpDto();
+        dto.setQuoteId(5L);
+        dto.setType(FollowUpType.EMAIL);
+        dto.setScheduledAt(newDate);
+        dto.setNotes("Enviar correo al cliente");
 
         when(followUpRepository.findById(7L)).thenReturn(Optional.of(existing));
         when(followUpRepository.save(existing)).thenReturn(existing);
@@ -370,8 +381,21 @@ class FollowUpServiceImplTest {
         // THEN
         assertSame(existing, result);
 
-        verify(followUpMapper).updateEntity(dto, existing);
+        assertEquals(FollowUpType.EMAIL, result.getType());
+        assertEquals(newDate, result.getScheduledAt());
+        assertEquals("Enviar correo al cliente", result.getNotes());
+
+        assertEquals(FollowUpStatus.PENDING, result.getStatus());
+        assertTrue(result.getActive());
+
+        // Si se reprograma, puede generar un nuevo evento.
+        assertNull(result.getDueEventPublishedAt());
+
+        verify(followUpRepository).findById(7L);
         verify(followUpRepository).save(existing);
+
+        // La actualización ya no utiliza el mapper.
+        verifyNoInteractions(followUpMapper);
     }
 
     // =====================================

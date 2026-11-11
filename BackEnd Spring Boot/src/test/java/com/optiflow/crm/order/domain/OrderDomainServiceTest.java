@@ -312,6 +312,7 @@ class OrderDomainServiceTest {
 
         // GIVEN
         Quote quote = new Quote();
+        quote.setActive(true);
         quote.setStatus(QuoteStatus.DRAFT);
 
         // WHEN + THEN
@@ -319,7 +320,10 @@ class OrderDomainServiceTest {
                 assertThrows(InvalidQuoteStatusException.class,
                         () -> service.validateQuoteConversion(quote));
 
-        assertTrue(exception.getMessage().contains("ACCEPTED"));
+        assertEquals(
+                "Solo se pueden convertir presupuestos aceptados",
+                exception.getMessage()
+        );
     }
 
     // =====================================
@@ -476,6 +480,7 @@ class OrderDomainServiceTest {
 
         // GIVEN
         Order order = new Order();
+        order.setActive(true);
         order.setStatus(OrderStatus.CANCELLED);
 
         // WHEN + THEN
@@ -483,7 +488,10 @@ class OrderDomainServiceTest {
                 assertThrows(InvalidOrderStatusException.class,
                         () -> service.validateCanCancel(order));
 
-        assertTrue(exception.getMessage().contains("cancelado"));
+        assertEquals(
+                "El pedido no se puede cancelar en estado CANCELLED",
+                exception.getMessage()
+        );
     }
 
     @Test
@@ -491,6 +499,7 @@ class OrderDomainServiceTest {
 
         // GIVEN
         Order order = new Order();
+        order.setActive(true);
         order.setStatus(OrderStatus.DELIVERED);
 
         // WHEN + THEN
@@ -498,7 +507,10 @@ class OrderDomainServiceTest {
                 assertThrows(InvalidOrderStatusException.class,
                         () -> service.validateCanCancel(order));
 
-        assertTrue(exception.getMessage().contains("entregado"));
+        assertEquals(
+                "El pedido no se puede cancelar en estado DELIVERED",
+                exception.getMessage()
+        );
     }
 
     // =====================================

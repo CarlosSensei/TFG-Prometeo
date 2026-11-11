@@ -96,7 +96,7 @@ class QuoteSpecificationTest {
 
         // THEN
         verify(cb).lower(numberPath);
-        verify(cb).like(lowerExpression, "%q-2026%");
+        verify(cb).like(lowerExpression, "%q-2026%", '\\');
     }
 
     @ParameterizedTest

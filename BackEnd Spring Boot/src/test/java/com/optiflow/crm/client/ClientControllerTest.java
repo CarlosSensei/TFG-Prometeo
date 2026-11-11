@@ -170,17 +170,21 @@ class ClientControllerTest {
         verify(clientService).findById(5L);
     }
 
+
     @Test
     void givenValidClient_whenCreate_thenReturn201() throws Exception {
-        Client entity = new Client();
+
+        // GIVEN
         Client saved = new Client();
         saved.setId(9L);
+
         ClientDto response = validClientDto();
         response.setId(9L);
-        when(clientMapper.toEntity(any(ClientDto.class))).thenReturn(entity);
-        when(clientService.save(entity)).thenReturn(saved);
+
+        when(clientService.create(any(ClientDto.class))).thenReturn(saved);
         when(clientMapper.toDto(saved)).thenReturn(response);
 
+        // WHEN + THEN
         mockMvc.perform(post("/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validClientJson()))
@@ -188,8 +192,11 @@ class ClientControllerTest {
                 .andExpect(jsonPath("$.id").value(9))
                 .andExpect(jsonPath("$.name").value("Ana"));
 
-        verify(clientService).save(entity);
+        // VERIFY
+        verify(clientService).create(any(ClientDto.class));
+        verify(clientMapper).toDto(saved);
     }
+
 
     @Test
     void givenValidClient_whenUpdate_thenReturn200() throws Exception {

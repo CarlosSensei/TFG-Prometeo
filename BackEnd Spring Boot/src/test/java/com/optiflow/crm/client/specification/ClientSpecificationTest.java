@@ -94,7 +94,7 @@ class ClientSpecificationTest {
         when(criteriaBuilder.lower(path)).thenReturn(lowercase);
 
         // Simulamos el predicado LIKE
-        when(criteriaBuilder.like(lowercase, "%ana%")).thenReturn(expected);
+        when(criteriaBuilder.like(lowercase, "%ana%", '\\')).thenReturn(expected);
 
         // WHEN
         Predicate result = specification(search).toPredicate(root, query, criteriaBuilder);
@@ -104,7 +104,7 @@ class ClientSpecificationTest {
 
         verify(root).get("name");
         verify(criteriaBuilder).lower(path);
-        verify(criteriaBuilder).like(lowercase, "%ana%");
+        verify(criteriaBuilder).like(lowercase, "%ana%", '\\');
     }
 
     @ParameterizedTest(name = "{0} transforma {1} en {2}")
@@ -147,22 +147,28 @@ class ClientSpecificationTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void givenPhone_whenFilterBy_thenUseContainsPattern() {
+
         ClientSearchDto search = new ClientSearchDto();
         search.setActive(null);
         search.setPhoneNumber("600");
 
-        @SuppressWarnings("unchecked")
         Path<String> path = mock(Path.class);
+        Expression<String> lowercase = mock(Expression.class);
         Predicate expected = mock(Predicate.class);
 
         when(root.<String>get("phoneNumber")).thenReturn(path);
-        when(criteriaBuilder.like(path, "%600%")).thenReturn(expected);
+
+        when(criteriaBuilder.lower(path)).thenReturn(lowercase);
+        when(criteriaBuilder.like(lowercase, "%600%", '\\')).thenReturn(expected);
 
         Predicate result = specification(search).toPredicate(root, query, criteriaBuilder);
 
         assertSame(expected, result);
-        verify(criteriaBuilder).like(path, "%600%");
+
+        verify(criteriaBuilder).lower(path);
+        verify(criteriaBuilder).like(lowercase, "%600%", '\\');
     }
 
     @ParameterizedTest
@@ -224,6 +230,7 @@ class ClientSpecificationTest {
         verify(criteriaBuilder).and(surnamePredicate, activePredicate);
     }
 
+    // Metodos auxiliares
     private static Specification<Client> specification(ClientSearchDto search) {
         return ClientSpecification.filterBy(search);
     }
@@ -246,7 +253,7 @@ class ClientSpecificationTest {
 
         when(root.<String>get(property)).thenReturn(path);
         when(criteriaBuilder.lower(path)).thenReturn(lowercase);
-        when(criteriaBuilder.like(lowercase, pattern)).thenReturn(predicate);
+        when(criteriaBuilder.like(lowercase, pattern, '\\')).thenReturn(predicate);
 
         return predicate;
     }

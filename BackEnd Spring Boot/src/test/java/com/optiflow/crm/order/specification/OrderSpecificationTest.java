@@ -87,8 +87,7 @@ class OrderSpecificationTest {
         // GIVEN
         Path<Boolean> activePath = mock(Path.class);
 
-        when(root.<Boolean>get("active"))
-                .thenReturn(activePath);
+        when(root.<Boolean>get("active")).thenReturn(activePath);
 
         // WHEN
         executeSpecification();
@@ -112,25 +111,18 @@ class OrderSpecificationTest {
         searchDto.setOrderNumber("O-2026");
 
         Path<String> numberPath = mock(Path.class);
-        Expression<String> lowerExpression =
-                mock(Expression.class);
+        Expression<String> lowerExpression = mock(Expression.class);
 
-        when(root.<String>get("orderNumber"))
-                .thenReturn(numberPath);
+        when(root.<String>get("orderNumber")).thenReturn(numberPath);
 
-        when(cb.lower(numberPath))
-                .thenReturn(lowerExpression);
+        when(cb.lower(numberPath)).thenReturn(lowerExpression);
 
         // WHEN
         executeSpecification();
 
         // THEN
         verify(cb).lower(numberPath);
-
-        verify(cb).like(
-                lowerExpression,
-                "%o-2026%"
-        );
+        verify(cb).like(lowerExpression, "%o-2026%", '\\');
     }
 
     // =====================================
@@ -140,8 +132,7 @@ class OrderSpecificationTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", "   "})
-    void givenBlankOrderNumber_whenFilterBy_thenIgnoreIt(
-            String orderNumber) {
+    void givenBlankOrderNumber_whenFilterBy_thenIgnoreIt(String orderNumber) {
 
         // GIVEN
         searchDto.setOrderNumber(orderNumber);
@@ -171,11 +162,9 @@ class OrderSpecificationTest {
         Path<Object> clientPath = mock(Path.class);
         Path<Long> idPath = mock(Path.class);
 
-        when(root.get("client"))
-                .thenReturn(clientPath);
+        when(root.get("client")).thenReturn(clientPath);
 
-        when(clientPath.<Long>get("id"))
-                .thenReturn(idPath);
+        when(clientPath.<Long>get("id")).thenReturn(idPath);
 
         // WHEN
         executeSpecification();
@@ -199,11 +188,9 @@ class OrderSpecificationTest {
         Path<Object> quotePath = mock(Path.class);
         Path<Long> idPath = mock(Path.class);
 
-        when(root.get("quote"))
-                .thenReturn(quotePath);
+        when(root.get("quote")).thenReturn(quotePath);
 
-        when(quotePath.<Long>get("id"))
-                .thenReturn(idPath);
+        when(quotePath.<Long>get("id")).thenReturn(idPath);
 
         // WHEN
         executeSpecification();
@@ -226,17 +213,13 @@ class OrderSpecificationTest {
 
         Path<OrderStatus> statusPath = mock(Path.class);
 
-        when(root.<OrderStatus>get("status"))
-                .thenReturn(statusPath);
+        when(root.<OrderStatus>get("status")).thenReturn(statusPath);
 
         // WHEN
         executeSpecification();
 
         // THEN
-        verify(cb).equal(
-                statusPath,
-                OrderStatus.PENDING
-        );
+        verify(cb).equal(statusPath, OrderStatus.PENDING);
     }
 
     // =====================================
@@ -255,8 +238,7 @@ class OrderSpecificationTest {
 
         Path<LocalDate> datePath = mock(Path.class);
 
-        when(root.<LocalDate>get("orderDate"))
-                .thenReturn(datePath);
+        when(root.<LocalDate>get("orderDate")).thenReturn(datePath);
 
         // WHEN
         executeSpecification();
@@ -281,8 +263,7 @@ class OrderSpecificationTest {
 
         Path<LocalDate> datePath = mock(Path.class);
 
-        when(root.<LocalDate>get("orderDate"))
-                .thenReturn(datePath);
+        when(root.<LocalDate>get("orderDate")).thenReturn(datePath);
 
         // WHEN
         executeSpecification();
@@ -308,8 +289,7 @@ class OrderSpecificationTest {
 
         Path<LocalDate> datePath = mock(Path.class);
 
-        when(root.<LocalDate>get("expectedDeliveryDate"))
-                .thenReturn(datePath);
+        when(root.<LocalDate>get("expectedDeliveryDate")).thenReturn(datePath);
 
         // WHEN
         executeSpecification();
@@ -335,8 +315,7 @@ class OrderSpecificationTest {
 
         Path<LocalDate> datePath = mock(Path.class);
 
-        when(root.<LocalDate>get("expectedDeliveryDate"))
-                .thenReturn(datePath);
+        when(root.<LocalDate>get("expectedDeliveryDate")).thenReturn(datePath);
 
         // WHEN
         executeSpecification();
@@ -361,8 +340,7 @@ class OrderSpecificationTest {
 
         Path<LocalDate> datePath = mock(Path.class);
 
-        when(root.<LocalDate>get("deliveryDate"))
-                .thenReturn(datePath);
+        when(root.<LocalDate>get("deliveryDate")).thenReturn(datePath);
 
         // WHEN
         executeSpecification();
@@ -387,8 +365,7 @@ class OrderSpecificationTest {
 
         Path<LocalDate> datePath = mock(Path.class);
 
-        when(root.<LocalDate>get("deliveryDate"))
-                .thenReturn(datePath);
+        when(root.<LocalDate>get("deliveryDate")).thenReturn(datePath);
 
         // WHEN
         executeSpecification();
@@ -404,16 +381,14 @@ class OrderSpecificationTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     @SuppressWarnings("unchecked")
-    void givenActive_whenFilterBy_thenUseEqual(
-            boolean active) {
+    void givenActive_whenFilterBy_thenUseEqual(boolean active) {
 
         // GIVEN
         searchDto.setActive(active);
 
         Path<Boolean> activePath = mock(Path.class);
 
-        when(root.<Boolean>get("active"))
-                .thenReturn(activePath);
+        when(root.<Boolean>get("active")).thenReturn(activePath);
 
         // WHEN
         executeSpecification();
@@ -446,23 +421,13 @@ class OrderSpecificationTest {
 
         when(root.get("client")).thenReturn(clientPath);
 
-        when(clientPath.<Long>get("id"))
-                .thenReturn(clientIdPath);
+        when(clientPath.<Long>get("id")).thenReturn(clientIdPath);
 
-        when(root.<OrderStatus>get("status"))
-                .thenReturn(statusPath);
-
-        when(root.<Boolean>get("active"))
-                .thenReturn(activePath);
-
-        when(cb.equal(clientIdPath, 7L))
-                .thenReturn(clientPredicate);
-
-        when(cb.equal(statusPath, OrderStatus.PENDING))
-                .thenReturn(statusPredicate);
-
-        when(cb.equal(activePath, true))
-                .thenReturn(activePredicate);
+        when(root.<OrderStatus>get("status")).thenReturn(statusPath);
+        when(root.<Boolean>get("active")).thenReturn(activePath);
+        when(cb.equal(clientIdPath, 7L)).thenReturn(clientPredicate);
+        when(cb.equal(statusPath, OrderStatus.PENDING)).thenReturn(statusPredicate);
+        when(cb.equal(activePath, true)).thenReturn(activePredicate);
 
         // WHEN
         executeSpecification();
@@ -473,9 +438,6 @@ class OrderSpecificationTest {
         verify(cb).equal(activePath, true);
 
         // Specification.allOf combina mediante AND.
-        verify(cb, atLeastOnce()).and(
-                any(Predicate.class),
-                any(Predicate.class)
-        );
+        verify(cb, atLeastOnce()).and(any(Predicate.class), any(Predicate.class));
     }
 }

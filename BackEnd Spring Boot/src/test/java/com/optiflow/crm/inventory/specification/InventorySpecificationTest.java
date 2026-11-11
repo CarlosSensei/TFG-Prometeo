@@ -123,7 +123,7 @@ class InventorySpecificationTest {
 
         // THEN
         verify(cb).lower(skuPath);
-        verify(cb).like(lowerExpression, "%mon-001%");
+        verify(cb).like(lowerExpression, "%mon-001%", '\\');
     }
 
     // =====================================
@@ -171,7 +171,7 @@ class InventorySpecificationTest {
 
         // THEN
         verify(cb).lower(namePath);
-        verify(cb).like(lowerExpression, "%montura%");
+        verify(cb).like(lowerExpression, "%montura%", '\\');
     }
 
     // =====================================
@@ -219,7 +219,7 @@ class InventorySpecificationTest {
 
         // THEN
         verify(cb).lower(brandPath);
-        verify(cb).like(lowerExpression, "%ray-ban%");
+        verify(cb).like(lowerExpression, "%ray-ban%", '\\');
     }
 
     // =====================================

@@ -112,7 +112,7 @@ class QuoteControllerTest {
         Page<Quote> page = new PageImpl<>(List.of(quote), pageable, 1);
 
         when(quoteService.findAll(any(Pageable.class))).thenReturn(page);
-        when(quoteMapper.toDto(quote)).thenReturn(dto);
+        when(quoteMapper.toSummaryDto(quote)).thenReturn(dto);
 
         // WHEN + THEN
         mockMvc.perform(get("/quotes")
@@ -128,7 +128,7 @@ class QuoteControllerTest {
         verify(quoteService).findAll(argThat(p ->
                         p.getPageNumber() == 0 && p.getPageSize() == 10));
 
-        verify(quoteMapper).toDto(quote);
+        verify(quoteMapper).toSummaryDto(quote);
     }
 
     // =====================================
@@ -146,7 +146,7 @@ class QuoteControllerTest {
         Page<Quote> page = new PageImpl<>(List.of(quote), pageable, 1);
 
         when(quoteService.search(any(QuoteSearchDto.class))).thenReturn(page);
-        when(quoteMapper.toDto(quote)).thenReturn(dto);
+        when(quoteMapper.toSummaryDto(quote)).thenReturn(dto);
 
         String json = """
                 {
@@ -170,7 +170,7 @@ class QuoteControllerTest {
                                 && Integer.valueOf(10).equals(search.getSize()))
         );
 
-        verify(quoteMapper).toDto(quote);
+        verify(quoteMapper).toSummaryDto(quote);
     }
 
     // =====================================
@@ -184,8 +184,7 @@ class QuoteControllerTest {
         Quote quote = createQuote(5L);
         QuoteDto dto = createQuoteDto(5L);
 
-        when(quoteService.findById(5L)).thenReturn(quote);
-        when(quoteMapper.toDto(quote)).thenReturn(dto);
+        when(quoteService.findDetailById(5L)).thenReturn(dto);
 
         // WHEN + THEN
         mockMvc.perform(get("/quotes/5"))
@@ -195,8 +194,8 @@ class QuoteControllerTest {
                 .andExpect(jsonPath("$.quoteNumber")
                         .value("Q-2026-000001"));
 
-        verify(quoteService).findById(5L);
-        verify(quoteMapper).toDto(quote);
+        verify(quoteService).findDetailById(5L);
+        verifyNoInteractions(quoteMapper);
     }
 
     // =====================================
@@ -285,7 +284,7 @@ class QuoteControllerTest {
         Page<Quote> page = new PageImpl<>(List.of(quote), pageable, 1);
 
         when(quoteService.findByClientId(eq(7L), any(Pageable.class))).thenReturn(page);
-        when(quoteMapper.toDto(quote)).thenReturn(dto);
+        when(quoteMapper.toSummaryDto(quote)).thenReturn(dto);
 
         // WHEN + THEN
         mockMvc.perform(get("/quotes/client/7")
@@ -298,7 +297,7 @@ class QuoteControllerTest {
         verify(quoteService).findByClientId(eq(7L), argThat(p ->
                         p.getPageNumber() == 0 && p.getPageSize() == 5));
 
-        verify(quoteMapper).toDto(quote);
+        verify(quoteMapper).toSummaryDto(quote);
     }
 
     // =====================================
