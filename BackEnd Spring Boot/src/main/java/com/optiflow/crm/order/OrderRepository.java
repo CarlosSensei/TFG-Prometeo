@@ -22,6 +22,8 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 
     List<Order> findByClientIdAndActiveTrue(Long clientId);
 
+    boolean existsByClientId(Long clientId);
+
     boolean existsByQuoteId(Long quoteId);
 
     Optional<Order> findTopByOrderNumberStartingWithOrderByOrderNumberDesc(String prefix);

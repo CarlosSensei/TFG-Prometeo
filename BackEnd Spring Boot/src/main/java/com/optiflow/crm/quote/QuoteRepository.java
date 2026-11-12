@@ -18,6 +18,8 @@ public interface QuoteRepository extends JpaRepository<Quote, Long>, JpaSpecific
 
     List<Quote> findByClientIdAndActiveTrue(Long clientId);
 
+    boolean existsByClientId(Long clientId);
+
     Optional<Quote> findTopByQuoteNumberStartingWithOrderByQuoteNumberDesc(String prefix);
 
     long countByClientIdAndActiveTrue(Long clientId);

@@ -21,7 +21,7 @@ export class OrderApiService {
     return this.http.post<OrderPage>(`${this.apiUrl}/search`, filters);
   }
 
-  getById(id: number): Observable<Order> {
+  findById(id: number): Observable<Order> {
 
     return this.http.get<Order>(`${this.apiUrl}/${id}`);
   }

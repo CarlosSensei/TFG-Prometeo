@@ -238,15 +238,21 @@ public class ClientServiceImpl implements ClientService {
 
     // Metodo de borrado de cliente. Solo desactiva cuenta.
     @Override
+    @Transactional
     public void delete(Long id) {
 
         Client client = findById(id);
 
+        // Si ya está desactivado, no hacemos nada.
+        if (Boolean.FALSE.equals(client.getActive())) {
+            return;
+        }
+
+        // Baja lógica: conservamos toda su información.
         client.setActive(false);
 
         clientRepository.save(client);
     }
-
 
     @Override
     @Transactional(readOnly = true)

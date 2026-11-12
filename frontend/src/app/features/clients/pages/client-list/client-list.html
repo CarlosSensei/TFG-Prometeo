@@ -91,6 +91,7 @@
   <app-client-detail-drawer
     [clientId]="detailClientId()"
     (closed)="closeClientDetail()"
+    (changed)="loadClients()"
   />
 
 </section>

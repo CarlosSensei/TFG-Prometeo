@@ -12,7 +12,7 @@ export class InventoryApiService {
     return this.http.post<InventoryPage>(`${this.baseUrl}/search`, query);
   }
 
-  getById(id: number): Observable<InventoryItem> {
+  findById(id: number): Observable<InventoryItem> {
     return this.http.get<InventoryItem>(`${this.baseUrl}/${id}`);
   }
 

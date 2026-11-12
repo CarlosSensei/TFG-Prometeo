@@ -53,6 +53,16 @@
         Editar cliente
       </app-button>
 
+      @if (currentClient.active) {
+        <app-button
+          variant="secondary"
+          [disabled]="processing()"
+          (pressed)="deactivateClient()"
+        >
+          Desactivar cliente
+        </app-button>
+      }
+
     </div>
 
     <!-- Navegación -->

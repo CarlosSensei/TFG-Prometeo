@@ -34,7 +34,7 @@ export class ClientForm implements OnInit {
     lastSurname: ['', Validators.maxLength(50)],
     dni: ['', [Validators.required, Validators.maxLength(10)]],
     phoneNumber: ['', Validators.required],
-    email: ['', Validators.email],
+    email: ['', [Validators.required, Validators.email]],
     birthDate: ['', Validators.required],
     address: ['', Validators.maxLength(200)],
     city: ['', Validators.maxLength(50)],
@@ -71,7 +71,7 @@ export class ClientForm implements OnInit {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.api.getById(id).subscribe({
+    this.api.findById(id).subscribe({
       next: client => {
 
         this.form.patchValue({
@@ -148,28 +148,46 @@ export class ClientForm implements OnInit {
   }
 
   private handleError(error: HttpErrorResponse): void {
+
     if (error.status === 409) {
-      this.errorMessage.set('Ya existe un cliente con este DNI/NIE.');
+      this.errorMessage.set('Ya existe un cliente con este DNI/NIE o hay un conflicto de datos.');
+
     } else if (error.status === 400) {
-      this.errorMessage.set(
-        'Hay datos incorrectos. Revisa los campos del formulario.'
-      );
+
+      const validationErrors = error.error?.validationErrors ?? error.error?.errors;
+
+      if (validationErrors && typeof validationErrors === 'object') {
+
+        const messages = Object.entries(validationErrors)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join(' · ');
+
+        this.errorMessage.set(messages || 'Hay datos incorrectos.');
+
+      } else {
+
+        this.errorMessage.set(error.error?.message || 'Hay datos incorrectos. Revisa el formulario.');
+      }
+
     } else if (error.status === 404) {
       this.errorMessage.set('El cliente ya no existe.');
+
     } else {
-      this.errorMessage.set(
-        'No se ha podido guardar. Inténtalo de nuevo.'
-      );
+      this.errorMessage.set('No se ha podido guardar. Inténtalo de nuevo.');
     }
+
+    console.error('Error guardando cliente:', error.error);
   }
 
   hasError(field: string): boolean {
+
     const control = this.form.get(field);
-    return !!control && control.invalid &&
-      (control.dirty || control.touched);
+
+    return !!control && control.invalid && (control.dirty || control.touched);
   }
 
   goBack(): void {
+    
     this.router.navigate(['/clients']);
   }
 }

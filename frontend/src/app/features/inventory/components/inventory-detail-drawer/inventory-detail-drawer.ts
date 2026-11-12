@@ -52,7 +52,7 @@ export class InventoryDetailDrawer {
 
       if (creating || id === null) { this.loading.set(false); return; }
       this.loading.set(true);
-      const request = this.api.getById(id).subscribe({
+      const request = this.api.findById(id).subscribe({
         next: item => { this.item.set(item); this.fillFields(item); this.loading.set(false); },
         error: err => { this.error.set(err.error?.message ?? 'No se pudo cargar el artículo.'); this.loading.set(false); },
       });
@@ -132,7 +132,7 @@ export class InventoryDetailDrawer {
   refreshAfterMovement(): void {
     const id = this.itemId();
     if (id === null) return;
-    this.api.getById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.findById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: item => {
         if (this.itemId() !== id) return;
         this.item.set(item);

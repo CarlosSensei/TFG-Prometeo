@@ -17,7 +17,7 @@ export class QuoteApiService {
     return this.http.post<QuotePage>(`${this.apiUrl}/search`, filters);
   }
 
-  getById(id: number): Observable<Quote> {
+  findById(id: number): Observable<Quote> {
 
     return this.http.get<Quote>(`${this.apiUrl}/${id}`);
   }

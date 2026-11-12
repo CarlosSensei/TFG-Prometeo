@@ -98,6 +98,7 @@
             label="Correo electrónico"
             type="email"
             formControlName="email"
+            [required]="true"
             [error]="hasError('email') ? 'Introduce un email válido.' : ''"
           />
 

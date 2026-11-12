@@ -114,7 +114,7 @@ export class QuoteForm implements OnInit {
     this.error.set(null);
 
     this.quoteApi
-      .getById(id)
+      .findById(id)
       .pipe(
         switchMap((quote) => {
           if (quote.status !== 'DRAFT') {

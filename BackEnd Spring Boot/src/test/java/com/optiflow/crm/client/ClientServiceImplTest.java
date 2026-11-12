@@ -223,6 +223,53 @@ class ClientServiceImplTest {
                 pageCaptor.getValue().getSort().getOrderFor("surname").getDirection());
     }
 
+    @Test
+    void givenActiveClient_whenDelete_thenDeactivateWithoutRemoving() {
+
+        // GIVEN
+        Client client = new Client();
+        client.setId(10L);
+        client.setActive(true);
+
+        when(clientRepository.findById(10L))
+                .thenReturn(Optional.of(client));
+
+        // WHEN
+        service.delete(10L);
+
+        // THEN
+        assertFalse(client.getActive());
+
+        verify(clientRepository).findById(10L);
+        verify(clientRepository).save(client);
+
+        // No debe eliminar el registro físicamente.
+        verify(clientRepository, never()).delete(any(Client.class));
+        verify(clientRepository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void givenInactiveClient_whenDelete_thenDoNothing() {
+
+        // GIVEN
+        Client client = new Client();
+        client.setId(10L);
+        client.setActive(false);
+
+        when(clientRepository.findById(10L))
+                .thenReturn(Optional.of(client));
+
+        // WHEN
+        service.delete(10L);
+
+        // THEN
+        assertFalse(client.getActive());
+
+        verify(clientRepository).findById(10L);
+        verify(clientRepository, never()).save(any(Client.class));
+        verify(clientRepository, never()).delete(any(Client.class));
+    }
+
     private static Client client(Long id, String dni, boolean active) {
         Client client = new Client();
         client.setId(id);

@@ -97,14 +97,14 @@ export class QuoteDetailDrawer {
       this.loading.set(true);
 
       const subscription = this.quoteApi
-        .getById(id)
+        .findById(id)
         .pipe(switchMap((quote) => {
             // Consultas auxiliares:
             // los fallos al recuperar nombres no deben
             // impedir ver el presupuesto.
 
             const clientRequest = this.clientApi
-              .getById(quote.clientId)
+              .findById(quote.clientId)
               .pipe(catchError(() => of(null)));
 
             const sellerRequest =

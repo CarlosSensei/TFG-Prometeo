@@ -39,6 +39,8 @@ export class ClientDetailDrawer {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly activeTab = signal<ClientTab>('summary');
+  readonly changed = output<void>();
+  readonly processing = signal(false);
 
   constructor() {
     effect((onCleanup) => {
@@ -50,7 +52,7 @@ export class ClientDetailDrawer {
       if (id === null) return;
 
       this.loading.set(true);
-      const subscription = this.api.getById(id).subscribe({
+      const subscription = this.api.findById(id).subscribe({
         next: (client) => {
           this.client.set(client);
           this.loading.set(false);
@@ -121,6 +123,51 @@ export class ClientDetailDrawer {
       queryParams: {
         clientId: client.id,
         returnUrl
+      }
+    });
+  }
+
+  deactivateClient(): void {
+
+    const client = this.client();
+
+    if (!client?.active || this.processing()) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `¿Quieres desactivar a ${this.fullName(client)}?\n\n` +
+      'El cliente dejará de aparecer en el listado de activos. ' +
+      'Sus presupuestos, pedidos e historial se conservarán.'
+    );
+
+    if (!confirmed) return;
+
+    this.processing.set(true);
+    this.error.set(null);
+
+    this.api.deactivate(client.id).subscribe({
+
+      next: () => {
+
+        this.processing.set(false);
+
+        // Avisar al listado para que actualice sus datos.
+        this.changed.emit();
+
+        // Cerrar el drawer.
+        this.close();
+      },
+
+      error: error => {
+
+        console.error('Error desactivando cliente:', error);
+
+        this.processing.set(false);
+
+        this.error.set(
+          'No se ha podido desactivar el cliente.'
+        );
       }
     });
   }

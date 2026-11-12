@@ -49,11 +49,6 @@ export class ClientApiService {
     return this.http.post<Page<Client>>(`${this.apiUrl}/search`, filters);
   }
 
-  getById(id: number): Observable<Client> {
-
-    return this.http.get<Client>(`${this.apiUrl}/${id}`);
-  }
-
   create(client: ClientPayload): Observable<Client> {
 
     return this.http.post<Client>(this.apiUrl, client);
@@ -62,6 +57,11 @@ export class ClientApiService {
   update(id: number, client: ClientPayload): Observable<Client> {
 
     return this.http.put<Client>(`${this.apiUrl}/${id}`, client);
+  }
+
+  deactivate(id: number): Observable<void> {
+    
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   getStats(id: number): Observable<ClientStats> {

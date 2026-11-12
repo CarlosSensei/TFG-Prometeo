@@ -93,14 +93,14 @@ export class OrderDetailDrawer {
       this.loading.set(true);
 
       const subscription = this.orderApi
-        .getById(id)
+        .findById(id)
         .pipe(switchMap(order => {
 
             // Los datos comerciales complementarios
             // no deben bloquear el detalle del pedido.
 
             const clientRequest = this.clientApi
-              .getById(order.clientId)
+              .findById(order.clientId)
               .pipe(catchError(() => of(null)));
 
             const sellerRequest = order.sellerId != null
